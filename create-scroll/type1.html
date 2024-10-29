@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expandable Panels</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        overflow-x: hidden;
+        background-color: #f0f0f0;
+      }
+
+      section {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+      }
+
+      .expand-container {
+        display: flex;
+        width: 100vw;
+      }
+
+      .panel {
+        position: relative;
+        height: 100vh;
+        width: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ff5733;
+        color: white;
+        cursor: pointer;
+        overflow: hidden;
+        transition: flex 0.8s ease; /* Smooth transition for expanding */
+      }
+
+      .panel h1 {
+        transform: rotate(-90deg);
+        white-space: nowrap;
+        transition: transform 0.4s ease;
+      }
+
+      .panel-content {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .panel.expanded {
+        flex: 3; /* Make clicked panel larger */
+      }
+
+      .panel.expanded h1 {
+        position: absolute;
+        bottom: 75px;
+        left: 0;
+      }
+
+      .panel.expanded .panel-content {
+        display: block;
+        opacity: 1;
+      }
+
+      /* Different colors for each panel */
+      .create {
+        background-color: #ff5733;
+      }
+      .connect {
+        background-color: #ffc300;
+      }
+      .activate {
+        background-color: #ff5733;
+      }
+      .innovate {
+        background-color: #ffc300;
+      }
+    </style>
+  </head>
+  <body>
+    <section>section 1</section>
+
+    <section class="expand-container" onwheel="debouncedScroll(event)">
+      <div class="panel create expanded" onclick="expandPanel(this)">
+        <h1>CREATE</h1>
+        <div class="panel-content">
+          <p>
+            Cross-Channel Integrated Campaign Conceptualisation & Content
+            Development
+          </p>
+          <p>Brand Insights & Planning</p>
+        </div>
+      </div>
+      <div class="panel connect" onclick="expandPanel(this)">
+        <h1>CONNECT</h1>
+        <div class="panel-content">
+          <p>Connecting with Audience & Strategy</p>
+        </div>
+      </div>
+      <div class="panel activate" onclick="expandPanel(this)">
+        <h1>ACTIVATE</h1>
+        <div class="panel-content">
+          <p>Activation Strategies & Engagement</p>
+        </div>
+      </div>
+      <div class="panel innovate" onclick="expandPanel(this)">
+        <h1>INNOVATE</h1>
+        <div class="panel-content">
+          <p>Innovative Solutions & Development</p>
+        </div>
+      </div>
+    </section>
+
+    <section>section 2</section>
+    <script>
+      let scrollBlocked = false; // Flag to track if scrolling is blocked
+
+      function expandPanel(panel) {
+        // Remove 'expanded' class from all panels
+        document
+          .querySelectorAll(".panel")
+          .forEach((p) => p.classList.remove("expanded"));
+
+        // Add 'expanded' class to clicked panel
+        panel.classList.add("expanded");
+      }
+
+      // Debounce function
+      function debounce(func, delay) {
+        let timeoutId;
+        return function (...args) {
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          timeoutId = setTimeout(() => {
+            func.apply(this, args);
+          }, delay);
+        };
+      }
+
+      function handleScroll(event) {
+        if (scrollBlocked) {
+          event.preventDefault(); // Prevent default scrolling
+          return; // Prevent any further processing
+        }
+
+        const panels = document.querySelectorAll(".panel");
+        let expandedPanel = Array.from(panels).find((panel) =>
+          panel.classList.contains("expanded")
+        );
+
+        if (event.deltaY > 0) {
+          // Scrolling down
+          if (expandedPanel && expandedPanel.nextElementSibling) {
+            scrollBlocked = true; // Block scrolling
+            expandedPanel.classList.remove("expanded"); // Collapse the current panel
+            expandedPanel.nextElementSibling.classList.add("expanded"); // Expand the next panel
+            setTimeout(() => {
+              scrollBlocked = false; // Allow scrolling after transition
+            }, 1000); // Duration of transition
+            event.preventDefault(); // Prevent default scrolling
+          }
+        } else {
+          // Scrolling up
+          if (expandedPanel && expandedPanel.previousElementSibling) {
+            scrollBlocked = true; // Block scrolling
+            expandedPanel.classList.remove("expanded"); // Collapse the current panel
+            expandedPanel.previousElementSibling.classList.add("expanded"); // Expand the previous panel
+            setTimeout(() => {
+              scrollBlocked = false; // Allow scrolling after transition
+            }, 1000); // Duration of transition
+            event.preventDefault(); // Prevent default scrolling
+          }
+        }
+      }
+
+      // Create a debounced version of the handleScroll function
+      const debouncedScroll = debounce(handleScroll, 200);
+    </script>
+  </body>
+</html>

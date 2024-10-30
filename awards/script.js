@@ -1,81 +1,131 @@
 const container = document.querySelector('.container');
 const cards = document.querySelectorAll('.card');
-let gravity = 2;
-let bounceFactor = 0.6;
-let cardPositions = [];
-let interval;
 
-cards.forEach((card, index) => {
-  // Position cards in a row initially
-  card.style.left = `${index * 110}px`;
-  card.style.top = `10px`;
+// Initialize card positions with spacing
+function positionCards() {
+    const spacing = 20; // Space between cards
+    const startX = 50;  // Starting X position
+    const startY = 50;  // Starting Y position
+    cards.forEach((card, index) => {
+        card.style.left = `${startX + (index * (card.clientWidth + spacing))}px`;
+        card.style.top = `${startY}px`;
+    });
+}
 
-  // Track card positions
-  cardPositions[index] = { x: index * 110, y: 10, vy: 0, moving: false };
+// Function to handle the initial drop with bounce effect
+function dropWithBounce() {
+    cards.forEach((card) => {
+        let velocityY = 2; // Initial fall speed
+        const gravity = 0.4; // Gravity for fall
+        let bounceCount = 0;
 
-  // Set drag events
-  card.addEventListener('mousedown', (e) => dragStart(e, index));
-  document.addEventListener('mouseup', dragEnd);
+        const animation = setInterval(() => {
+            const cardTop = parseFloat(card.style.top);
+            velocityY += gravity;
+            card.style.top = `${Math.min(container.clientHeight - card.clientHeight, cardTop + velocityY)}px`;
+
+            // Check if card hits bottom and apply bounce
+            if (cardTop + card.clientHeight >= container.clientHeight) {
+                if (bounceCount < 2) { // Allow two bounces
+                    velocityY *= -0.5; // Medium bounce effect
+                    bounceCount++;
+                } else {
+                    clearInterval(animation);
+                }
+            }
+        }, 16);
+    });
+}
+
+// Initial positioning of cards
+positionCards();
+
+// Start initial drop after 2 seconds
+setTimeout(dropWithBounce, 2000);
+
+// Draggable functionality with throw and bounce effect
+cards.forEach((card) => {
+    let isDragging = false;
+    let offsetX, offsetY;
+    let lastMouseX, lastMouseY;
+    let velocityX = 0;
+    let velocityY = 0;
+
+    card.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - card.getBoundingClientRect().left;
+        offsetY = e.clientY - card.getBoundingClientRect().top;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+        card.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            const x = e.clientX - offsetX;
+            const y = e.clientY - offsetY;
+
+            // Update card position with gradual changes for smoother movement
+            card.style.left = `${Math.min(container.clientWidth - card.clientWidth, Math.max(0, x))}px`;
+            card.style.top = `${Math.min(container.clientHeight - card.clientHeight, Math.max(0, y))}px`;
+
+            // Calculate velocity with reduced influence for slower movement
+            velocityX = (e.clientX - lastMouseX) * 0.3;
+            velocityY = (e.clientY - lastMouseY) * 0.3;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            card.style.cursor = 'grab';
+            throwCard(card, velocityX, velocityY); // Pass velocityX and velocityY to determine throw direction
+        }
+    });
 });
 
-// Gravity effect after 2 seconds
-setTimeout(() => {
-  interval = setInterval(applyGravity, 20);
-}, 2000);
+// Function to handle the throw and bounce effect
+function throwCard(card, initialVelocityX, initialVelocityY) {
+    let velocityX = initialVelocityX;
+    let velocityY = initialVelocityY;
+    const gravity = 0.4;
+    const bounceDamping = 0.6;
+    let bounceCount = 0;
 
-function applyGravity() {
-  cards.forEach((card, index) => {
-    const pos = cardPositions[index];
+    function moveCard() {
+        velocityY += gravity; // Apply gravity to vertical velocity
+        const cardLeft = parseFloat(card.style.left) || 0;
+        const cardTop = parseFloat(card.style.top) || 0;
 
-    // Apply gravity if not dragging
-    if (!pos.moving) {
-      pos.vy += gravity;
-      pos.y += pos.vy;
+        // Update position using velocity
+        card.style.left = `${Math.min(container.clientWidth - card.clientWidth, Math.max(0, cardLeft + velocityX))}px`;
+        card.style.top = `${Math.min(container.clientHeight - card.clientHeight, Math.max(0, cardTop + velocityY))}px`;
 
-      // Detect collision with the bottom of the container
-      if (pos.y + card.clientHeight >= container.clientHeight) {
-        pos.y = container.clientHeight - card.clientHeight;
-        pos.vy *= -bounceFactor; // Bounce effect
-      }
+        // Bounce off the right and left container edges
+        if (cardLeft <= 0 || cardLeft + card.clientWidth >= container.clientWidth) {
+            velocityX *= -bounceDamping; // Reverse horizontal velocity
+        }
 
-      // Update card position
-      card.style.top = `${pos.y}px`;
+        // Bounce off the top and bottom container edges
+        if (cardTop <= 0 || cardTop + card.clientHeight >= container.clientHeight) {
+            velocityY *= -bounceDamping; // Reverse vertical velocity
+            bounceCount++;
+        }
+
+        // Apply slight friction for a more natural slowing effect
+        velocityX *= 0.98;
+        velocityY *= 0.98;
+
+        // Stop movement if velocity is very low to avoid endless small bounces
+        if (Math.abs(velocityX) < 0.1 && Math.abs(velocityY) < 0.1) {
+            clearInterval(animation);
+        }
     }
-  });
+
+    const animation = setInterval(moveCard, 16);
 }
 
-function dragStart(e, index) {
-  const pos = cardPositions[index];
-  pos.moving = true;
-
-  let offsetX = e.offsetX;
-  let offsetY = e.offsetY;
-
-  function onMouseMove(event) {
-    pos.x = event.pageX - container.offsetLeft - offsetX;
-    pos.y = event.pageY - container.offsetTop - offsetY;
-    cardPositions[index] = pos;
-
-    cards[index].style.left = `${pos.x}px`;
-    cards[index].style.top = `${pos.y}px`;
-  }
-
-  document.addEventListener('mousemove', onMouseMove);
-
-  function stopDrag() {
-    pos.moving = false;
-    pos.vy = 0;  // Reset velocity after drag
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mouseup', stopDrag);
-  }
-
-  document.addEventListener('mouseup', stopDrag);
-}
-
-function dragEnd() {
-  // Re-enable gravity effect after dragging
-  cards.forEach((card, index) => {
-    const pos = cardPositions[index];
-    pos.moving = false;
-  });
-}
+// Initial positioning of cards
+positionCards();

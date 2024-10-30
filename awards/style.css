@@ -1,36 +1,36 @@
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-  }
-  
-  .container {
-    width: 80%;
-    height: 80%;
-    background-color: #ffffff;
-    border: 2px solid #ddd;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .card {
-    width: 100px;
-    height: 100px;
-    background-color: #4CAF50;
-    color: #fff;
-    text-align: center;
-    line-height: 100px;
-    position: absolute;
-    cursor: grab;
-    user-select: none;
-    transition: transform 0.1s ease; /* Add transition for smooth drag effect */
-  }
-  
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  position: relative;
+  width: 80vw;
+  height: 80vh;
+  background-color: #f0f0f0;
+  border: 2px solid #333;
+  overflow: hidden;
+}
+
+.card {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: #4CAF50;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: grab;
+  user-select: none;
+}

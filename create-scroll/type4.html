@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        /* overflow: hidden; */
+      }
+
+      section {
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .expand-container {
+        background-color: bisque;
+        display: flex;
+      }
+
+      .panel {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100px;
+        transition: width 0.5s ease;
+      }
+
+      .panel1 {
+        background-color: blue;
+      }
+
+      .panel2 {
+        background-color: rgb(172, 27, 46);
+      }
+
+      .panel3 {
+        background-color: rgb(221, 255, 0);
+      }
+
+      .panel4 {
+        background-color: rgb(0, 255, 179);
+      }
+
+      .panel.expanded {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <section>section 1</section>
+    <section id="expand-container" class="expand-container">
+      <div class="panel panel1 expanded">panel1</div>
+      <div class="panel panel2">panel2</div>
+      <div class="panel panel3">panel3</div>
+      <div class="panel panel4">panel4</div>
+    </section>
+    <section>section 3</section>
+
+    <script>
+      const expandContainer = document.getElementById("expand-container");
+
+      function debounce(func, delay) {
+        let timeout;
+        return function (...args) {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(this, args), delay);
+        };
+      }
+
+      // Only debounced expansion function
+      const expandNextPanel = debounce((expandedPanel) => {
+        if (expandedPanel && expandedPanel.nextElementSibling) {
+          expandedPanel.classList.remove("expanded");
+          expandedPanel.nextElementSibling.classList.add("expanded");
+        } else {
+          expandContainer.classList.remove("reached");
+          window.scrollBy({
+            top: 250,
+            behavior: "smooth",
+          });
+        }
+      }, 200);
+
+      // Only debounced expansion function
+      const expandPreviousPanel = debounce((expandedPanel) => {
+        if (expandedPanel && expandedPanel.previousElementSibling) {
+          expandedPanel.classList.remove("expanded");
+          expandedPanel.previousElementSibling.classList.add("expanded");
+        } else {
+          expandContainer.classList.remove("reached");
+          window.scrollBy({
+            top: 250,
+            behavior: "smooth",
+          });
+        }
+      }, 200);
+
+      const handleScroll = (e) => {
+        let expandedIndex;
+        const panels = document.querySelectorAll(".panel");
+        let expandedPanel = Array.from(panels).find((panel, index) => {
+          if (panel.classList.contains("expanded")) {
+            expandedIndex = index;
+            return panel;
+          }
+        });
+
+        const containerTop = expandContainer.getBoundingClientRect().top;
+        const containerBottom = expandContainer.getBoundingClientRect().bottom;
+        const windowHeight = window.innerHeight;
+
+        if (e.deltaY > 0) {
+          if (containerTop <= 0 && expandedIndex + 1 !== panels.length) {
+            expandContainer.scrollIntoView({ behavior: "smooth" });
+            e.preventDefault();
+            expandNextPanel(expandedPanel); // Debounced expansion
+          }
+        } else {
+          if (containerBottom >= windowHeight && expandedIndex !== 0) {
+            expandContainer.scrollIntoView({ behavior: "smooth" });
+            e.preventDefault();
+            expandPreviousPanel(expandedPanel); // Debounced expansion
+          }
+        }
+      };
+
+      window.addEventListener("wheel", handleScroll, { passive: false });
+
+      window.addEventListener(
+        "scroll",
+        (e) => {
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+    </script>
+  </body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continuous Scrolling Ads</title>
+    <style>
+        /* Main container styling */
+        .running-section-forward,
+        .running-section-forward-1,
+        .running-section-back {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            background-color: #f3f3f3;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            /* white-space: nowrap; */
+        }
+
+        .scrolling-wrapper-forward {
+            display: flex;
+            animation: scroll-left-to-right 25s linear infinite;
+            width: calc(200%);
+        }
+
+        .scrolling-wrapper-forward-1 {
+            display: flex;
+            animation: scroll-left-to-right 25s linear infinite;
+            width: calc(200%);
+        }
+
+        .scrolling-wrapper-back {
+            display: flex;
+            animation: scroll-right-to-left 25s linear infinite;
+            width: calc(200%);
+        }
+
+        .image-container {
+            display: inline-block;
+            margin-right: 10px;
+            position: relative;
+        }
+
+        /* Image styling */
+        .image-container img {
+            height: 100px;
+            width: 300px;
+            border-radius: 5px;
+        }
+
+        /* Arrow styling */
+        .image-container .arrow {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            display: none;
+            font-size: 15px;
+            color: #ffffff;
+            cursor: pointer;
+            font-weight: 700;
+            z-index: 10;
+            background: #FF5000;
+            padding: 10px;
+        }
+
+
+        .arrow::after {
+            content: "";
+            width: 12px;
+            height: 12px;
+            border: 4px solid white;
+            display: flex;
+            rotate: 133deg;
+            border-bottom: none;
+            border-right: none;
+            right: 13px;
+            bottom: 13px;
+            position: absolute;
+        }
+
+        /* Show arrow on hover */
+        .image-container:hover .arrow {
+            display: block;
+        }
+
+        /* Pause all images on hover */
+        .running-section-forward:hover .scrolling-wrapper-forward,
+        .running-section-forward-1:hover .scrolling-wrapper-forward-1,
+        .running-section-back:hover .scrolling-wrapper-back {
+            animation-play-state: paused;
+        }
+
+        /* Keyframes for continuous scrolling animation */
+        @keyframes scroll-left-to-right {
+            0% {
+                transform: translateX(-50%);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scroll-right-to-left {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="running-section-forward">
+        <div class="scrolling-wrapper-forward">
+            <!-- Images will be appended here dynamically by JavaScript -->
+        </div>
+    </div>
+    <div class="running-section-back">
+        <div class="scrolling-wrapper-back">
+            <!-- Images will be appended here dynamically by JavaScript -->
+        </div>
+    </div>
+    <div class="running-section-forward-1">
+        <div class="scrolling-wrapper-forward-1">
+            <!-- Images will be appended here dynamically by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Array with image paths and URLs for left-to-right scrolling
+        const imageArrayForward = [
+            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1' },
+            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page2' },
+            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page3' },
+            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page4' },
+            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page5' },
+            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page6' },
+            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page7' },
+            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page8' },
+            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page9' },
+            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page10' },
+        ];
+
+        // Array with image paths and different URLs for right-to-left scrolling
+        const imageArrayBack = [
+            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageA' },
+            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageB' },
+            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageC' },
+            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageD' },
+            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageE' },
+            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageF' },
+            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageG' },
+            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageH' },
+            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageI' },
+            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageJ' },
+           ];
+        const imageArrayForward1 = [
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageA' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageB' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageC' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageD' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageE' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageF' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageG' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageH' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageI' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageJ' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageK' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageL' },
+            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageM' },
+        ];
+        const scrollingWrapperForward = document.querySelector('.scrolling-wrapper-forward');
+        const scrollingWrapperForward1 = document.querySelector('.scrolling-wrapper-forward-1');
+        const scrollingWrapperBack = document.querySelector('.scrolling-wrapper-back');
+
+        // Function to create and append images dynamically
+        function loadImages(wrapper, imageArray) {
+            imageArray.forEach((item,index) => {
+                const container = document.createElement('div');
+                container.classList.add('image-container');
+
+                const img = document.createElement('img');
+                img.src = item.imagePath;
+                img.alt = 'Running Image';
+
+                const arrow = document.createElement('span');
+                arrow.classList.add('arrow');
+                arrow.innerHTML = item?.content || "";
+                arrow.onclick = () => {
+                    window.open(item.targetUrl, '_blank');  // Open URL in a new tab
+                };
+
+                container.appendChild(img);
+                container.appendChild(arrow);
+                wrapper.appendChild(container);
+            });
+        }
+
+        // Load images for both scrolling sections
+        loadImages(scrollingWrapperBack, imageArrayBack);
+        loadImages(scrollingWrapperForward, imageArrayForward);
+        loadImages(scrollingWrapperForward1, imageArrayForward1);
+    </script>
+
+</body>
+
+</html>

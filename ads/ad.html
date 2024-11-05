@@ -40,14 +40,15 @@
 
         .image-container {
             display: inline-block;
-            margin-right: 10px;
             position: relative;
+            margin: 10px;
         }
 
         /* Image styling */
         .image-container img {
-            height: 100px;
-            width: 300px;
+            /* set height 155 for hide and view image cycle  */
+            height: 155px;
+            width: auto;
             border-radius: 5px;
         }
 
@@ -64,6 +65,7 @@
             z-index: 10;
             background: #FF5000;
             padding: 10px;
+            min-width: 150px;
         }
 
 
@@ -137,45 +139,42 @@
     <script>
         // Array with image paths and URLs for left-to-right scrolling
         const imageArrayForward = [
-            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1' },
-            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page2' },
-            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page3' },
-            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page4' },
-            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page5' },
-            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page6' },
-            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page7' },
-            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page8' },
-            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page9' },
-            { imagePath: './assets/banner-image.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page10' },
+            { imagePath: './images/1.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1' },
+            { imagePath: './images/2.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page2' },
+            { imagePath: './images/3.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page3' },
+            { imagePath: './images/4.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page4' },
+            { imagePath: './images/5.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page5' },
+            { imagePath: './images/6.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page6' },
+            { imagePath: './images/7.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page7' },
+            { imagePath: './images/8.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page8' },
+            { imagePath: './images/9.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page9' },
+            { imagePath: './images/10.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page10' },
         ];
 
         // Array with image paths and different URLs for right-to-left scrolling
         const imageArrayBack = [
-            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageA' },
-            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageB' },
-            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageC' },
-            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageD' },
-            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageE' },
-            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageF' },
-            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageG' },
-            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageH' },
-            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageI' },
-            { imagePath: './assets/engineer.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageJ' },
-           ];
+            { imagePath: './images/1.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageA' },
+            { imagePath: './images/2.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageB' },
+            { imagePath: './images/3.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageC' },
+            { imagePath: './images/4.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageD' },
+            { imagePath: './images/5.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageE' },
+            { imagePath: './images/6.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageF' },
+            { imagePath: './images/7.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageG' },
+            { imagePath: './images/8.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageH' },
+            { imagePath: './images/9.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageI' },
+            { imagePath: './images/10.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageJ' },
+        ];
         const imageArrayForward1 = [
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageA' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageB' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageC' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageD' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageE' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageF' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageG' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageH' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageI' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageJ' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageK' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageL' },
-            { imagePath: './assets/women.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageM' },
+            { imagePath: './images/1.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageA' },
+            { imagePath: './images/2.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageB' },
+            { imagePath: './images/3.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageC' },
+            { imagePath: './images/4.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageD' },
+            { imagePath: './images/5.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageE' },
+            { imagePath: './images/6.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageF' },
+            { imagePath: './images/7.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageG' },
+            { imagePath: './images/8.jpg', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageH' },
+            { imagePath: './images/9.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageI' },
+            { imagePath: './images/10.png', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/pageJ' },
         ];
         const scrollingWrapperForward = document.querySelector('.scrolling-wrapper-forward');
         const scrollingWrapperForward1 = document.querySelector('.scrolling-wrapper-forward-1');
@@ -183,7 +182,7 @@
 
         // Function to create and append images dynamically
         function loadImages(wrapper, imageArray) {
-            imageArray.forEach((item,index) => {
+            imageArray.forEach((item, index) => {
                 const container = document.createElement('div');
                 container.classList.add('image-container');
 
@@ -204,7 +203,11 @@
             });
         }
 
-        // Load images for both scrolling sections
+        // here all function called twise to avoid the image cycle start and end with all images
+        loadImages(scrollingWrapperBack, imageArrayBack);
+        loadImages(scrollingWrapperForward, imageArrayForward);
+        loadImages(scrollingWrapperForward1, imageArrayForward1);
+
         loadImages(scrollingWrapperBack, imageArrayBack);
         loadImages(scrollingWrapperForward, imageArrayForward);
         loadImages(scrollingWrapperForward1, imageArrayForward1);

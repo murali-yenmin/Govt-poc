@@ -59,7 +59,7 @@ const boxData = [
 ];
 
 const numBoxes = boxData.length;
-const boxWidth = 450;
+const boxWidth = 294;
 const startX = window.innerWidth / 2 - (numBoxes * boxWidth) / 2;
 
 for (let i = 0; i < numBoxes; i++) {
@@ -85,7 +85,7 @@ const canvas = render.canvas;
 const ctx = canvas.getContext('2d');
 
 // Define padding for text inside the box
-const padding = 70;
+const padding =60;
 const lineHeight = 30;
 
 // Render loop to update the canvas with text
@@ -122,7 +122,7 @@ Events.on(engine, 'afterUpdate', () => {
         ctx.fillRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight);
 
         // Title
-        ctx.font = '700 28px Lora';
+        ctx.font = '700 23px Lora';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'left';
 

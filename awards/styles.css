@@ -23,27 +23,32 @@ body {
 }
 
 #container h1 {
-position: absolute;
-top: 15%;
-left: 45%;
-color: #ff5000;
-font-size: 80px;
-font-weight: 700;
+  position: absolute;
+  top: 15%;
+  left: 45%;
+  color: #ff5000;
+  font-size: 80px;
+  font-weight: 700;
 }
+
 #container p {
-position: absolute;
-top: 22%;
-left: 42%;
-width: 16%;
-text-transform: uppercase;
-font-family: "Lora", serif;
-text-align: center;
-color: #ffffff;
-font-size: 20px;
-font-weight: 400;
+  position: absolute;
+  top: 22%;
+  left: 42%;
+  width: 16%;
+  text-transform: uppercase;
+  font-family: "Lora", serif;
+  text-align: center;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 400;
 }
+
 .box {
-color: white; /* Set font color to white */
-font-family: Arial, sans-serif; /* Optional: set a clean font */
-text-align: center; /* Center the text */
+  color: white;
+  /* Set font color to white */
+  font-family: Arial, sans-serif;
+  /* Optional: set a clean font */
+  text-align: center;
+  /* Center the text */
 }

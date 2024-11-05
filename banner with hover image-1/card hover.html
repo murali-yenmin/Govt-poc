@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequential Image Hover Animation</title>
+    <style>
+        /* Container styling */
+        .container {
+            width: 100%;
+            height: 100vh;
+            /* border: 2px solid #333; */
+            position: relative;
+            overflow: hidden;
+            background-color: #FEE7B5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 {
+            color: #FF5000;
+            font-size: 100px;
+            font-weight: 700;
+        }
+
+
+
+        .dynamic-image {
+            width: 150px;
+            height: 150px;
+            position: absolute;
+            pointer-events: none;
+            transition: transform 1s ease, opacity 0.5s ease;
+            /* Zoom and fade transition */
+            transform: scale(1);
+            /* Initial scale */
+            opacity: 1;
+        }
+
+        .dynamic-image.zoomed {
+            transform: scale(1.5);
+            /* Zoom-in effect */
+        }
+
+        /* Fade-out effect */
+        .dynamic-image.fade-out {
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="container">
+        <h1 style="text-align: center;">CREATING BEYOND BOUNDARIES</h1>
+    </div>
+    <div style="padding: 20px;">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veniam quos in labore doloremque reiciendis ullam est,
+        placeat ea dolore modi explicabo! Libero voluptatibus at mollitia? Quis, repudiandae cum quibusdam mollitia
+        error eum, eos laboriosam accusantium blanditiis dolorem quas totam dicta nulla voluptates eaque culpa harum,
+        odit nisi eligendi quisquam magnam dolore quia. Ex repellat nihil provident odit laudantium quo! Reiciendis,
+        aliquam magnam. Exercitationem quisquam omnis quia est doloremque repellendus veniam! Animi impedit, quidem
+        quaerat inventore cumque laboriosam. Quibusdam, delectus alias explicabo sit, itaque ut, quos nam quis
+        accusantium laboriosam blanditiis! Officia delectus neque quidem praesentium maiores. Expedita voluptatibus non
+        ut libero hic a ipsam, nostrum numquam. Minima voluptatum adipisci, deserunt sunt culpa cupiditate voluptate
+        facere ipsam, repellat similique reprehenderit repudiandae aperiam vitae dignissimos assumenda ipsum, debitis
+        recusandae. Corporis ullam placeat nihil odio impedit accusamus. Consequatur nemo, laborum deleniti dolore sed
+        facere harum, earum ipsum magni non molestias obcaecati dolor repellat recusandae expedita amet soluta ex
+        distinctio quaerat laboriosam ut. Vero mollitia nisi quasi earum sunt repellat corrupti vitae suscipit! Amet
+        itaque non rem id, error maiores voluptates nesciunt repellat tempore maxime perferendis odio sapiente, adipisci
+        voluptas, voluptate earum soluta ullam quod? Debitis fugit cum exercitationem quae, blanditiis aperiam molestiae
+        et.
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+
+        // Array of image paths
+        const imagePaths = [
+            './assets/sample/1.jfif',
+            './assets/sample/2.jfif',
+            './assets/sample/3.jfif',
+            './assets/banner-image.png',
+            './assets/engineer.png',
+            './assets/women.png',
+        ];
+
+        let currentImageIndex = 0;
+        let previousX = null;
+        let previousY = null;
+
+        // Function to create an img element at a fixed position with animations
+        function createImageAtFixedPosition(x, y) {
+
+            // Calculate movement direction
+            const moveX = x + (x > previousX ? 100 : -20);
+            const moveY = y + (y > previousY ? 100 : -20);
+
+
+            // Extract the current image filename from the imagePaths array
+            const currentImageFileName = imagePaths[currentImageIndex].split('/').pop();
+
+            // Find any existing image with the same filename in the container
+            const existingImage = Array.from(document.querySelectorAll('.dynamic-image')).find(img => {
+                const imgFileName = img.src.split('/').pop();
+                return imgFileName === currentImageFileName;
+            });
+
+            // If an existing image is found with the same filename, remove it
+            if (existingImage) {
+                // existingImage.remove();
+            }
+
+            // Create a new img element with the updated src
+            const img = document.createElement('img');
+            img.src = imagePaths[currentImageIndex];
+            img.className = 'dynamic-image';
+            img.style.left = `${x - 30}px`;
+            img.style.top = `${y - 30}px`;
+
+            // Append the image to the container and apply zoom-in effect
+            container.appendChild(img);
+
+            //   requestAnimationFrame(() => {
+            //     // img.style.transform = `scale(1.7) translate(${moveX - x}px, ${moveY - y}px)`;
+            //     // img.style.transform = `scale(1.5)`;
+            // });
+
+            requestAnimationFrame(() => img.classList.add('zoomed'));
+            // Automatically remove the image after 3 seconds with fade-out effect
+            setTimeout(() => {
+                img.classList.remove('zoomed');
+                img.classList.add('fade-out'); // Start the fade-out animation
+                setTimeout(() => img.remove(), 12000); // Remove after fade-out completes
+            }, 1000);
+
+            // Move to the next image index, looping back after the last image
+            currentImageIndex = (currentImageIndex + 1) % imagePaths.length;
+        }
+
+        // Function to handle position update and image creation
+        function handleMove(x, y) {
+            // Check if the mouse/touch has moved more than 50px from the previous position
+            if (previousX !== null && previousY !== null) {
+                const distance = Math.sqrt((x - previousX) ** 2 + (y - previousY) ** 2);
+                if (distance > 70) {
+                    createImageAtFixedPosition(x, y);
+                    previousX = x;
+                    previousY = y;
+                }
+            } else {
+                previousX = x;
+                previousY = y;
+                createImageAtFixedPosition(x, y);
+            }
+        }
+
+        // Event listeners for desktop (mouse) and mobile (touch)
+        container.addEventListener('mousemove', (event) => {
+            const rect = container.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            handleMove(x, y);
+        });
+
+        container.addEventListener('touchmove', (event) => {
+            const rect = container.getBoundingClientRect();
+            const x = event.touches[0].clientX - rect.left;
+            const y = event.touches[0].clientY - rect.top;
+            handleMove(x, y);
+        });
+
+        // Reset sequence on mouse/touch leave
+        function resetSequence() {
+            const existingImage = document.querySelector('.dynamic-image');
+            currentImageIndex = 0;
+            previousX = null;
+            previousY = null;
+        }
+
+        container.addEventListener('mouseleave', resetSequence);
+        container.addEventListener('touchend', resetSequence);
+    </script>
+</body>
+
+</html>

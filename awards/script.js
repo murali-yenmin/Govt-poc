@@ -1,131 +1,166 @@
-const container = document.querySelector('.container');
-const cards = document.querySelectorAll('.card');
+// Import Matter.js components
+const { Engine, Render, Runner, Bodies, World, Mouse, MouseConstraint, Events } = Matter;
 
-// Initialize card positions with spacing
-function positionCards() {
-    const spacing = 20; // Space between cards
-    const startX = 50;  // Starting X position
-    const startY = 50;  // Starting Y position
-    cards.forEach((card, index) => {
-        card.style.left = `${startX + (index * (card.clientWidth + spacing))}px`;
-        card.style.top = `${startY}px`;
+// Create the engine and world
+const engine = Engine.create();
+const world = engine.world;
+world.gravity.y = 0.5;
+
+// Create a renderer with full-page dimensions
+const render = Render.create({
+    element: document.getElementById('container'),
+    engine: engine,
+    options: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        wireframes: false,
+        background: null
+    }
+});
+Render.run(render);
+
+// Create runner to update the engine
+const runner = Runner.create();
+Runner.run(runner, engine);
+
+// Add walls to create closed boundaries
+const wallThickness = 50;
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+const walls = [
+    Bodies.rectangle(width / 2, -wallThickness / 2, width, wallThickness, { isStatic: true }), // Top
+    Bodies.rectangle(width / 2, height + wallThickness / 2, width, wallThickness, { isStatic: true }), // Bottom
+    Bodies.rectangle(-wallThickness / 2, height / 2, wallThickness, height, { isStatic: true }), // Left
+    Bodies.rectangle(width + wallThickness / 2, height / 2, wallThickness, height, { isStatic: true }) // Right
+];
+World.add(world, walls);
+
+// Set up mouse for dragging
+const mouse = Mouse.create(render.canvas);
+const mouseConstraint = MouseConstraint.create(engine, {
+    mouse: mouse,
+    constraint: {
+        stiffness: 0.9,
+        render: { visible: false }
+    }
+});
+World.add(world, mouseConstraint);
+render.mouse = mouse;
+
+// Define an array of titles, years, and additional text for each box
+const boxData = [
+    { title: 'SG Independent AOTY', year: '2023' },
+    { title: 'SEA Experiential AOTY', year: '2024' },
+    { title: 'Independent AOTY & Grand Prix', year: '2025' },
+    { title: 'SG Independent AOTY & SEA Experiential AOTY', year: '2026' },
+    { title: 'World’s Leading Independent Agency', year: '2027' },
+    { title: 'World’s Leading Independent Agency', year: '2028' }
+];
+
+const numBoxes = boxData.length;
+const boxWidth = 450;
+const startX = window.innerWidth / 2 - (numBoxes * boxWidth) / 2;
+
+for (let i = 0; i < numBoxes; i++) {
+    const x = startX + i * boxWidth;
+    const y = 0;
+
+    // Set a random initial angle between 0 and 2π
+    const angle = Math.random() * 2 * Math.PI;
+    
+    // Random angular velocity for clockwise or counterclockwise rotation
+    const angularVelocity = Math.random() * 0.02 * (Math.random() < 0.5 ? -1 : 1);
+    
+    const boxBody = Bodies.rectangle(x, y, boxWidth, boxWidth, { 
+        restitution: 0.5,
+        angle: angle // Set the initial angle
     });
+    boxBody.angularVelocity = angularVelocity; // Set initial angular velocity
+    World.add(world, boxBody);
 }
 
-// Function to handle the initial drop with bounce effect
-function dropWithBounce() {
-    cards.forEach((card) => {
-        let velocityY = 2; // Initial fall speed
-        const gravity = 0.4; // Gravity for fall
-        let bounceCount = 0;
+// Get the canvas context for rendering text
+const canvas = render.canvas;
+const ctx = canvas.getContext('2d');
 
-        const animation = setInterval(() => {
-            const cardTop = parseFloat(card.style.top);
-            velocityY += gravity;
-            card.style.top = `${Math.min(container.clientHeight - card.clientHeight, cardTop + velocityY)}px`;
+// Define padding for text inside the box
+const padding = 70;
+const lineHeight = 30;
 
-            // Check if card hits bottom and apply bounce
-            if (cardTop + card.clientHeight >= container.clientHeight) {
-                if (bounceCount < 2) { // Allow two bounces
-                    velocityY *= -0.5; // Medium bounce effect
-                    bounceCount++;
+// Render loop to update the canvas with text
+Events.on(engine, 'afterUpdate', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = 0; i < numBoxes; i++) {
+        const boxBody = world.bodies[i + 4];
+        const boxHeight = boxWidth;
+        const backgroundX = boxBody.position.x - boxWidth / 2;
+        const backgroundY = boxBody.position.y - boxHeight / 2;
+
+        // Check boundaries and reposition if outside
+        const boundaryOffset = boxWidth / 2;
+        if (boxBody.position.x < boundaryOffset) {
+            Matter.Body.setPosition(boxBody, { x: boundaryOffset, y: boxBody.position.y });
+        } else if (boxBody.position.x > width - boundaryOffset) {
+            Matter.Body.setPosition(boxBody, { x: width - boundaryOffset, y: boxBody.position.y });
+        }
+        
+        if (boxBody.position.y < boundaryOffset) {
+            Matter.Body.setPosition(boxBody, { x: boxBody.position.x, y: boundaryOffset });
+        } else if (boxBody.position.y > height - boundaryOffset) {
+            Matter.Body.setPosition(boxBody, { x: boxBody.position.x, y: height - boundaryOffset });
+        }
+
+        // Draw the rotating box background
+        ctx.save(); // Save the current canvas state
+        ctx.translate(boxBody.position.x, boxBody.position.y); // Move canvas to box position
+        ctx.rotate(boxBody.angle); // Rotate canvas to match box angle
+
+        // Draw the box with rotation
+        ctx.fillStyle = '#ff5000';
+        ctx.fillRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight);
+
+        // Title
+        ctx.font = '700 28px Lora';
+        ctx.fillStyle = 'white';
+        ctx.textAlign = 'left';
+
+        const titleX = -boxWidth / 2 + padding;
+        const titleY = -boxHeight / 2 + padding;
+
+        const titleWidth = boxWidth * 0.7;
+        const titleTextWidth = ctx.measureText(boxData[i].title).width;
+
+        if (titleTextWidth > titleWidth) {
+            const words = boxData[i].title.split(' ');
+            let currentLine = '';
+            let lines = [];
+            for (const word of words) {
+                const testLine = currentLine + word + ' ';
+                const testWidth = ctx.measureText(testLine).width;
+                if (testWidth > titleWidth && currentLine.length > 0) {
+                    lines.push(currentLine);
+                    currentLine = word + ' ';
                 } else {
-                    clearInterval(animation);
+                    currentLine = testLine;
                 }
             }
-        }, 16);
-    });
-}
+            lines.push(currentLine);
 
-// Initial positioning of cards
-positionCards();
-
-// Start initial drop after 2 seconds
-setTimeout(dropWithBounce, 2000);
-
-// Draggable functionality with throw and bounce effect
-cards.forEach((card) => {
-    let isDragging = false;
-    let offsetX, offsetY;
-    let lastMouseX, lastMouseY;
-    let velocityX = 0;
-    let velocityY = 0;
-
-    card.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        offsetX = e.clientX - card.getBoundingClientRect().left;
-        offsetY = e.clientY - card.getBoundingClientRect().top;
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
-        card.style.cursor = 'grabbing';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-            const x = e.clientX - offsetX;
-            const y = e.clientY - offsetY;
-
-            // Update card position with gradual changes for smoother movement
-            card.style.left = `${Math.min(container.clientWidth - card.clientWidth, Math.max(0, x))}px`;
-            card.style.top = `${Math.min(container.clientHeight - card.clientHeight, Math.max(0, y))}px`;
-
-            // Calculate velocity with reduced influence for slower movement
-            velocityX = (e.clientX - lastMouseX) * 0.3;
-            velocityY = (e.clientY - lastMouseY) * 0.3;
-            lastMouseX = e.clientX;
-            lastMouseY = e.clientY;
-        }
-    });
-
-    document.addEventListener('mouseup', () => {
-        if (isDragging) {
-            isDragging = false;
-            card.style.cursor = 'grab';
-            throwCard(card, velocityX, velocityY); // Pass velocityX and velocityY to determine throw direction
-        }
-    });
-});
-
-// Function to handle the throw and bounce effect
-function throwCard(card, initialVelocityX, initialVelocityY) {
-    let velocityX = initialVelocityX;
-    let velocityY = initialVelocityY;
-    const gravity = 0.4;
-    const bounceDamping = 0.6;
-    let bounceCount = 0;
-
-    function moveCard() {
-        velocityY += gravity; // Apply gravity to vertical velocity
-        const cardLeft = parseFloat(card.style.left) || 0;
-        const cardTop = parseFloat(card.style.top) || 0;
-
-        // Update position using velocity
-        card.style.left = `${Math.min(container.clientWidth - card.clientWidth, Math.max(0, cardLeft + velocityX))}px`;
-        card.style.top = `${Math.min(container.clientHeight - card.clientHeight, Math.max(0, cardTop + velocityY))}px`;
-
-        // Bounce off the right and left container edges
-        if (cardLeft <= 0 || cardLeft + card.clientWidth >= container.clientWidth) {
-            velocityX *= -bounceDamping; // Reverse horizontal velocity
+            lines.forEach((line, index) => {
+                ctx.fillText(line, titleX, titleY + index * lineHeight);
+            });
+        } else {
+            ctx.fillText(boxData[i].title, titleX, titleY);
         }
 
-        // Bounce off the top and bottom container edges
-        if (cardTop <= 0 || cardTop + card.clientHeight >= container.clientHeight) {
-            velocityY *= -bounceDamping; // Reverse vertical velocity
-            bounceCount++;
-        }
+        // Year
+        ctx.font = '700 59.19px Oswald';
+        const yearX = -boxWidth / 2 + padding;
+        const yearY = boxHeight / 2 - padding;
+        ctx.fillText(`${boxData[i].year}`, yearX, yearY);
 
-        // Apply slight friction for a more natural slowing effect
-        velocityX *= 0.98;
-        velocityY *= 0.98;
-
-        // Stop movement if velocity is very low to avoid endless small bounces
-        if (Math.abs(velocityX) < 0.1 && Math.abs(velocityY) < 0.1) {
-            clearInterval(animation);
-        }
+        ctx.restore(); // Restore the canvas state
     }
-
-    const animation = setInterval(moveCard, 16);
-}
-
-// Initial positioning of cards
-positionCards();
+});

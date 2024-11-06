@@ -1,0 +1,45 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+section {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.expand-container {
+    background-color: bisque;
+    display: flex;
+}
+
+.panel {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    transition: width 0.5s ease;
+}
+
+.panel1 {
+    background-color: blue;
+    width: 100%;
+    /* First panel is fully expanded by default */
+}
+
+.panel2 {
+    background-color: rgb(172, 27, 46);
+}
+
+.panel3 {
+    background-color: rgb(221, 255, 0);
+}
+
+.panel4 {
+    background-color: rgb(0, 255, 179);
+}

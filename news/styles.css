@@ -1,0 +1,97 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.newssection {
+    cursor: none;
+    color: #fff;
+    background: #141414;
+}
+
+.newscnt {
+    padding: 140px;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.newshead {
+    font-family: "Oswald", serif;
+    font-weight: 700;
+    font-size: 80px;
+    text-align: center;
+}
+
+.news {
+    padding: 20px 0px;
+    display: flex;
+}
+.essay{
+    width:40%
+}
+.essay p {
+    padding: 25px 0px 0px 55px;
+    text-transform: capitalize;
+    width: 90%;
+    font-size: 20px;
+    font-family: "Lora", serif;
+}
+.cnt{
+    position: relative;
+    width: 78%;
+    border-bottom: 1px solid;
+}
+.headlines{
+    width: 60%;
+}
+.headlines h6{
+    font-family: "Oswald", serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #8c8c8c;
+}
+.headlines h1 {
+    font-family: "Oswald", serif;
+    width: 90%;
+    line-height: 63px;
+    font-size: 60px;
+}
+.cnt:last-child {
+    border: none;
+}
+
+.cnt img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 374px;
+    height: 374px;
+    object-fit: cover;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 2;
+    transition: opacity 0.5s ease-in-out, visibility 0s 0.5s; /* Smooth animation */
+}
+
+.cnt:hover img {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-in-out; /* Reset transition on hover */
+}
+
+.cnt:hover h1 {
+    color: #ff5000;
+    transition: color 0.3s ease-in-out; /* Smooth color transition */
+}
+
+.custom-cursor {
+    width: 30px; /* Diameter of 15px radius */
+    height: 30px;
+    background-color: #8c8c8c; /* Semi-transparent black */
+    border-radius: 50%;
+    position: absolute;
+    pointer-events: none; /* Prevent the cursor from interacting */
+    transform: translate(-50%, -50%); /* Center the cursor */
+}
+ 

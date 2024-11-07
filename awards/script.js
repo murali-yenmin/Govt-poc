@@ -62,22 +62,43 @@ const numBoxes = boxData.length;
 const boxWidth = 294;
 const startX = window.innerWidth / 2 - (numBoxes * boxWidth) / 2;
 
-for (let i = 0; i < numBoxes; i++) {
-    const x = startX + i * boxWidth;
-    const y = 0;
+// Flag to track whether boxes should start falling
+let startFalling = false;
 
-    // Set a random initial angle between 0 and 2π
-    const angle = Math.random() * 2 * Math.PI;
-    
-    // Random angular velocity for clockwise or counterclockwise rotation
-    const angularVelocity = Math.random() * 0.02 * (Math.random() < 0.5 ? -1 : 1);
-    
-    const boxBody = Bodies.rectangle(x, y, boxWidth, boxWidth, { 
-        restitution: 0.5,
-        angle: angle // Set the initial angle
+// Create Intersection Observer to detect when section is 70% visible
+const section = document.getElementById('container');
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.7 && !startFalling) {
+            startFalling = true;
+            createBoxes(); // Create the falling boxes when the section is 70% visible
+        }
     });
-    boxBody.angularVelocity = angularVelocity; // Set initial angular velocity
-    World.add(world, boxBody);
+}, {
+    threshold: 0.7 // 70% visibility
+});
+
+observer.observe(section);
+
+// Function to create boxes when the section becomes visible
+function createBoxes() {
+    for (let i = 0; i < numBoxes; i++) {
+        const x = startX + i * boxWidth;
+        const y = -boxWidth / 2; // Start above the screen
+
+        // Set a random initial angle between 0 and 2π
+        const angle = Math.random() * 2 * Math.PI;
+        
+        // Random angular velocity for clockwise or counterclockwise rotation
+        const angularVelocity = Math.random() * 0.02 * (Math.random() < 0.5 ? -1 : 1);
+        
+        const boxBody = Bodies.rectangle(x, y, boxWidth, boxWidth, { 
+            restitution: 0.5,
+            angle: angle // Set the initial angle
+        });
+        boxBody.angularVelocity = angularVelocity; // Set initial angular velocity
+        World.add(world, boxBody);
+    }
 }
 
 // Get the canvas context for rendering text
@@ -85,7 +106,7 @@ const canvas = render.canvas;
 const ctx = canvas.getContext('2d');
 
 // Define padding for text inside the box
-const padding =60;
+const padding = 60;
 const lineHeight = 30;
 
 // Render loop to update the canvas with text
@@ -93,10 +114,15 @@ Events.on(engine, 'afterUpdate', () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (let i = 0; i < numBoxes; i++) {
-        const boxBody = world.bodies[i + 4];
+        const boxBody = world.bodies[i + 4]; // Adjust the body index
         const boxHeight = boxWidth;
         const backgroundX = boxBody.position.x - boxWidth / 2;
         const backgroundY = boxBody.position.y - boxHeight / 2;
+
+        // Smoothly reduce angular velocity over time to simulate deceleration
+        if (boxBody.angularVelocity !== 0) {
+            boxBody.angularVelocity *= 0.99; // Slow down by 1% each frame
+        }
 
         // Check boundaries and reposition if outside
         const boundaryOffset = boxWidth / 2;

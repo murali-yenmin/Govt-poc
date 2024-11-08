@@ -71,25 +71,26 @@
 
 .cnt img {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 374px;
+    top: 50%;
+    left: 50%;
+    width: 374px; /* Set initial size */
     height: 374px;
     object-fit: cover;
+    transform: translate(-50%, -50%) scale(0);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
     z-index: 2;
-    transition: opacity 0.5s ease-in-out, visibility 0s 0.5s;
-    /* Smooth animation */
 }
 
 .cnt:hover img {
     opacity: 1;
     visibility: visible;
-    transition: opacity 0.5s ease-in-out;
-    /* Reset transition on hover */
+    transform: translate(-50%, -50%) scale(1); /* Expand smoothly */
 }
+
+
 
 .cnt:hover h1 {
     color: #ff5000;

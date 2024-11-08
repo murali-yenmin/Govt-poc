@@ -1,39 +1,36 @@
-// Select all containers and their respective images
 const containers = document.querySelectorAll('.cnt');
+const customCursor = document.getElementById('customCursor');
 
-// Loop through each container and set up event listeners for each
 containers.forEach(container => {
   const img = container.querySelector('img');
 
-  // When mouse enters the container, show the image
-  container.addEventListener('mouseenter', () => {
+  container.addEventListener('mouseenter', (e) => {
     img.style.opacity = '1';
     img.style.visibility = 'visible';
+    customCursor.style.visibility = 'hidden';
+
+    const containerRect = container.getBoundingClientRect();
+    img.style.left = `${e.clientX - containerRect.left}px`;
+    img.style.top = `${e.clientY - containerRect.top}px`;
   });
 
-  // Track mouse movements inside the container
   container.addEventListener('mousemove', (e) => {
     const containerRect = container.getBoundingClientRect();
-    const mouseX = e.clientX - containerRect.left;
-    const mouseY = e.clientY - containerRect.top;
-
-    // Adjust image position based on mouse position relative to the container
-    img.style.transform = `translate(${mouseX - img.width / 2}px, ${mouseY - img.height / 2}px)`; // Adjust for image's center
+    img.style.left = `${e.clientX - containerRect.left}px`;
+    img.style.top = `${e.clientY - containerRect.top}px`;
   });
 
-  // When mouse leaves, hide the image (but don't reset position)
   container.addEventListener('mouseleave', () => {
     img.style.opacity = '0';
     img.style.visibility = 'hidden';
+    customCursor.style.visibility = 'visible';
   });
 });
 
+// Update custom cursor position in the main news section
 const cntDiv = document.querySelector('.newssection');
-const customCursor = document.getElementById('customCursor');
-
-// Update custom cursor position based on mouse movement
 cntDiv.addEventListener('mousemove', (e) => {
-    const rect = cntDiv.getBoundingClientRect();
-    customCursor.style.left = `${e.clientX - rect.left}px`;
-    customCursor.style.top = `${e.clientY - rect.top}px`;
+  const rect = cntDiv.getBoundingClientRect();
+  customCursor.style.left = `${e.clientX - rect.left}px`;
+  customCursor.style.top = `${e.clientY - rect.top}px`;
 });

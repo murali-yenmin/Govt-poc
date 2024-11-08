@@ -3,7 +3,16 @@
   padding: 0;
   box-sizing: border-box;
 }
-.awardsection {
+.sec1{
+  background: #fff;
+
+  height: 1000px;
+}
+.sec2{
+  background: #fff;
+  height: 1000px;
+}
+.awardssection {
   display: flex;
   justify-content: center;
   align-items: center;

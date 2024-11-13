@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smooth Horizontal Scroll on Vertical Scroll</title>
+    <style>
+      html {
+        overflow-y: scroll;
+        height: 100%;
+        -webkit-overflow-scrolling: touch;
+        overflow-scrolling: touch;
+      }
+      body {
+        overflow-y: visible;
+        position: relative;
+        height: unset;
+        margin: 0;
+      }
+      html,
+      body {
+        overflow-x: hidden;
+        margin: 0;
+      }
+
+      .expand-container {
+        height: 100vh;
+        display: flex;
+        flex-wrap: nowrap;
+      }
+
+      .firstContainer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: yellow;
+      }
+
+      .lastContainer {
+        display: flex;
+        height: 100vh;
+        background: yellow;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .panel {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3rem;
+      }
+
+      .blue {
+        background: rgba(0, 0, 255, 0.574);
+      }
+      .red {
+        background: red;
+      }
+      .orange {
+        background: orange;
+      }
+      .purple {
+        background: purple;
+      }
+
+      .panels-wrapper {
+        position: relative;
+      }
+
+      .panel-heading-container {
+        position: absolute;
+        width: 100vw;
+        height: 100%;
+      }
+
+      .panel-heading {
+        width: 80px;
+        height: 100%;
+        position: absolute;
+        z-index: 1;
+        cursor: pointer;
+      }
+
+      .panel-heading-1 {
+        left: 0;
+      }
+
+      .title {
+        border: 1px solid black;
+        background-color: white;
+        height: calc(100% - 100px);
+        width: 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      h3 {
+        rotate: -90deg;
+      }
+      .empty {
+        width: 80px;
+        height: 100px;
+      }
+
+      .scroll-text-container {
+        display: flex;
+        align-items: center;
+        width: 95%;
+        position: absolute;
+        bottom: 15px;
+        z-index: 100;
+        width: 100vw;
+      }
+
+      .line {
+        width: 100%;
+        height: 2px;
+        background-color: black;
+        min-width: 20px !important;
+        transition: width 0.5s ease;
+      }
+
+      .line-left.line {
+        width: 20px;
+        background-color: white;
+      }
+
+      .scroll-text {
+        color: white;
+        background: black;
+        padding: 5px 10px;
+        margin: 0 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="firstContainer">
+      <h1>Testing horizontal scrolling w/ four sections</h1>
+      <h2>First Container</h2>
+    </div>
+    <div class="panels-wrapper">
+      <div class="expand-container">
+        <div id="scroll-text-container" class="scroll-text-container">
+          <div id="line-left" class="line line-left"></div>
+          <div id="scroll-text" class="scroll-text">SCROLL</div>
+          <div id="line-right" class="line line-right"></div>
+        </div>
+        <div class="panel-heading-container">
+          <div class="panel-heading panel-heading-1">
+            <div class="title"><h3>ONE</h3></div>
+            <div class="empty"></div>
+          </div>
+          <div class="panel-heading panel-heading-2">
+            <div class="title"><h3>TWO</h3></div>
+            <div class="empty"></div>
+          </div>
+          <div class="panel-heading panel-heading-3">
+            <div class="title"><h3>THREE</h3></div>
+            <div class="empty"></div>
+          </div>
+          <div class="panel-heading panel-heading-4">
+            <div class="title"><h3>FOUR</h3></div>
+            <div class="empty"></div>
+          </div>
+          <div class="panel-heading panel-heading-5">
+            <div class="title"><h3>FIVE</h3></div>
+            <div class="empty"></div>
+          </div>
+        </div>
+        <section id="panel-0" class="panel blue">ONE</section>
+        <section id="panel-1" class="panel orange">TWO</section>
+        <section id="panel-2" class="panel purple">THREE</section>
+        <section id="panel-3" class="panel red">FOUR</section>
+        <section id="panel-1" class="panel orange">FIVE</section>
+      </div>
+    </div>
+    <div class="lastContainer">Last Container</div>
+
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollToPlugin.min.js"></script>
+
+    <script>
+      gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+      let sections = gsap.utils.toArray(".panel");
+      let panelHeadings = gsap.utils.toArray(".panel-heading");
+      const lineLeft = document.getElementById("line-left");
+      const lineRight = document.getElementById("line-right");
+      const panelWrapper = document.querySelector(".panels-wrapper");
+      const expandContainer = document.querySelector(".expand-container");
+      expandContainer.style.width = `${sections.length * 100}%`;
+
+      gsap.to(sections, {
+        xPercent: -100 * (sections.length - 1),
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".expand-container",
+          pin: true,
+          scrub: 1,
+          end: () =>
+            "+=" + document.querySelector(".expand-container").offsetWidth,
+          onUpdate: function () {
+            updatePanelHeading();
+            updateScrollPercentage();
+          },
+          onRefresh: () => {
+            updatePanelHeading();
+            updateScrollPercentage();
+          },
+        },
+      });
+
+      window.addEventListener("scroll", updatePanelHeading);
+
+      function updatePanelHeading() {
+        sections.forEach((panel, index) => {
+          const panelRect = panel.getBoundingClientRect();
+          const panelHeading = panelHeadings[index];
+
+          if (index !== 0) {
+            let minLeft = index * 80,
+              maxLeft = (sections.length - index) * 80;
+
+            if (panelRect.width - panelRect.left < maxLeft) {
+              panelHeading.style.left = `${panelRect.width - maxLeft}px`;
+            } else if (panelRect.left + 10 < panelRect.width) {
+              if (panelRect.left < minLeft) {
+                panelHeading.style.left = `${minLeft}px`;
+              } else {
+                panelHeading.style.left = `${panelRect.left - 20}px`;
+              }
+            }
+          }
+        });
+      }
+
+      function updateScrollPercentage() {
+        const sectionLength = sections.length;
+        const widthOfPanel = sections[0].getBoundingClientRect().width;
+        const widthOfLeft = sections[0].getBoundingClientRect().left;
+        const overAllWidth = (sectionLength - 1) * widthOfPanel;
+
+        const percentage = (Math.abs(widthOfLeft) / overAllWidth) * 100;
+        const rightValue = 100 - percentage;
+
+        lineLeft.style.width = `${percentage}%`;
+        lineRight.style.width = `${rightValue}%`;
+      }
+
+      function viewPanel(panelIndex, event) {
+        const scrollStart = panelWrapper.offsetTop;
+        const scrollEnd = panelWrapper.scrollHeight;
+        const diff = (scrollEnd - scrollStart) / (sections.length - 1);
+
+        window.scrollTo({
+          top: scrollStart + panelIndex * diff,
+        });
+
+        const intervalID = setInterval(() => {
+          ScrollTrigger.refresh();
+        }, 100);
+        setTimeout(() => {
+          clearInterval(intervalID);
+        }, 500);
+      }
+
+      const panelsHeading = document.querySelectorAll(".panel-heading");
+      panelsHeading.forEach((panel, index) => {
+        panel.addEventListener("click", function (event) {
+          viewPanel(index, event);
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -218,8 +218,34 @@ Events.on(engine, 'afterUpdate', () => {
 });
 // Allow scrolling on the canvas area
 // Allow scrolling in the canvas area by stopping the event from interfering with page scrolling
+// Allow scrolling on the canvas area for mouse wheel and touch events
+
+// Mouse wheel scroll handling
+// Allow scrolling on the canvas area for mouse wheel, mobile touch, and laptop touchpad
+
+// Mouse wheel scroll handling
 render.canvas.addEventListener('wheel', (event) => {
-    // Ensure the page scrolls normally by preventing the wheel event from affecting the canvas
-    event.stopPropagation();
+    event.stopPropagation(); // Prevent the default behavior to allow page scrolling
 }, { passive: true });
 
+// Mobile touch scroll handling
+render.canvas.addEventListener('touchstart', (event) => {
+    event.stopPropagation(); // Prevent touch event from blocking scrolling
+}, { passive: true });
+
+render.canvas.addEventListener('touchmove', (event) => {
+    event.stopPropagation(); // Prevent touchmove from blocking scroll
+}, { passive: true });
+
+// Laptop touchpad and other pointer devices (e.g., stylus, touchscreen)
+render.canvas.addEventListener('pointerdown', (event) => {
+    event.stopPropagation(); // Prevent pointer down event from blocking scrolling
+}, { passive: true });
+
+render.canvas.addEventListener('pointermove', (event) => {
+    event.stopPropagation(); // Prevent pointer move event from blocking scrolling
+}, { passive: true });
+
+render.canvas.addEventListener('pointerup', (event) => {
+    event.stopPropagation(); // Prevent pointer up event from blocking scrolling
+}, { passive: true });

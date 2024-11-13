@@ -1,0 +1,170 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.newssection {
+    cursor: none;
+    color: #fff;
+    background: #141414;
+    position: relative;
+}
+
+.newscnt {
+    padding: 140px 0px 180px 0px;
+    width: 80%;
+    margin: 0 auto;
+    
+}
+
+.newshead {
+    font-family: "Oswald", serif;
+    font-weight: 700;
+    font-size: 80px;
+    text-align: center;
+}
+
+.news {
+    padding: 20px 0px;
+    display: flex;
+}
+
+.essay {
+    width: 40%
+}
+
+.essay p {
+    padding: 25px 0px 0px 55px;
+    text-transform: capitalize;
+    width: 90%;
+    font-size: 20px;
+    font-family: "Lora", serif;
+}
+
+.cnt {
+    position: relative;
+    width: 78%;
+    border-bottom: 1px solid;
+}
+
+.headlines {
+    width: 60%;
+}
+
+.headlines h6 {
+    font-family: "Oswald", serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #8c8c8c;
+}
+
+.headlines h1 {
+    font-family: "Oswald", serif;
+    width: 90%;
+    line-height: 63px;
+    font-size: 60px;
+}
+
+.cnt:last-child {
+    border: none;
+}
+
+.cnt img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 374px; /* Set initial size */
+    height: 374px;
+    object-fit: cover;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    z-index: 2;
+}
+
+.cnt:hover img {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1); /* Expand smoothly */
+}
+
+
+
+.cnt:hover h1 {
+    color: #ff5000;
+    transition: color 0.3s ease-in-out;
+    /* Smooth color transition */
+}
+
+.custom-cursor {
+    width: 30px;
+    /* Diameter of 15px radius */
+    height: 30px;
+    background-color: #8c8c8c;
+    /* Semi-transparent black */
+    border-radius: 50%;
+    position: absolute;
+    pointer-events: none;
+    /* Prevent the cursor from interacting */
+    transform: translate(-50%, -50%);
+    /* Center the cursor */
+    z-index: 9999;
+}
+
+.endcnt h1 {
+    width: 0%;
+    line-height: 63px;
+    text-transform: uppercase;
+    font-size: 60px;
+    font-family: "Oswald", serif;
+    font-weight: 700;
+}
+
+.container {
+    position: absolute;
+    top: -13px;
+    left: 85px;
+    width: 141px;
+    height: 141px;
+}
+
+.big-circle,
+.small-circle {
+    position: absolute;
+    border-radius: 50%;
+}
+
+.big-circle {
+    width: 141px;
+    height: 141px;
+    background-color: #ff5000;
+    opacity: 0.4;
+    top: 0;
+    left: 0;
+}
+
+.small-circle {
+    width: 99px;
+    height: 99px;
+    background-color: #ff5000;
+    opacity: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: relative;
+}
+
+.small-circle img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.more {
+    position: absolute;
+    bottom: 21%;
+    right: 9%;
+}

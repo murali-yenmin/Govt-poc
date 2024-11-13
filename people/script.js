@@ -1,84 +1,74 @@
-const scrollContainer = document.getElementById('peoplecard');
-const nextSection = document.getElementById('next-section');
-const prevSection = document.getElementById('prev-section');
+// const scrollContainer = document.getElementById('peoplecard');
+// const scrollIndicator = document.getElementById('scroll-indicator');
+// const scrollBarTrack = document.querySelector('.scroll-bar-track');
+// const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+// const nextSection = document.getElementById('next-section');
+// const prevSection = document.getElementById('prev-section');
 
-let scrollPosition = 0; // Track the current horizontal scroll position
-const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+// let scrollPosition = 0; // Track the current horizontal scroll position
 
-// Function to snap the "people" section to fully fit the viewport
-function snapPeopleSectionIntoView() {
-    const rect = scrollContainer.getBoundingClientRect();
+// // Function to update the scroll position and apply smooth animation using GSAP
+// function updateScrollPosition() {
+//     // Apply smooth horizontal scroll to the container using GSAP
+//     gsap.to(scrollContainer, {
+//         scrollLeft: scrollPosition,
+//         duration: 0.6,  // Adjust duration for smoother effect if desired
+//         ease: "power2.out"
+//     });
+    
+//     // Calculate the position of the scroll indicator based on the scroll position
+//     const maxIndicatorPosition = scrollBarTrack.offsetWidth - scrollIndicator.offsetWidth;
+//     const indicatorPosition = (scrollPosition / maxScroll) * maxIndicatorPosition;
 
-    // Check if any part of the "people" section is visible but not fully aligned
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-        gsap.to(window, {
-            scrollTo: scrollContainer,
-            duration: 0.8,
-            ease: "power2.out"
-        });
-    }
-}
+//     // Update the scroll indicator's position
+//     scrollIndicator.style.transform = `translateX(${indicatorPosition}px)`;
 
-// Function to update horizontal scroll position within the "people" section
-function updateScrollPosition() {
-    gsap.to(scrollContainer, {
-        scrollLeft: scrollPosition,
-        duration: 0.6,
-        ease: "power2.out"
-    });
+//     // Check if the scroll has reached the end (max scroll position)
+//     if (scrollPosition === maxScroll) {
+//         // Move to the next section smoothly
+//         moveToNextSection();
+//     }
 
-    // Check if horizontal scroll reaches the end or beginning
-    if (scrollPosition === maxScroll && isElementInViewport(scrollContainer)) {
-        moveToNextSection();
-    } else if (scrollPosition === 0 && isElementInViewport(scrollContainer)) {
-        moveToPrevSection();
-    }
-}
+//     // Check if the scroll has reached the beginning (scroll position 0)
+//     if (scrollPosition === 0) {
+//         // Move to the previous section smoothly
+//         moveToPrevSection();
+//     }
+// }
 
-// Function to scroll to the next section
-function moveToNextSection() {
-    gsap.to(window, {
-        scrollTo: nextSection,
-        duration: 1,
-        ease: "power2.out"
-    });
-}
+// // Function to scroll to the next section
+// function moveToNextSection() {
+//     gsap.to(window, {
+//         scrollTo: nextSection,
+//         duration: 1,  // Duration for the scroll transition
+//         ease: "power2.out"
+//     });
+// }
 
-// Function to scroll to the previous section
-function moveToPrevSection() {
-    gsap.to(window, {
-        scrollTo: prevSection,
-        duration: 1,
-        ease: "power2.out"
-    });
-}
+// // Function to scroll to the previous section
+// function moveToPrevSection() {
+//     gsap.to(window, {
+//         scrollTo: prevSection,
+//         duration: 1,  // Duration for the scroll transition
+//         ease: "power2.out"
+//     });
+// }
 
-// Check if element is fully visible in the viewport
-function isElementInViewport(el) {
-    const rect = el.getBoundingClientRect();
-    return rect.top >= 0 && rect.bottom <= window.innerHeight;
-}
+// // Event listener to convert vertical scroll to horizontal scroll for cards
+// scrollContainer.addEventListener('wheel', (e) => {
+//     const isAtStart = scrollPosition === 0;
+//     const isAtEnd = scrollPosition === maxScroll;
 
-// Event listener to convert vertical scroll to horizontal scroll within "people" section
-scrollContainer.addEventListener('wheel', (e) => {
-    const isAtStart = scrollPosition === 0;
-    const isAtEnd = scrollPosition === maxScroll;
+//     if (!(isAtStart && e.deltaY < 0) && !(isAtEnd && e.deltaY > 0)) {
+//         e.preventDefault(); // Prevent default vertical scrolling behavior only within bounds
 
-    if (!(isAtStart && e.deltaY < 0) && !(isAtEnd && e.deltaY > 0)) {
-        e.preventDefault();
+//         // Adjust scroll position based on wheel direction (up or down)
+//         scrollPosition += e.deltaY > 0 ? 50 : -50;
 
-        // Adjust scroll position based on wheel direction
-        scrollPosition += e.deltaY > 0 ? 50 : -50;
+//         // Ensure scroll position stays within bounds
+//         scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
 
-        // Ensure scroll position stays within bounds
-        scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
-
-        // Update the scroll position smoothly
-        updateScrollPosition();
-    }
-});
-
-// Window scroll event listener to snap "people" section into view if partially visible
-window.addEventListener('scroll', () => {
-    snapPeopleSectionIntoView();
-});
+//         // Update the scroll position and scroll indicator smoothly
+//         updateScrollPosition();
+//     }
+// });

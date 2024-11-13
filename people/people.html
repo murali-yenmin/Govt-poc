@@ -15,7 +15,7 @@
 
 <body>
     <div class="sec1" id="prev-section"></div>
-    <section class="peoplesection">
+    <section class="peoplesection"  id="people-section">
         <div class="peopdiv">
             <div class="peopletag">
                 <h1>People</h1>
@@ -26,6 +26,70 @@
 
                 </div>
                 <div class="peoplecard" id="peoplecard">
+                    <div class="pcard">
+                        <div class="image-overlay">
+                            <div class="layer"></div>
+                            <img src="./assests/images/image 85.png" alt="">
+                        </div>
+                        <h1>Jolene Mok</h1>
+                        <h2>Senior Producer</h2>
+                    </div>
+                    <div class="pcard">
+                        <div class="image-overlay">
+                            <div class="layer"></div>
+                            <img src="./assests/images/image 85.png" alt="">
+                        </div>
+                        <h1>Jolene Mok</h1>
+                        <h2>Senior Producer</h2>
+                    </div>
+                    <div class="pcard">
+                        <div class="image-overlay">
+                            <div class="layer"></div>
+                            <img src="./assests/images/image 85.png" alt="">
+                        </div>
+                        <h1>Jolene Mok</h1>
+                        <h2>Senior Producer</h2>
+                    </div>
+                    <div class="pcard">
+                        <div class="image-overlay">
+                            <div class="layer"></div>
+                            <img src="./assests/images/image 85.png" alt="">
+                        </div>
+                        <h1>Jolene Mok</h1>
+                        <h2>Senior Producer</h2>
+                    </div>
+                    <div class="pcard">
+                        <div class="image-overlay">
+                            <div class="layer"></div>
+                            <img src="./assests/images/image 85.png" alt="">
+                        </div>
+                        <h1>Jolene Mok</h1>
+                        <h2>Senior Producer</h2>
+                    </div>
+                    <div class="pcard">
+                        <div class="image-overlay">
+                            <div class="layer"></div>
+                            <img src="./assests/images/image 85.png" alt="">
+                        </div>
+                        <h1>Jolene Mok</h1>
+                        <h2>Senior Producer</h2>
+                    </div>
+                    <div class="pcard">
+                        <div class="image-overlay">
+                            <div class="layer"></div>
+                            <img src="./assests/images/image 85.png" alt="">
+                        </div>
+                        <h1>Jolene Mok</h1>
+                        <h2>Senior Producer</h2>
+                    </div>
+                    <div class="pcard">
+                        <div class="image-overlay">
+                            <div class="layer"></div>
+                            <img src="./assests/images/image 85.png" alt="">
+                        </div>
+                        <h1>Jolene Mok</h1>
+                        <h2>Senior Producer</h2>
+                    </div>
                     <div class="pcard">
                         <div class="image-overlay">
                             <div class="layer"></div>
@@ -153,7 +217,79 @@
     <div class="sec1" id="next-section"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="./script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/ScrollTrigger.min.js"></script>
+    <!-- <script src="./script.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/Draggable.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            gsap.registerPlugin(ScrollTrigger, Draggable);
+            
+            const imagesContainer = document.querySelector('.peoplecard');
+            const totalScrollWidth = imagesContainer.scrollWidth - imagesContainer.clientWidth;
+            
+            const scrollIndicator = document.querySelector('#scroll-indicator');
+            const scrollIndicatorContainer = document.querySelector('.scroll-b');
+            const maxScrollIndicatorX = scrollIndicatorContainer.offsetWidth - scrollIndicator.offsetWidth;
+            
+            const scrollIndicatorSpeedFactor = 1; // Adjust if you want the indicator to move faster/slower
+    
+            // Horizontal scroll animation for imagesContainer with consistent speed
+            gsap.to(imagesContainer, {
+                x: -totalScrollWidth,
+                ease: "none", // Ensures a consistent speed
+                scrollTrigger: {
+                    trigger: "#people-section",
+                    start: "top top",
+                    end: () => `+=${totalScrollWidth}`,
+                    scrub: 1,
+                    pin: true,
+                    anticipatePin: 1,
+                    markers: false,
+                    onUpdate: (self) => {
+                        // Calculate the scroll progress (0 to 1)
+                        const progressRatio = self.progress;
+    
+                        // Set scroll indicator position for consistent speed
+                        const indicatorPosition = Math.min(maxScrollIndicatorX, progressRatio * maxScrollIndicatorX * scrollIndicatorSpeedFactor);
+                        
+                        // Set the scroll indicator's X position to match the progress
+                        gsap.set(scrollIndicator, {
+                            x: indicatorPosition
+                        });
+                    }
+                }
+            });
+    
+            // Make the scroll indicator draggable
+            Draggable.create(scrollIndicator, {
+                type: "x",
+                bounds: scrollIndicatorContainer,
+                onDrag: function () {
+                    // Calculate the drag progress (0 to 1) based on x position of the indicator
+                    const dragProgress = this.x / maxScrollIndicatorX;
+    
+                    // Update the imagesContainer scroll position to match the drag progress
+                    gsap.to(imagesContainer, {
+                        x: -dragProgress * totalScrollWidth,
+                        overwrite: "auto",
+                        ease: "none"
+                    });
+                }
+            });
+        });
+    </script>
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
 </body>
 
 </html>

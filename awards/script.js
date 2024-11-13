@@ -216,3 +216,10 @@ Events.on(engine, 'afterUpdate', () => {
         ctx.restore(); // Restore the canvas state
     }
 });
+// Allow scrolling on the canvas area
+// Allow scrolling in the canvas area by stopping the event from interfering with page scrolling
+render.canvas.addEventListener('wheel', (event) => {
+    // Ensure the page scrolls normally by preventing the wheel event from affecting the canvas
+    event.stopPropagation();
+}, { passive: true });
+

@@ -4,7 +4,7 @@ const { Engine, Render, Runner, Bodies, World, Mouse, MouseConstraint, Events } 
 // Create the engine and world
 const engine = Engine.create();
 const world = engine.world;
-world.gravity.y = 0.5;
+world.gravity.y = 0.5; // Base gravity (full effect is applied gradually)
 
 // Create a renderer with full-page dimensions
 const render = Render.create({
@@ -59,8 +59,8 @@ const boxData = [
 ];
 
 const numBoxes = boxData.length;
-const boxWidth = 294;
-const startX = window.innerWidth / 2 - (numBoxes * boxWidth) / 2;
+const boxWidth = 264;
+// const startX = window.innerWidth / 2 - (numBoxes * boxWidth) / 2;
 
 // Flag to track whether boxes should start falling
 let startFalling = false;
@@ -69,7 +69,7 @@ let startFalling = false;
 const section = document.getElementById('container');
 const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.7 && !startFalling) {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.1 && !startFalling) {
             startFalling = true;
             createBoxes(); // Create the falling boxes when the section is 70% visible
         }
@@ -80,33 +80,58 @@ const observer = new IntersectionObserver(entries => {
 
 observer.observe(section);
 
-// Function to create boxes when the section becomes visible
+const centerX = window.innerWidth / 2;
+const startY = -boxWidth / 2; // Start position above the screen
+
+// Function to create boxes that fall from the center
 function createBoxes() {
     for (let i = 0; i < numBoxes; i++) {
-        const x = startX + i * boxWidth;
-        const y = -boxWidth / 2; // Start above the screen
+        // All boxes start from the center of the screen
+        const x = centerX;
+        const y = startY;
 
-        // Set a random initial angle between 0 and 2π
+        // Set a random initial angle for rotation and random angular velocity
         const angle = Math.random() * 2 * Math.PI;
-        
-        // Random angular velocity for clockwise or counterclockwise rotation
         const angularVelocity = Math.random() * 0.02 * (Math.random() < 0.5 ? -1 : 1);
-        
+
+        // Create the box body
         const boxBody = Bodies.rectangle(x, y, boxWidth, boxWidth, { 
             restitution: 0.5,
-            angle: angle // Set the initial angle
+            angle: angle
         });
-        boxBody.angularVelocity = angularVelocity; // Set initial angular velocity
+        boxBody.angularVelocity = angularVelocity;
+
+        // Apply a slight horizontal force to spread boxes from the center as they fall
+        const horizontalForce = (Math.random() - 0.5) * 0.02; // Small random force left or right
+        Matter.Body.applyForce(boxBody, { x: boxBody.position.x, y: boxBody.position.y }, { x: horizontalForce, y: 0.005 });
         World.add(world, boxBody);
+
+        // Gradually increase gravity effect after a slight delay for staggered descent
+        setTimeout(() => {
+            Matter.Body.applyForce(boxBody, { x: boxBody.position.x, y: boxBody.position.y }, { x: 0, y: 0.02 });
+        }, i * 200); // Offset delay for each box
     }
 }
+
+
+
+
+// Ensures all boxes fall without sticking by providing small forces and ensuring no zero velocity
+Matter.Events.on(engine, 'beforeUpdate', () => {
+    world.bodies.forEach(body => {
+        if (!body.isStatic && body.velocity.y === 0) {
+            Matter.Body.setVelocity(body, { x: 0, y: 0.1 });
+        }
+    });
+});
+
 
 // Get the canvas context for rendering text
 const canvas = render.canvas;
 const ctx = canvas.getContext('2d');
 
 // Define padding for text inside the box
-const padding = 60;
+const padding = 40;
 const lineHeight = 30;
 
 // Render loop to update the canvas with text
@@ -116,8 +141,9 @@ Events.on(engine, 'afterUpdate', () => {
     for (let i = 0; i < numBoxes; i++) {
         const boxBody = world.bodies[i + 4]; // Adjust the body index
         const boxHeight = boxWidth;
-        const backgroundX = boxBody.position.x - boxWidth / 2;
-        const backgroundY = boxBody.position.y - boxHeight / 2;
+        if (!boxBody) {
+            break;
+        }
 
         // Smoothly reduce angular velocity over time to simulate deceleration
         if (boxBody.angularVelocity !== 0) {
@@ -148,7 +174,7 @@ Events.on(engine, 'afterUpdate', () => {
         ctx.fillRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight);
 
         // Title
-        ctx.font = '700 23px Lora';
+        ctx.font = '700 18px Lora';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'left';
 
@@ -182,7 +208,7 @@ Events.on(engine, 'afterUpdate', () => {
         }
 
         // Year
-        ctx.font = '700 59.19px Oswald';
+        ctx.font = '700 49.19px Oswald';
         const yearX = -boxWidth / 2 + padding;
         const yearY = boxHeight / 2 - padding;
         ctx.fillText(`${boxData[i].year}`, yearX, yearY);

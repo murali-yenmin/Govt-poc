@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequential Image Hover Animation</title>
+    <style>
+        .banner {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background-color: #FEE7B5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 {
+            color: #FF5000;
+            font-size: 100px;
+            font-weight: 700;
+        }
+
+        .stickers {
+            width: 120px;
+            height: 120px;
+            position: absolute;
+            pointer-events: none;
+            opacity: 1;
+            animation: scaleUp 0.4s ease forwards;
+
+        }
+
+        .stickers.fade-out {
+            animation: scaleDown 0.3s ease forwards;
+        }
+
+        @keyframes scaleUp {
+            0% {
+                transform: scale(0.8);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes scaleDown {
+            0% {
+                opacity: 1;
+            }
+
+            25% {
+                opacity: 0.75;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            75% {
+                opacity: 0.25;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="banner" id="banner">
+        <h1 style="text-align: center;font-size: 155px;font-weight: 700;">CREATING <br> BEYOND <br> BOUNDARIES</h1>
+    </div>
+
+
+
+    <script>
+        const container = document.getElementById('banner');
+
+        // Array of image paths
+        const imagePaths = [
+            './assets/sample/Layer1.jpg',
+            './assets/sample/Layer2.png',
+            './assets/sample/Layer3.png',
+            './assets/sample/Layer4.png',
+
+        ];
+
+        let currentImageIndex = 0;
+        let previousX = null;
+        let previousY = null;
+
+        function createImageAtFixedPosition(x, y) {
+            const moveX = x + (x > previousX ? 100 : -20);
+            const moveY = y + (y > previousY ? 100 : -20);
+
+            const currentImageFileName = imagePaths[currentImageIndex].split('/').pop();
+
+            const existingImage = Array.from(document.querySelectorAll('.stickers')).find(img => {
+                const imgFileName = img.src.split('/').pop();
+                return imgFileName === currentImageFileName;
+            });
+
+            if (existingImage) {
+                existingImage.classList.add('fade-out');
+                setTimeout(() => existingImage.remove(), 100)
+            }
+
+            const img = document.createElement('img');
+            img.src = imagePaths[currentImageIndex];
+            img.className = 'stickers';
+            img.style.left = `${x - 30}px`;
+            img.style.top = `${y - 30}px`;
+
+            container.appendChild(img);
+
+            //   requestAnimationFrame(() => {
+            //     // img.style.transform = `scale(1.7) translate(${moveX - x}px, ${moveY - y}px)`;
+            //     // img.style.transform = `scale(1.5)`;
+            // });
+
+            // requestAnimationFrame(() => img.classList.add('zoomed'));
+
+            setTimeout(() => {
+                img.classList.add('fade-out');
+                setTimeout(() => img.remove(), 100)
+            }, 1100);
+
+            currentImageIndex = (currentImageIndex + 1) % imagePaths.length;
+        }
+
+        function handleMove(x, y) {
+            if (previousX !== null && previousY !== null) {
+                const distance = Math.sqrt((x - previousX) ** 2 + (y - previousY) ** 2);
+                const imageDistance = Math.floor(Math.random() * (180 - 100 + 1)) + 80;
+
+                if (distance > imageDistance) {
+                    createImageAtFixedPosition(x, y);
+                    previousX = x;
+                    previousY = y;
+                }
+            } else {
+                previousX = x;
+                previousY = y;
+                createImageAtFixedPosition(x, y);
+            }
+        }
+
+        container.addEventListener('mousemove', (event) => {
+            const rect = container.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            handleMove(x, y);
+        });
+
+        container.addEventListener('touchmove', (event) => {
+            const rect = container.getBoundingClientRect();
+            const x = event.touches[0].clientX - rect.left;
+            const y = event.touches[0].clientY - rect.top;
+            handleMove(x, y);
+        });
+
+        function resetSequence() {
+            const existingImage = document.querySelector('.stickers');
+            currentImageIndex = 0;
+            previousX = null;
+            previousY = null;
+        }
+
+        container.addEventListener('mouseleave', resetSequence);
+        container.addEventListener('touchend', resetSequence);
+    </script>
+</body>
+
+</html>

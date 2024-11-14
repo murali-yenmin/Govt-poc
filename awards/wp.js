@@ -1,5 +1,13 @@
-const boxData = awardData;
-if (awardData) {
+const boxData = [
+    { title: 'SG Independent AOTY', year: '2023' },
+    { title: 'SEA Experiential AOTY', year: '2024' },
+    { title: 'Independent AOTY & Grand Prix', year: '2025' },
+    { title: 'SG Independent AOTY & SEA Experiential AOTY', year: '2026' },
+    { title: 'World’s Leading Independent Agency', year: '2027' },
+    { title: 'World’s Leading Independent Agency', year: '2028' }
+];
+
+if (boxData) {
     const { Engine, Render, Runner, Bodies, World, Mouse, MouseConstraint, Events } = Matter;
 
     const engine = Engine.create();
@@ -52,44 +60,44 @@ if (awardData) {
 
     function setResponsiveSizes() {
         const screenWidth = window.innerWidth;
-  
-		if (screenWidth < 420) {
-        boxWidth = 140;
-        fontTitle = '700 14px Lora';
-        fontYear = '700 30px Oswald';
-        padding = 20;
-        lineHeight = 18;
-    } else if (screenWidth < 560) {  
-        boxWidth = 150;
-        fontTitle = '700 16px Lora';
-        fontYear = '700 35px Oswald';
-        padding = 20;
-        lineHeight = 20;
-    } else if (screenWidth < 768) {  
-        boxWidth = 220;
-        fontTitle = '700 18px Lora';
-        fontYear = '700 24px Oswald';
-        padding = 40;
-        lineHeight = 24;
-    } else if (screenWidth < 1024) {
-        boxWidth = 240;
-        fontTitle = '700 22px Lora';
-        fontYear = '700 59px Oswald';
-        padding = 40;
-        lineHeight = 30;
-    } else if (screenWidth < 1560) {
-        boxWidth = 260;
-        fontTitle = '700 22px Lora';
-        fontYear = '700 59px Oswald';
-        padding = 40;
-        lineHeight = 30;
-    } else {
-        boxWidth = 294;
-        fontTitle = '700 22px Lora';
-        fontYear = '700 59px Oswald';
-        padding = 60;
-        lineHeight = 30;
-    }
+
+        if (screenWidth < 420) {
+            boxWidth = 140;
+            fontTitle = '700 14px Lora';
+            fontYear = '700 30px Oswald';
+            padding = 20;
+            lineHeight = 18;
+        } else if (screenWidth < 560) {
+            boxWidth = 150;
+            fontTitle = '700 16px Lora';
+            fontYear = '700 35px Oswald';
+            padding = 20;
+            lineHeight = 20;
+        } else if (screenWidth < 768) {
+            boxWidth = 220;
+            fontTitle = '700 18px Lora';
+            fontYear = '700 24px Oswald';
+            padding = 40;
+            lineHeight = 24;
+        } else if (screenWidth < 1024) {
+            boxWidth = 240;
+            fontTitle = '700 22px Lora';
+            fontYear = '700 59px Oswald';
+            padding = 40;
+            lineHeight = 30;
+        } else if (screenWidth < 1560) {
+            boxWidth = 260;
+            fontTitle = '700 22px Lora';
+            fontYear = '700 59px Oswald';
+            padding = 40;
+            lineHeight = 30;
+        } else {
+            boxWidth = 294;
+            fontTitle = '700 22px Lora';
+            fontYear = '700 59px Oswald';
+            padding = 60;
+            lineHeight = 30;
+        }
     }
 
     setResponsiveSizes();
@@ -112,49 +120,40 @@ if (awardData) {
     observer.observe(section);
 
     const centerX = window.innerWidth / 2;
-const startY = -boxWidth / 2; // Start position above the screen
+    const startY = -boxWidth / 2; // Start position above the screen
 
-// Function to create boxes that fall from the center
-function createBoxes() {
-    for (let i = 0; i < numBoxes; i++) {
-        // All boxes start from the center of the screen
-        const x = centerX;
-        const y = startY;
+    // Function to create boxes that fall from the center
+    function createBoxes() {
+        for (let i = 0; i < numBoxes; i++) {
+            const x = centerX;
+            const y = startY;
 
-        // Set a random initial angle for rotation and random angular velocity
-        const angle = Math.random() * 2 * Math.PI;
-        const angularVelocity = Math.random() * 0.02 * (Math.random() < 0.5 ? -1 : 1);
+            const angle = Math.random() * 2 * Math.PI;
+            const angularVelocity = Math.random() * 0.02 * (Math.random() < 0.5 ? -1 : 1);
 
-        // Create the box body
-        const boxBody = Bodies.rectangle(x, y, boxWidth, boxWidth, { 
-            restitution: 0.5,
-            angle: angle
-        });
-        boxBody.angularVelocity = angularVelocity;
+            const boxBody = Bodies.rectangle(x, y, boxWidth, boxWidth, {
+                restitution: 0.5,
+                angle: angle
+            });
+            boxBody.angularVelocity = angularVelocity;
 
-        // Apply a slight horizontal force to spread boxes from the center as they fall
-        const horizontalForce = (Math.random() - 0.5) * 0.02; // Small random force left or right
-        Matter.Body.applyForce(boxBody, { x: boxBody.position.x, y: boxBody.position.y }, { x: horizontalForce, y: 0.005 });
-        World.add(world, boxBody);
+            const horizontalForce = (Math.random() - 0.5) * 0.02;
+            Matter.Body.applyForce(boxBody, { x: boxBody.position.x, y: boxBody.position.y }, { x: horizontalForce, y: 0.005 });
+            World.add(world, boxBody);
 
-        // Gradually increase gravity effect after a slight delay for staggered descent
-        setTimeout(() => {
-            Matter.Body.applyForce(boxBody, { x: boxBody.position.x, y: boxBody.position.y }, { x: 0, y: 0.02 });
-        }, i * 200); // Offset delay for each box
-    }
-}
-
-
-
-
-// Ensures all boxes fall without sticking by providing small forces and ensuring no zero velocity
-Matter.Events.on(engine, 'beforeUpdate', () => {
-    world.bodies.forEach(body => {
-        if (!body.isStatic && body.velocity.y === 0) {
-            Matter.Body.setVelocity(body, { x: 0, y: 0.1 });
+            setTimeout(() => {
+                Matter.Body.applyForce(boxBody, { x: boxBody.position.x, y: boxBody.position.y }, { x: 0, y: 0.02 });
+            }, i * 200);
         }
+    }
+
+    Matter.Events.on(engine, 'beforeUpdate', () => {
+        world.bodies.forEach(body => {
+            if (!body.isStatic && body.velocity.y === 0) {
+                Matter.Body.setVelocity(body, { x: 0, y: 0.1 });
+            }
+        });
     });
-});
 
     const canvas = render.canvas;
     const ctx = canvas.getContext('2d');
@@ -165,11 +164,9 @@ Matter.Events.on(engine, 'beforeUpdate', () => {
         for (let i = 0; i < numBoxes; i++) {
             const boxBody = world.bodies[i + 4];
             const boxHeight = boxWidth;
-			if(!boxBody){
-				break;
-			}
-//             const backgroundX = boxBody.position.x - boxWidth / 2;
-//             const backgroundY = boxBody.position.y - boxHeight / 2;
+            if (!boxBody) {
+                break;
+            }
 
             if (boxBody.angularVelocity !== 0) {
                 boxBody.angularVelocity *= 0.99;
@@ -235,29 +232,66 @@ Matter.Events.on(engine, 'beforeUpdate', () => {
             ctx.restore();
         }
     });
+
+    // Touch and mouse scroll handling
+    let touchStartY = 0;
+    let activeBox = null;
+
+    // Handle touch start (for mobile devices)
+    canvas.addEventListener('touchstart', (event) => {
+        const touchPos = getTouchPosition(event);
+        activeBox = getTouchedBox(touchPos);
+
+        if (!activeBox) {
+            touchStartY = touchPos.y;
+        }
+    });
+
+    // Handle touch move (for mobile devices)
+    canvas.addEventListener('touchmove', (event) => {
+        const touchPos = getTouchPosition(event);
+
+        if (activeBox) {
+            // Apply force to the touched box (simulate throwing)
+            const forceX = (touchPos.x - activeBox.position.x) * 0.05;
+            const forceY = (touchPos.y - activeBox.position.y) * 0.05;
+            Matter.Body.applyForce(activeBox, activeBox.position, { x: forceX, y: forceY });
+            event.preventDefault(); // Prevent scrolling if a box is touched
+        } else {
+            const scrollDistance = touchStartY - touchPos.y;
+            if (Math.abs(scrollDistance) > 10) {
+                window.scrollBy(0, scrollDistance);
+                touchStartY = touchPos.y;
+                event.preventDefault();
+            }
+        }
+    });
+
+    // Function to get the position of the touch event
+    function getTouchPosition(event) {
+        return {
+            x: event.touches[0].clientX,
+            y: event.touches[0].clientY
+        };
+    }
+
+    // Function to check if the touch position intersects with a box
+    function getTouchedBox(touchPos) {
+        for (let i = 0; i < numBoxes; i++) {
+            const boxBody = world.bodies[i + 4];
+            const distance = Math.sqrt(
+                Math.pow(touchPos.x - boxBody.position.x, 2) +
+                Math.pow(touchPos.y - boxBody.position.y, 2)
+            );
+
+            if (distance < boxWidth / 2) {
+                return boxBody;
+            }
+        }
+        return null;
+    }
+    render.canvas.addEventListener('wheel', (event) => {
+        event.stopPropagation(); // Stops propagation but allows scroll
+        // Do NOT call preventDefault to allow scroll
+    }, { passive: true });
 }
-render.canvas.addEventListener('wheel', (event) => {
-    event.stopPropagation(); // Prevent the default behavior to allow page scrolling
-}, { passive: true });
-
-// Mobile touch scroll handling
-render.canvas.addEventListener('touchstart', (event) => {
-    event.stopPropagation(); // Prevent touch event from blocking scrolling
-}, { passive: true });
-
-render.canvas.addEventListener('touchmove', (event) => {
-    event.stopPropagation(); // Prevent touchmove from blocking scroll
-}, { passive: true });
-
-// Laptop touchpad and other pointer devices (e.g., stylus, touchscreen)
-render.canvas.addEventListener('pointerdown', (event) => {
-    event.stopPropagation(); // Prevent pointer down event from blocking scrolling
-}, { passive: true });
-
-render.canvas.addEventListener('pointermove', (event) => {
-    event.stopPropagation(); // Prevent pointer move event from blocking scrolling
-}, { passive: true });
-
-render.canvas.addEventListener('pointerup', (event) => {
-    event.stopPropagation(); // Prevent pointer up event from blocking scrolling
-}, { passive: true });

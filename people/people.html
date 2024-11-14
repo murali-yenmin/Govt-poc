@@ -207,7 +207,7 @@
 
 
         </div>
-        <div class="scroll-b">
+        <div class="scroll-b" id="scroll-id">
             <div class="scroll-bar-track"></div>
             <h1 class="scroll-indicator" id="scroll-indicator">
                 [scroll]
@@ -222,73 +222,140 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/Draggable.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            gsap.registerPlugin(ScrollTrigger, Draggable);
-            
-            const imagesContainer = document.querySelector('.peoplecard');
-            const totalScrollWidth = imagesContainer.scrollWidth - imagesContainer.clientWidth;
-            
-            const scrollIndicator = document.querySelector('#scroll-indicator');
-            const scrollIndicatorContainer = document.querySelector('.scroll-b');
-            const maxScrollIndicatorX = scrollIndicatorContainer.offsetWidth - scrollIndicator.offsetWidth;
-            
-            const scrollIndicatorSpeedFactor = 1; // Adjust if you want the indicator to move faster/slower
-    
-            // Horizontal scroll animation for imagesContainer with consistent speed
-            gsap.to(imagesContainer, {
-                x: -totalScrollWidth,
-                ease: "none", // Ensures a consistent speed
-                scrollTrigger: {
-                    trigger: "#people-section",
-                    start: "top top",
-                    end: () => `+=${totalScrollWidth}`,
-                    scrub: 1,
-                    pin: true,
-                    anticipatePin: 1,
-                    markers: false,
-                    onUpdate: (self) => {
-                        // Calculate the scroll progress (0 to 1)
-                        const progressRatio = self.progress;
-    
-                        // Set scroll indicator position for consistent speed
-                        const indicatorPosition = Math.min(maxScrollIndicatorX, progressRatio * maxScrollIndicatorX * scrollIndicatorSpeedFactor);
-                        
-                        // Set the scroll indicator's X position to match the progress
-                        gsap.set(scrollIndicator, {
-                            x: indicatorPosition
-                        });
-                    }
-                }
-            });
-    
-            // Make the scroll indicator draggable
-            Draggable.create(scrollIndicator, {
-                type: "x",
-                bounds: scrollIndicatorContainer,
-                onDrag: function () {
-                    // Calculate the drag progress (0 to 1) based on x position of the indicator
-                    const dragProgress = this.x / maxScrollIndicatorX;
-    
-                    // Update the imagesContainer scroll position to match the drag progress
-                    gsap.to(imagesContainer, {
-                        x: -dragProgress * totalScrollWidth,
-                        overwrite: "auto",
-                        ease: "none"
-                    });
-                }
-            });
-        });
-    </script>
-    
-    
-    
-    
-    
-    
-    
-    
+    gsap.registerPlugin(ScrollTrigger, Draggable);
 
-    
-    
+    const imagesContainer = document.querySelector('.peoplecard');
+    const totalScrollWidth = imagesContainer.scrollWidth - imagesContainer.clientWidth;
+
+    const scrollIndicator = document.querySelector('#scroll-indicator');
+    const scrollIndicatorContainer = document.querySelector('.scroll-b');
+    const maxScrollIndicatorX = scrollIndicatorContainer.offsetWidth - scrollIndicator.offsetWidth;
+
+    let isPinned = false; // To track the pin state of the section
+    let currentVerticalScroll = window.scrollY; // Store current vertical scroll position
+
+    // Function to create ScrollTrigger and enable re-initialization on re-entry
+    function createScrollAnimation() {
+        return gsap.to(imagesContainer, {
+            x: -totalScrollWidth,
+            ease: "none",
+            scrollTrigger: {
+                id: "imageScroll",
+                trigger: "#people-section",
+                start: "top top",
+                end: () => `+=${totalScrollWidth}`,
+                scrub: 1,
+                pin: true,
+                anticipatePin: 1,
+                markers: false,
+                onEnter: () => {
+                    // Reset scroll indicator to start on re-entry
+                    gsap.set(scrollIndicator, { x: 0 });
+                },
+                onUpdate: (self) => {
+                    const progressRatio = self.progress;
+                    const indicatorPosition = Math.min(maxScrollIndicatorX, progressRatio * maxScrollIndicatorX);
+
+                    // Smoothly sync the scroll indicator with scrolling
+                    gsap.to(scrollIndicator, { x: indicatorPosition, duration: 0.2, ease: "power1.out" });
+                },
+                onToggle: (self) => {
+                    // Track whether the section is pinned or not
+                    isPinned = self.isActive;
+
+                    // Enable or disable the draggable functionality based on pin state
+                    if (isPinned) {
+                        Draggable.get(scrollIndicator).enable();
+                    } else {
+                        Draggable.get(scrollIndicator).disable();
+                    }
+                },
+                onLeaveBack: () => {
+                    // Ensure the section re-pins on re-entry
+                    ScrollTrigger.getById("imageScroll").refresh();
+                },
+            }
+        });
+    }
+
+    // Initialize ScrollTrigger animation
+    createScrollAnimation();
+
+    // Make the scroll indicator draggable and ensure it syncs horizontal animation
+    Draggable.create(scrollIndicator, {
+        type: "x",
+        bounds: scrollIndicatorContainer,
+        onDrag: function () {
+            const dragProgress = this.x / maxScrollIndicatorX;
+
+            // Move imagesContainer directly based on drag position
+            gsap.to(imagesContainer, {
+                x: -dragProgress * totalScrollWidth,
+                overwrite: "auto",
+                ease: "power1.out",
+                duration: 0.3
+            });
+
+            // Update the ScrollTrigger progress to match the drag position
+            const imageScrollTrigger = ScrollTrigger.getById("imageScroll");
+            if (imageScrollTrigger) {
+                imageScrollTrigger.scroll(dragProgress * imageScrollTrigger.end);
+            }
+        },
+        onDragEnd: function () {
+            const imageScrollTrigger = ScrollTrigger.getById("imageScroll");
+
+            // Release the section pin if at the start or end of the scroll
+            if (this.x === 0 || this.x === maxScrollIndicatorX) {
+                imageScrollTrigger.disable();
+            } else {
+                // Refresh ScrollTrigger if in middle to keep the pin
+                imageScrollTrigger.enable();
+            }
+
+            // Align ScrollTrigger progress with drag position after dragging ends
+            ScrollTrigger.refresh();
+        }
+    });
+
+    // Prevent vertical scroll reset on drag by storing vertical scroll position
+    window.addEventListener('scroll', () => {
+        // Capture the vertical scroll position
+        currentVerticalScroll = window.scrollY;
+    });
+
+    // Function to maintain vertical scroll position
+    function maintainVerticalScrollPosition() {
+        window.scrollTo(0, currentVerticalScroll);
+    }
+
+    // Keep the vertical scroll position intact while dragging the scroll indicator
+    Draggable.create(scrollIndicator, {
+        type: "x",
+        bounds: scrollIndicatorContainer,
+        onDrag: function () {
+            maintainVerticalScrollPosition(); // Keep vertical scroll from changing
+
+            const dragProgress = this.x / maxScrollIndicatorX;
+
+            // Move imagesContainer directly based on drag position
+            gsap.to(imagesContainer, {
+                x: -dragProgress * totalScrollWidth,
+                overwrite: "auto",
+                ease: "power1.out",
+                duration: 0.3
+            });
+
+            // Update the ScrollTrigger progress to match the drag position
+            const imageScrollTrigger = ScrollTrigger.getById("imageScroll");
+            if (imageScrollTrigger) {
+                imageScrollTrigger.scroll(dragProgress * imageScrollTrigger.end);
+            }
+        }
+    });
+});
+
+    </script>
     
 </body>
 

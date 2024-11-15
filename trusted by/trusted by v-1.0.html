@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Horizontal Scrolling with GSAP</title>
+  <style>
+    /* Basic styling for sections */
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* section {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+    } */
+
+    #section1,
+    #section3 {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      background-color: #f0f0f0;
+    }
+
+
+    #trustedBy {
+      height: 50vh;
+      position: relative;
+      overflow: hidden;
+      background-color: transparent;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Styling for horizontal scroll container */
+    /* .scroll-images {
+      display: flex;
+      gap: 10px;
+      position: absolute;
+      white-space: nowrap;
+      z-index: 5;
+    } */
+
+    /* .scroll-images img {
+      width: 200px;
+      height: 300px;
+      object-fit: cover;
+    } */
+
+    .background-text {
+      position: absolute;
+      font-size: 150px;
+      width: max-content;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 1;
+      color: white;
+      background-color: transparent;
+      text-shadow: -1px -1px 0 #ff5000, 1px -1px 0 #ff5000, -1px 1px 0 #ff5000, 1px 1px 0 #ff5000;
+      /* opacity: 0.6; */
+    }
+
+    .foreground-text {
+      position: absolute;
+      color: #ff5000;
+      width: max-content;
+      font-size: 150px;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 2;
+      clip-path: inset(0px 0px 0px 0px);
+    }
+
+    .text-sec {
+      position: absolute;
+      z-index: 0;
+    }
+
+    /* ---------------------------- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    .scrollWrapper {
+      width: 100%;
+      max-width: 1536px;
+      margin-inline: auto;
+      position: relative;
+      min-height: 100px;
+      height: 200px;
+      overflow: hidden;
+      /* mask-image: linear-gradient(to right,
+                    rgba(0, 0, 0, 0),
+                    rgba(0, 0, 0, 1) 20%,
+                    rgba(0, 0, 0, 1) 80%,
+                    rgba(0, 0, 0, 0)); */
+    }
+
+    .scrollItem {
+      width: 200px;
+      height: 300px;
+      position: absolute;
+      animation-name: scrollLeft;
+      animation-duration: 30s;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    .stopScroll {
+      animation-play-state: paused;
+
+    }
+
+    .srollmg {
+      width: 200px;
+      height: 200px;
+    }
+
+    @keyframes scrollLeft {
+      to {
+        left: -200px;
+      }
+    }
+
+    /* ---------------------------- */
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Section 1 -->
+  <section id="section1">Section 1</section>
+
+  <!-- Section 2 with horizontally scrolling images -->
+  <section id="trustedBy">
+    <div class="text-sec">
+      <h1 class="background-text">Trusted by</h1>
+      <h1 class="foreground-text">Trusted by</h1>
+    </div>
+
+    <div id="srolImageWrapper" class="scrollWrapper"></div>
+
+  </section>
+
+  <!-- Section 3 -->
+  <section id="section3">Section 3</section>
+
+  <script>
+    // Array of image source paths
+    const srcPaths = [
+      { imagePath: 'https://via.placeholder.com/200x300' },
+      { imagePath: 'https://via.placeholder.com/200x300' },
+      { imagePath: 'https://via.placeholder.com/200x300' },
+      { imagePath: 'https://via.placeholder.com/200x300' },
+      { imagePath: 'https://via.placeholder.com/200x300' },
+      { imagePath: 'https://via.placeholder.com/200x300' },
+      { imagePath: 'https://via.placeholder.com/200x300' },
+      { imagePath: 'https://via.placeholder.com/200x300' }
+    ];
+
+    // Get the wrapper element by ID
+    const wrapper = document.getElementById('srolImageWrapper');
+
+    function createImages() {
+      const totalItems = srcPaths.length;
+
+      srcPaths.forEach((item, index) => {
+        const DIV = document.createElement('div');
+        DIV.classList.add('scrollItem');
+
+        const img = document.createElement('img');
+        img.src = item.imagePath;
+        img.alt = index + 1;
+        img.classList.add('srollmg');
+
+        const calcPart = 200 * index; // 200px * 8 for the example images width
+
+        // Construct the left position using max(calc(...), 100%)
+        const leftPosition = `max(calc(${calcPart}px), 100%)`;
+
+        // Calculate the animation delay dynamically
+        const delay = (30 / totalItems) * (totalItems - (index + 1)) * -1;
+        DIV.style.left = leftPosition; // Apply the dynamic left position
+
+        DIV.style.animationDelay = `${delay}s`; // Apply the dynamic animation delay
+
+        DIV.appendChild(img);
+        wrapper.appendChild(DIV);
+      });
+    }
+
+    // Call the function to create images
+    createImages();
+  </script>
+
+
+</body>
+
+</html>

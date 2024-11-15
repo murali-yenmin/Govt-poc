@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles2.css">
+
+</head>
+
+<body>
+    <div class="sec1" id="prev-section"></div>
+    <div class="people-wrapper">
+        <section class="peoplesection" id="people-section">
+            <div class="peopdiv">
+                <div class="peopletag">
+                    <h1>People</h1>
+                </div>
+                <div class="pcnt">
+                    <div class="people-cont">
+                        <h2>HOME IS WHERE THESE MISFITS ARE</h2>
+
+                    </div>
+                    <div class="peoplecard" id="peoplecard">
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="scroll-b" id="scroll-id">
+                <div class="line left-line"></div>
+                <h1 class="scroll-indicator" id="scroll-indicator">
+                    [scroll]
+                </h1>
+                <div class="line right-line"></div>
+            </div>
+        </section>
+    </div>
+    <div class="sec1" id="next-section"></div>
+
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollToPlugin.min.js"></script>
+
+    <script>
+        const peopleData = [
+            { "src": "./assests/images/image 85.png", "name": "Leanordo", "role": "Senior Executive" },
+            { "src": "./assests/images/image 86.png", "name": "Jolene Mok", "role": "Senior Producer" },
+            { "src": "./assests/images/image 87.png", "name": "Alice Johnson", "role": "Project Manager" },
+            { "src": "./assests/images/image 88.png", "name": "Bob Smith", "role": "Software Engineer" },
+            { "src": "./assests/images/image 85.png", "name": "Leanordo", "role": "Senior Executive" },
+            { "src": "./assests/images/image 86.png", "name": "Jolene Mok", "role": "Senior Producer" },
+            { "src": "./assests/images/image 87.png", "name": "Alice Johnson", "role": "Project Manager" },
+            { "src": "./assests/images/image 88.png", "name": "Bob Smith", "role": "Software Engineer" },
+            { "src": "./assests/images/image 85.png", "name": "Leanordo", "role": "Senior Executive" },
+            { "src": "./assests/images/image 86.png", "name": "Jolene Mok", "role": "Senior Producer" },
+            { "src": "./assests/images/image 87.png", "name": "Alice Johnson", "role": "Project Manager" },
+            { "src": "./assests/images/image 88.png", "name": "Bob Smith", "role": "Software Engineer" },
+            { "src": "./assests/images/image 85.png", "name": "Leanordo", "role": "Senior Executive" },
+            { "src": "./assests/images/image 86.png", "name": "Jolene Mok", "role": "Senior Producer" },
+            { "src": "./assests/images/image 87.png", "name": "Alice Johnson", "role": "Project Manager" },
+            { "src": "./assests/images/image 88.png", "name": "Bob Smith", "role": "Software Engineer" },
+            { "src": "./assests/images/image 85.png", "name": "Leanordo", "role": "Senior Executive" },
+            { "src": "./assests/images/image 86.png", "name": "Jolene Mok", "role": "Senior Producer" },
+            { "src": "./assests/images/image 87.png", "name": "Alice Johnson", "role": "Project Manager" },
+            { "src": "./assests/images/image 88.png", "name": "Bob Smith", "role": "Software Engineer" },
+            { "src": "./assests/images/image 85.png", "name": "Leanordo", "role": "Senior Executive" },
+            { "src": "./assests/images/image 86.png", "name": "Jolene Mok", "role": "Senior Producer" },
+            { "src": "./assests/images/image 87.png", "name": "Alice Johnson", "role": "Project Manager" },
+            { "src": "./assests/images/image 88.png", "name": "Bob Smith", "role": "Software Engineer" },
+            { "src": "./assests/images/image 85.png", "name": "Leanordo", "role": "Senior Executive" },
+            { "src": "./assests/images/image 86.png", "name": "Jolene Mok", "role": "Senior Producer" },
+            { "src": "./assests/images/image 87.png", "name": "Alice Johnson", "role": "Project Manager" },
+            { "src": "./assests/images/image 88.png", "name": "Bob Smith", "role": "Software Engineer" },
+            { "src": "./assests/images/image 85.png", "name": "Leanordo", "role": "Senior Executive" },
+            { "src": "./assests/images/image 86.png", "name": "Jolene Mok", "role": "Senior Producer" }
+        ];
+
+        const peoplecard = document.querySelector('.peoplecard');
+        const actionBtn = "<div></div>"
+
+        // Loop through the peopleData array and create the elements
+        peopleData.forEach(person => {
+            // Create the container div for the card
+            const pcard = document.createElement('div');
+            const peopleInfo = document.createElement('div');
+            peopleInfo.classList.add('peopleInfo');
+            pcard.classList.add('pcard');
+
+            // Create the image overlay div
+            const imageOverlay = document.createElement('div');
+            imageOverlay.classList.add('image-overlay');
+
+            // Create the layer div inside the overlay
+            const layer = document.createElement('div');
+            layer.classList.add('layer');
+
+            // Create the img element and set the src and alt attributes
+            const img = document.createElement('img');
+            img.setAttribute('src', person.src);
+            img.setAttribute('alt', person.name);  // Using the name as alt text
+
+            // Append the layer and img to the imageOverlay
+            imageOverlay.appendChild(layer);
+            imageOverlay.appendChild(img);
+
+            // Create the h1 element for the name
+            const h1 = document.createElement('h6');
+            h1.textContent = person.name;
+
+            // Create the h2 element for the role
+            const h2 = document.createElement('p');
+            h2.textContent = person.role;
+
+            // Append the imageOverlay, h1, and h2 to the pcard
+            pcard.appendChild(imageOverlay);
+
+            peopleInfo.appendChild(h1)
+            peopleInfo.appendChild(h2)
+
+            // pcard.appendChild(h1);
+            // pcard.appendChild(h2);
+            pcard.appendChild(peopleInfo);
+
+            // Append the pcard to the peoplecard container
+            peoplecard.appendChild(pcard);
+        });
+
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // Wrap the peoplecard container
+        const peopleWrapper = document.querySelector('.people-wrapper');
+        const peopleCardWrapper = document.querySelector('.peoplecard');
+        const lineLeft = document.querySelector('.left-line');
+        const lineRight = document.querySelector('.right-line');
+        const scrollText = document.querySelector('.scroll-indicator');
+        const scrollContainer = document.querySelector('.scroll-b');
+
+        const totalWidth = peopleCardWrapper.scrollWidth + 169;
+        let isDragging = false;
+        let animationFrameId;
+
+        // Set up GSAP scroll animation
+        gsap.to(peopleCardWrapper, {
+            x: () => -(totalWidth - window.innerWidth), // Moves the container leftward
+            ease: "none",
+            scrollTrigger: {
+                trigger: ".peoplesection", // Section to trigger the animation
+                start: "top top",
+                end: () => `+=${totalWidth}`, // Scroll distance based on total content width
+                scrub: true,
+                pin: true, // Pins the section during the animation
+            },
+        });
+
+        function moveScrollText(percentage) {
+            const rightValue = 100 - percentage;
+
+            lineLeft.style.width = `${percentage}%`;
+            lineRight.style.width = `${rightValue}%`;
+        }
+
+        const observer = new MutationObserver(() => {
+            const startScroll = peopleWrapper.offsetTop;
+            const endScroll = peopleWrapper.scrollHeight;
+            if (window.scrollY < startScroll) return 0;
+            if (window.scrollY > endScroll) return 100;
+
+            const percentage =
+                ((window.scrollY - startScroll) / (endScroll - startScroll)) * 100;
+
+            moveScrollText(percentage)
+        });
+
+        observer.observe(peopleCardWrapper, {
+            attributes: true,
+            attributeFilter: ["style"],
+        });
+
+
+        // Start dragging
+        scrollText.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startLeftWidth = lineLeft.clientWidth;
+            scrollText.style.cursor = 'grabbing';
+        });
+
+        // Update the line widths using requestAnimationFrame
+        const updateLines = (e) => {
+            const total = peopleWrapper.scrollHeight;
+            const minScroll = peopleWrapper.offsetTop;
+
+            const containerWidth = scrollContainer.clientWidth;
+            const percentage = (e.clientX / containerWidth) * 100;
+
+            const result = (percentage / 100) * total;
+
+            if (result > total) {
+                window.scrollTo({
+                    top: total
+                });
+            } else if (result < minScroll) {
+                window.scrollTo({
+                    top: minScroll
+                });
+            } else {
+                window.scrollTo({
+                    top: result
+                });
+            }
+            lineLeft.style.width = `${percentage}%`;
+            lineRight.style.width = `${100 - percentage}%`;
+        };
+
+        // Dragging
+        const handleMouseMove = (e) => {
+            if (isDragging) {
+                // Cancel any previous frame to prevent multiple updates in the same frame
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+
+                // Request animation frame for smoother update
+                animationFrameId = requestAnimationFrame(() => updateLines(e));
+            }
+        };
+
+        // Attach the mousemove event
+        document.addEventListener('mousemove', handleMouseMove);
+
+        // Stop dragging
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                scrollText.style.cursor = 'grab';
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>

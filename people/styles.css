@@ -5,7 +5,7 @@
     font-weight: 400;
 }
 .peoplesection{
-    width: 1920px;
+    width: 100%;
     height: 100vh;
 }
 
@@ -14,8 +14,8 @@
 
 }
 .peopletag{
-    width: 211px;
-    height: 735px;
+    width: 12%;
+    height: 75vh;
     background: #FF5000;
     display: flex;
     flex-direction: column;
@@ -24,22 +24,24 @@
 }
 
 .peopletag h1{
-    padding: 58px 0px 78px 58px;
+    padding: 42px 0px 39px 70px;
     transform: rotate(-90deg);
     text-transform: uppercase;
     font-family: "Oswald", serif;
     font-weight: 700;
-    font-size: 80px;
+    font-size: 70px;
     color: #ffffff;
+
 }
+
 
 .pcnt{
     width: 88%;
 
 }
 .people-cont h2{
-    width: 9% ;
-    padding:59px 0px 0px 118px ;
+    width: 11% ;
+    padding:45px 0px 0px 98px ;
     font-weight: 400;
     font-size: 20px;
     font-family: "Lora", serif;
@@ -49,10 +51,15 @@
     display: flex;
 }
 .pcard{
-    width: 307px;
+    width: 26%;
     margin-right: 50px;
     
 }
+.pcard img{
+    width: 180px;
+    height: 200px;
+}
+
 .image-overlay{
     position: relative;
     display: inline-block;
@@ -68,12 +75,12 @@ filter: grayscale(100%);
     padding-top:10px ;
     color: #ff5000;
     font-weight: 700;
-    font-size: 32.25px;
+    font-size: 25.25px;
     text-transform: uppercase;
 }
 .pcard h2{
     text-transform: uppercase;
-    font-size: 21.5px;
+    font-size: 15.5px;
     font-family: "Lora", serif;
 }
 .layer{
@@ -87,10 +94,10 @@ filter: grayscale(100%);
         transition: opacity 0.3s;
 }
 .pcard:nth-child(odd) {
-    margin-top: 131px;
+    margin-top: 11%;
 }
 .pcard:nth-child(even) {
-    margin-bottom: 160px;
+    margin-bottom: 13%;
 }
 .pcnt {
     overflow: hidden;
@@ -106,8 +113,7 @@ filter: grayscale(100%);
 }
 
 .scroll-b{
-    margin-top: 90px;
-    margin-bottom: 120px;
+    margin-top: 5%;
     position: relative;
 }
 .scroll-bar-track {

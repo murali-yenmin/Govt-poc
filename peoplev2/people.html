@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Oswald:wght@200..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <div class="sec1" id="prev-section"></div>
+    <section class="peoplesection" id="people-section">
+        <div class="peopdiv">
+            <div class="peopletag">
+                <h1>People</h1>
+            </div>
+            <div class="pcnt">
+                <div class="people-cont">
+                    <h2>HOME IS WHERE THESE MISFITS ARE</h2>
+
+                </div>
+                <div class="peoplecard" id="peoplecard">
+                   
+                </div>
+            </div>
+
+
+        </div>
+        <div class="scroll-b" id="scroll-id">
+            <div class="scroll-bar-track"></div>
+            <h1 class="scroll-indicator" id="scroll-indicator">
+                [scroll]
+            </h1>
+        </div>
+    </section>
+    <div class="sec1" id="next-section"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/ScrollTrigger.min.js"></script>
+    <!-- <script src="./script.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/Draggable.min.js"></script>
+    <script>
+        // Get the peoplecard container
+
+        const peopleData = [
+    { "src": "./assests/images/image 85.png", "name": "Leanordo", "role": "Senior Executive" },
+    { "src": "./assests/images/image 86.png", "name": "Jolene Mok", "role": "Senior Producer" },
+    { "src": "./assests/images/image 87.png", "name": "Alice Johnson", "role": "Project Manager" },
+    { "src": "./assests/images/image 88.png", "name": "Bob Smith", "role": "Software Engineer" },
+    { "src": "./assests/images/image 89.png", "name": "Charlie Brown", "role": "Marketing Lead" },
+    { "src": "./assests/images/image 90.png", "name": "David Lee", "role": "Graphic Designer" },
+    { "src": "./assests/images/image 91.png", "name": "Eva Martinez", "role": "Content Strategist" },
+    { "src": "./assests/images/image 92.png", "name": "Frank Williams", "role": "UX Designer" },
+    { "src": "./assests/images/image 93.png", "name": "Grace Clark", "role": "Business Analyst" },
+    { "src": "./assests/images/image 94.png", "name": "Henry Harris", "role": "Sales Director" },
+    { "src": "./assests/images/image 95.png", "name": "Isabella Davis", "role": "Accountant" },
+    { "src": "./assests/images/image 96.png", "name": "Jack Thompson", "role": "HR Manager" },
+    { "src": "./assests/images/image 97.png", "name": "Kimberly Evans", "role": "Customer Support Lead" },
+    { "src": "./assests/images/image 98.png", "name": "Liam Wilson", "role": "Data Scientist" },
+    { "src": "./assests/images/image 99.png", "name": "Megan Taylor", "role": "Product Owner" },
+    { "src": "./assests/images/image 100.png", "name": "Nathaniel Moore", "role": "DevOps Engineer" },
+    { "src": "./assests/images/image 101.png", "name": "Olivia Jackson", "role": "SEO Specialist" },
+    { "src": "./assests/images/image 102.png", "name": "Patrick Scott", "role": "Finance Director" },
+    { "src": "./assests/images/image 103.png", "name": "Quincy Lee", "role": "Social Media Manager" },
+    { "src": "./assests/images/image 104.png", "name": "Rita King", "role": "Operations Manager" },
+    { "src": "./assests/images/image 105.png", "name": "Samuel Perez", "role": "Software Developer" },
+    { "src": "./assests/images/image 106.png", "name": "Tina Gonzalez", "role": "Marketing Specialist" },
+    { "src": "./assests/images/image 107.png", "name": "Ursula Harris", "role": "Project Lead" },
+    { "src": "./assests/images/image 108.png", "name": "Victor White", "role": "Senior Developer" },
+    { "src": "./assests/images/image 109.png", "name": "Wendy Adams", "role": "UI Designer" },
+    { "src": "./assests/images/image 110.png", "name": "Xander Young", "role": "Cybersecurity Expert" },
+    { "src": "./assests/images/image 111.png", "name": "Yvonne Carter", "role": "Chief Marketing Officer" },
+    { "src": "./assests/images/image 112.png", "name": "Zane Mitchell", "role": "Software Engineer" },
+    { "src": "./assests/images/image 113.png", "name": "Amelia Moore", "role": "Product Manager" },
+    { "src": "./assests/images/image 114.png", "name": "Ben Foster", "role": "Data Analyst" },
+    { "src": "./assests/images/image 115.png", "name": "Catherine Brooks", "role": "QA Engineer" },
+    { "src": "./assests/images/image 116.png", "name": "Daniela Collins", "role": "Brand Strategist" }
+];
+
+
+// Get the peoplecard container
+
+ 
+// Get the peoplecard container
+const peoplecard = document.querySelector('.peoplecard');
+
+const actionBtn = "<div></div>"
+
+// Loop through the peopleData array and create the elements
+peopleData.forEach(person => {
+    // Create the container div for the card
+    const pcard = document.createElement('div');
+    const peopleInfo = document.createElement('div');
+    peopleInfo.classList.add('peopleInfo');
+    pcard.classList.add('pcard');
+
+    // Create the image overlay div
+    const imageOverlay = document.createElement('div');
+    imageOverlay.classList.add('image-overlay');
+
+    // Create the layer div inside the overlay
+    const layer = document.createElement('div');
+    layer.classList.add('layer');
+
+    // Create the img element and set the src and alt attributes
+    const img = document.createElement('img');
+    img.setAttribute('src', person.src);
+    img.setAttribute('alt', person.name);  // Using the name as alt text
+
+    // Append the layer and img to the imageOverlay
+    imageOverlay.appendChild(layer);
+    imageOverlay.appendChild(img);
+
+    // Create the h1 element for the name
+    const h1 = document.createElement('h6');
+    h1.textContent = person.name;
+
+    // Create the h2 element for the role
+    const h2 = document.createElement('p');
+    h2.textContent = person.role;
+
+    // Append the imageOverlay, h1, and h2 to the pcard
+    pcard.appendChild(imageOverlay);
+
+    peopleInfo.appendChild(h1)
+    peopleInfo.appendChild(h2)
+
+    // pcard.appendChild(h1);
+    // pcard.appendChild(h2);
+    pcard.appendChild(peopleInfo);
+
+    // Append the pcard to the peoplecard container
+    peoplecard.appendChild(pcard);
+	
+});
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            gsap.registerPlugin(ScrollTrigger, Draggable);
+
+            const imagesContainer = document.querySelector('.peoplecard');
+            const totalScrollWidth = imagesContainer.scrollWidth - imagesContainer.clientWidth;
+
+            const scrollIndicator = document.querySelector('#scroll-indicator');
+            const scrollIndicatorContainer = document.querySelector('.scroll-b');
+            const maxScrollIndicatorX = scrollIndicatorContainer.offsetWidth - scrollIndicator.offsetWidth;
+
+            let isPinned = false; // To track the pin state of the section
+            let currentVerticalScroll = window.scrollY; // Store current vertical scroll position
+
+            // Function to create ScrollTrigger and enable re-initialization on re-entry
+            function createScrollAnimation() {
+                return gsap.to(imagesContainer, {
+                    x: -totalScrollWidth,
+                    ease: "none",
+                    scrollTrigger: {
+                        id: "imageScroll",
+                        trigger: "#people-section",
+                        start: "top top",
+                        end: () => `+=${totalScrollWidth}`,
+                        scrub: 1,
+                        pin: true,
+                        anticipatePin: 1,
+                        markers: false,
+                        onEnter: () => {
+                            // Reset scroll indicator to start on re-entry
+                            gsap.set(scrollIndicator, { x: 0 });
+                        },
+                        onUpdate: (self) => {
+                            const progressRatio = self.progress;
+                            const indicatorPosition = Math.min(maxScrollIndicatorX, progressRatio * maxScrollIndicatorX);
+
+                            // Smoothly sync the scroll indicator with scrolling
+                            gsap.to(scrollIndicator, { x: indicatorPosition, duration: 0.2, ease: "power1.out" });
+                        },
+                        onToggle: (self) => {
+                            // Track whether the section is pinned or not
+                            isPinned = self.isActive;
+
+                            // Enable or disable the draggable functionality based on pin state
+                            if (isPinned) {
+                                Draggable.get(scrollIndicator).enable();
+                            } else {
+                                Draggable.get(scrollIndicator).disable();
+                            }
+                        },
+                        onLeaveBack: () => {
+                            // Ensure the section re-pins on re-entry
+                            ScrollTrigger.getById("imageScroll").refresh();
+                        },
+                    }
+                });
+            }
+
+            // Initialize ScrollTrigger animation
+            createScrollAnimation();
+
+            // Make the scroll indicator draggable and ensure it syncs horizontal animation
+            Draggable.create(scrollIndicator, {
+                type: "x",
+                bounds: scrollIndicatorContainer,
+                onDrag: function () {
+                    const dragProgress = this.x / maxScrollIndicatorX;
+
+                    // Move imagesContainer directly based on drag position
+                    gsap.to(imagesContainer, {
+                        x: -dragProgress * totalScrollWidth,
+                        overwrite: "auto",
+                        ease: "power1.out",
+                        duration: 0.3
+                    });
+
+                    // Update the ScrollTrigger progress to match the drag position
+                    const imageScrollTrigger = ScrollTrigger.getById("imageScroll");
+                    if (imageScrollTrigger) {
+                        imageScrollTrigger.scroll(dragProgress * imageScrollTrigger.end);
+                    }
+                },
+                onDragEnd: function () {
+                    const imageScrollTrigger = ScrollTrigger.getById("imageScroll");
+
+                    // Release the section pin if at the start or end of the scroll
+                    if (this.x === 0 || this.x === maxScrollIndicatorX) {
+                        imageScrollTrigger.disable();
+                    } else {
+                        // Refresh ScrollTrigger if in middle to keep the pin
+                        imageScrollTrigger.enable();
+                    }
+
+                    // Align ScrollTrigger progress with drag position after dragging ends
+                    ScrollTrigger.refresh();
+                }
+            });
+
+            // Prevent vertical scroll reset on drag by storing vertical scroll position
+            window.addEventListener('scroll', () => {
+                // Capture the vertical scroll position
+                currentVerticalScroll = window.scrollY;
+            });
+
+            // Function to maintain vertical scroll position
+            function maintainVerticalScrollPosition() {
+                window.scrollTo(0, currentVerticalScroll);
+            }
+
+            // Keep the vertical scroll position intact while dragging the scroll indicator
+            Draggable.create(scrollIndicator, {
+                type: "x",
+                bounds: scrollIndicatorContainer,
+                onDrag: function () {
+                    maintainVerticalScrollPosition(); // Keep vertical scroll from changing
+
+                    const dragProgress = this.x / maxScrollIndicatorX;
+
+                    // Move imagesContainer directly based on drag position
+                    gsap.to(imagesContainer, {
+                        x: -dragProgress * totalScrollWidth,
+                        overwrite: "auto",
+                        ease: "power1.out",
+                        duration: 0.3
+                    });
+
+                    // Update the ScrollTrigger progress to match the drag position
+                    const imageScrollTrigger = ScrollTrigger.getById("imageScroll");
+                    if (imageScrollTrigger) {
+                        imageScrollTrigger.scroll(dragProgress * imageScrollTrigger.end);
+                    }
+                }
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Horizontal Scrolling with GSAP</title>
+  <style>
+    #section1,
+    #section3 {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      background-color: #f0f0f0;
+    }
+
+
+    .trustedBy-sec {
+      position: relative;
+      overflow: hidden;
+      background-color: transparent;
+      color: white;
+      cursor: pointer;
+      height: 258px;
+      margin: 90px 0;
+    }
+
+
+    .background-text {
+      font-size: 200px;
+      font-weight: 700;
+      width: max-content;
+      text-align: center;
+      z-index: 1;
+      color: white;
+      background-color: transparent;
+      text-shadow: -1px -1px 0 #ff5000, 1px -1px 0 #ff5000, -1px 1px 0 #ff5000, 1px 1px 0 #ff5000;
+    }
+
+
+    .trustedBy-text-sec {
+      position: absolute;
+      z-index: -1;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+
+    .trustedBy-slick-slider .slick-track {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+
+    }
+
+    .trustedBy-slick-slider .element {
+      color: white;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      gap: 5px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Section 1 -->
+  <section id="section1">Section 1</section>
+
+  <section class="trustedBy-sec">
+    <div class="trustedBy-text-sec">
+      <h1 class="background-text">Trusted by</h1>
+    </div>
+    <div id="slickslider" class="trustedBy-slick-slider"> </div>
+  </section>
+
+  <!-- Section 3 -->
+  <section id="section3">Section 3</section>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Slick JS -->
+  <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
+
+
+
+  <script>
+    const srcPaths = [
+      { imagePath: './images/1-removebg-preview.png' },
+      { imagePath: './images/2-removebg-preview.png' },
+      { imagePath: './images/3-removebg-preview.png' },
+      { imagePath: './images/4-removebg-preview.png' },
+      { imagePath: './images/1-removebg-preview.png' },
+      { imagePath: './images/2-removebg-preview.png' },
+      { imagePath: './images/3-removebg-preview.png' },
+      { imagePath: './images/4-removebg-preview.png' },
+      { imagePath: './images/1-removebg-preview.png' },
+      { imagePath: './images/2-removebg-preview.png' },
+      { imagePath: './images/3-removebg-preview.png' },
+      { imagePath: './images/4-removebg-preview.png' },
+      { imagePath: './images/1-removebg-preview.png' },
+      { imagePath: './images/2-removebg-preview.png' },
+      { imagePath: './images/3-removebg-preview.png' },
+      { imagePath: './images/4-removebg-preview.png' },
+
+    ];
+    const wrapper = document.getElementById('slickslider');
+
+
+    function createImages() {
+      const totalItems = srcPaths.length;
+
+      srcPaths.forEach((item, index) => {
+        const DIV = document.createElement('div');
+        DIV.classList.add('element');
+
+        const img = document.createElement('img');
+        img.src = item.imagePath;
+        img.alt = index + 1;
+        img.classList.add('srollmg');
+
+        DIV.appendChild(img);
+        wrapper.appendChild(DIV);
+      });
+
+    }
+
+    // Call the function to create images
+    createImages();
+
+  </script>
+
+
+  <script>
+    $(document).ready(function () {
+      if (typeof $.fn.slick === "undefined") {
+        console.error("Slick Slider is not loaded!");
+      } else {
+        $(".trustedBy-slick-slider").slick({
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          autoplay: true,
+          autoplaySpeed: 2000,
+          infinite: true,
+          dots: false,
+          arrows: false,
+          responsive: [
+            {
+              breakpoint: 1024,
+              settings: {
+                slidesToShow: 3,
+                slidesToScroll: 3,
+              }
+            },
+            {
+              breakpoint: 768,
+              settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2
+              }
+            },
+            {
+              breakpoint: 480,
+              settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+              }
+            }
+          ]
+        });
+      }
+    });
+  </script>
+
+</body>
+
+</html>

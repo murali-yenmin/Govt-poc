@@ -12,7 +12,6 @@
 
 .peopdiv {
     display: flex;
-
 }
 
 .peopletag {
@@ -22,7 +21,6 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-
 }
 
 .peopletag h1 {
@@ -33,13 +31,10 @@
     font-weight: 700;
     font-size: 70px;
     color: #ffffff;
-
 }
-
 
 .pcnt {
     width: 88%;
-
 }
 
 .people-cont h2 {
@@ -58,7 +53,6 @@
 .pcard {
     width: 26%;
     margin-right: 50px;
-
 }
 
 .pcard img {
@@ -115,23 +109,18 @@
 .pcnt {
     overflow: hidden;
     position: relative;
-    /* width: 100%; */
-    /* max-width: 100%; */
 }
 
 .peoplecard {
     display: flex;
-    /* overflow: hidden; */
-    /* width: 100%; */
 }
-
 
 .scroll-b {
     display: flex;
     align-items: center;
 }
 
-.line {
+.people-horz {
     min-width: 20px;
     width: 100%;
     background-color: #ff5000;

@@ -16,41 +16,38 @@
 <body>
     <div class="sec1" id="prev-section"></div>
 
-    <section class="peoplesection" id="people-section">
-        <div class="peopdiv">
-            <div class="peopletag">
-                <div class="textSec">
+    <div class="people-wrapper">
+        <section class="peoplesection" id="people-section">
+            <div class="peopdiv">
+                <div class="peopletag">
                     <h1>People</h1>
                 </div>
-            </div>
-            <div class="pcnt">
-                <div class="people-cont">
-                    <p>HOME IS WHERE THESE MISFITS ARE</p>
+                <div class="pcnt">
+                    <div class="people-cont">
+                        <h2>HOME IS WHERE THESE MISFITS ARE</h2>
 
-                </div>
-                <div class="peoplecard" id="peoplecard">
-                    <div
-                        class="et_pb_module et_pb_blurb et_pb_blurb_0_tb_footer actionBtn et_clickable  et_pb_text_align_left  et_pb_blurb_position_top et_pb_bg_layout_light">
+                    </div>
+                    <div class="peoplecard" id="peoplecard">
 
                     </div>
                 </div>
+
+
             </div>
-
-
-        </div>
-        <div class="scroll-b" id="scroll-id">
-            <div class="scroll-bar-track"></div>
-            <p class="scroll-indicator" id="scroll-indicator">
-                [<span>scroll</span>]
-            </p>
-        </div>
-    </section>
+            <div class="scroll-b" id="scroll-id">
+                <div class="line left-line"></div>
+                <h1 class="scroll-indicator" id="scroll-indicator">
+                    [scroll]
+                </h1>
+                <div class="line right-line"></div>
+            </div>
+        </section>
+    </div>
     <div class="sec1" id="next-section"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/ScrollTrigger.min.js"></script>
-    <!-- <script src="./script.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/Draggable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollToPlugin.min.js"></script>
     <script>
         // Get the peoplecard container
 
@@ -94,11 +91,10 @@
 
         // Get the peoplecard container
         const peoplecard = document.querySelector('.peoplecard');
-
-        var actionBtn = "<div class='viewMoreBtn'><div><a href='#'>View MORE</a></div></div>"
+        const actionBtn = "<div></div>"
 
         // Loop through the peopleData array and create the elements
-        peopleData.forEach((person, index, __self) => {
+        peopleData.forEach(person => {
             // Create the container div for the card
             const pcard = document.createElement('div');
             const peopleInfo = document.createElement('div');
@@ -142,153 +138,121 @@
 
             // Append the pcard to the peoplecard container
             peoplecard.appendChild(pcard);
+        });
 
-            if (index == __self.length - 1) {
-                console.log("__self.length", index, __self.length - 1)
-                // 		 peoplecard.appendChild(actionBtn);
-                peoplecard.innerHTML += actionBtn
-            }
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
+        // Wrap the peoplecard container
+        const peopleWrapper = document.querySelector('.people-wrapper');
+        const peopleCardWrapper = document.querySelector('.peoplecard');
+        const lineLeft = document.querySelector('.left-line');
+        const lineRight = document.querySelector('.right-line');
+        const scrollText = document.querySelector('.scroll-indicator');
+        const scrollContainer = document.querySelector('.scroll-b');
 
+        const totalWidth = peopleCardWrapper.scrollWidth + 169;
+        let isDragging = false;
+        let animationFrameId;
 
+        // Set up GSAP scroll animation
+        gsap.to(peopleCardWrapper, {
+            x: () => -(totalWidth - window.innerWidth), // Moves the container leftward
+            ease: "none",
+            scrollTrigger: {
+                trigger: ".peoplesection", // Section to trigger the animation
+                start: "top top",
+                end: () => `+=${totalWidth}`, // Scroll distance based on total content width
+                scrub: true,
+                pin: true, // Pins the section during the animation
+            },
+        });
+
+        function moveScrollText(percentage) {
+            const rightValue = 100 - percentage;
+
+            lineLeft.style.width = `${percentage}%`;
+            lineRight.style.width = `${rightValue}%`;
+        }
+
+        const observer = new MutationObserver(() => {
+            const startScroll = peopleWrapper.offsetTop;
+            const endScroll = peopleWrapper.scrollHeight;
+            if (window.scrollY < startScroll) return 0;
+            if (window.scrollY > endScroll) return 100;
+
+            const percentage =
+                ((window.scrollY - startScroll) / (endScroll - startScroll)) * 100;
+
+            moveScrollText(percentage)
+        });
+
+        observer.observe(peopleCardWrapper, {
+            attributes: true,
+            attributeFilter: ["style"],
         });
 
 
-        document.addEventListener("DOMContentLoaded", function () {
-            gsap.registerPlugin(ScrollTrigger, Draggable);
+        // Start dragging
+        scrollText.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startLeftWidth = lineLeft.clientWidth;
+            scrollText.style.cursor = 'grabbing';
+        });
 
-            const imagesContainer = document.querySelector('.peoplecard');
-            const totalScrollWidth = imagesContainer.scrollWidth - imagesContainer.clientWidth;
+        // Update the line widths using requestAnimationFrame
+        const updateLines = (e) => {
+            const total = peopleWrapper.scrollHeight;
+            const minScroll = peopleWrapper.offsetTop;
 
-            const scrollIndicator = document.querySelector('#scroll-indicator');
-            const scrollIndicatorContainer = document.querySelector('.scroll-b');
-            const maxScrollIndicatorX = scrollIndicatorContainer.offsetWidth - scrollIndicator.offsetWidth;
+            const containerWidth = scrollContainer.clientWidth;
+            const percentage = (e.clientX / containerWidth) * 100;
 
-            let isPinned = false; // To track the pin state of the section
-            let currentVerticalScroll = window.scrollY; // Store current vertical scroll position
+            const result = (percentage / 100) * total;
 
-            // Function to create ScrollTrigger and enable re-initialization on re-entry
-            function createScrollAnimation() {
-                return gsap.to(imagesContainer, {
-                    x: -totalScrollWidth,
-                    ease: "none",
-                    scrollTrigger: {
-                        id: "imageScroll",
-                        trigger: "#people-section",
-                        start: "top top",
-                        end: () => `+=${totalScrollWidth}`,
-                        scrub: 1,
-                        pin: true,
-                        anticipatePin: 1,
-                        markers: false,
-                        onEnter: () => {
-                            // Reset scroll indicator to start on re-entry
-                            gsap.set(scrollIndicator, { x: 0 });
-                        },
-                        onUpdate: (self) => {
-                            const progressRatio = self.progress;
-                            const indicatorPosition = Math.min(maxScrollIndicatorX, progressRatio * maxScrollIndicatorX);
-
-                            // Smoothly sync the scroll indicator with scrolling
-                            gsap.to(scrollIndicator, { x: indicatorPosition, duration: 0.2, ease: "power1.out" });
-                        },
-                        onToggle: (self) => {
-                            // Track whether the section is pinned or not
-                            isPinned = self.isActive;
-
-                            // Enable or disable the draggable functionality based on pin state
-                            if (isPinned) {
-                                Draggable.get(scrollIndicator).enable();
-                            } else {
-                                Draggable.get(scrollIndicator).disable();
-                            }
-                        },
-                        onLeaveBack: () => {
-                            // Ensure the section re-pins on re-entry
-                            ScrollTrigger.getById("imageScroll").refresh();
-                        },
-                    }
+            if (result > total) {
+                window.scrollTo({
+                    top: total
+                });
+            } else if (result < minScroll) {
+                window.scrollTo({
+                    top: minScroll
+                });
+            } else {
+                window.scrollTo({
+                    top: result
                 });
             }
+            lineLeft.style.width = `${percentage}%`;
+            lineRight.style.width = `${100 - percentage}%`;
+        };
 
-            // Initialize ScrollTrigger animation
-            createScrollAnimation();
-
-            // Make the scroll indicator draggable and ensure it syncs horizontal animation
-            Draggable.create(scrollIndicator, {
-                type: "x",
-                bounds: scrollIndicatorContainer,
-                onDrag: function () {
-                    const dragProgress = this.x / maxScrollIndicatorX;
-
-                    // Move imagesContainer directly based on drag position
-                    gsap.to(imagesContainer, {
-                        x: -dragProgress * totalScrollWidth,
-                        overwrite: "auto",
-                        ease: "power1.out",
-                        duration: 0.3
-                    });
-
-                    // Update the ScrollTrigger progress to match the drag position
-                    const imageScrollTrigger = ScrollTrigger.getById("imageScroll");
-                    if (imageScrollTrigger) {
-                        imageScrollTrigger.scroll(dragProgress * imageScrollTrigger.end);
-                    }
-                },
-                onDragEnd: function () {
-                    const imageScrollTrigger = ScrollTrigger.getById("imageScroll");
-
-                    // Release the section pin if at the start or end of the scroll
-                    if (this.x === 0 || this.x === maxScrollIndicatorX) {
-                        imageScrollTrigger.disable();
-                    } else {
-                        // Refresh ScrollTrigger if in middle to keep the pin
-                        imageScrollTrigger.enable();
-                    }
-
-                    // Align ScrollTrigger progress with drag position after dragging ends
-                    ScrollTrigger.refresh();
+        // Dragging
+        const handleMouseMove = (e) => {
+            if (isDragging) {
+                // Cancel any previous frame to prevent multiple updates in the same frame
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
                 }
-            });
 
-            // Prevent vertical scroll reset on drag by storing vertical scroll position
-            window.addEventListener('scroll', () => {
-                // Capture the vertical scroll position
-                currentVerticalScroll = window.scrollY;
-            });
-
-            // Function to maintain vertical scroll position
-            function maintainVerticalScrollPosition() {
-                window.scrollTo(0, currentVerticalScroll);
+                // Request animation frame for smoother update
+                animationFrameId = requestAnimationFrame(() => updateLines(e));
             }
+        };
 
-            // Keep the vertical scroll position intact while dragging the scroll indicator
-            Draggable.create(scrollIndicator, {
-                type: "x",
-                bounds: scrollIndicatorContainer,
-                onDrag: function () {
-                    maintainVerticalScrollPosition(); // Keep vertical scroll from changing
+        // Attach the mousemove event
+        document.addEventListener('mousemove', handleMouseMove);
 
-                    const dragProgress = this.x / maxScrollIndicatorX;
-
-                    // Move imagesContainer directly based on drag position
-                    gsap.to(imagesContainer, {
-                        x: -dragProgress * totalScrollWidth,
-                        overwrite: "auto",
-                        ease: "power1.out",
-                        duration: 0.3
-                    });
-
-                    // Update the ScrollTrigger progress to match the drag position
-                    const imageScrollTrigger = ScrollTrigger.getById("imageScroll");
-                    if (imageScrollTrigger) {
-                        imageScrollTrigger.scroll(dragProgress * imageScrollTrigger.end);
-                    }
+        // Stop dragging
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                scrollText.style.cursor = 'grab';
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
                 }
-            });
+            }
         });
-
-
 
     </script>
 

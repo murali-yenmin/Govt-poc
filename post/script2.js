@@ -1918,68 +1918,114 @@ createNewsSection(firstThreeNews, newspost);
 // Select all elements with the class 'newsp'
 const newspElements = document.querySelectorAll('.newsp');
 
+// Grouping 0-algorithm cards into groups of 6 (cards with 25% width)
+const groupSize = 9;  // Each group contains 9 cards
+const zeroAlgoGroups = [];
+
 // Loop through each element and apply styles based on the repeating pattern groups
 newspElements.forEach((element, index) => {
-  const groupOfNine = Math.floor(index / 9);
-  const positionInGroup = index % 9;
+  const groupOfNine = Math.floor(index / groupSize);
+  const positionInGroup = index % groupSize;
 
   // Apply the pattern based on the group number
   if (groupOfNine % 4 === 0) {
     // Pattern 1-0-0
     if (positionInGroup === 0 || positionInGroup === 3 || positionInGroup === 6) {
       element.style.width = '48%';
+      element.classList.add("newsp-48");  // Add class for 48% width elements
     } else {
       element.style.width = '25%';
       element.querySelector("h1").style.fontSize = '1.5em';
       element.classList.add("scroll-animation");  // Add animation class to 25% width divs
-    }
+      element.style.position = 'relative';  // Add relative position to 25% width elements
 
-    // Add height to the last card in the 0-algo group
-    if (positionInGroup === 6) {
-      element.style.height = '100px'; // Add height to the last card in this group
+      // Group the 25% width elements (0-algorithm cards) into groups of 6
+      const groupIndex = Math.floor(index / groupSize);
+      if (!zeroAlgoGroups[groupIndex]) zeroAlgoGroups[groupIndex] = [];
+      zeroAlgoGroups[groupIndex].push(element);
     }
   } else if (groupOfNine % 4 === 1) {
     // Pattern 0-1-0
     if (positionInGroup === 1 || positionInGroup === 4 || positionInGroup === 7) {
       element.style.width = '48%';
+      element.classList.add("newsp-48");  // Add class for 48% width elements
     } else {
       element.style.width = '25%';
       element.querySelector("h1").style.fontSize = '1.5em';
       element.classList.add("scroll-animation");  // Add animation class to 25% width divs
+      element.style.position = 'relative';  // Add relative position to 25% width elements
+
+      // Group the 25% width elements (0-algorithm cards) into groups of 6
+      const groupIndex = Math.floor(index / groupSize);
+      if (!zeroAlgoGroups[groupIndex]) zeroAlgoGroups[groupIndex] = [];
+      zeroAlgoGroups[groupIndex].push(element);
     }
   } else if (groupOfNine % 4 === 2) {
     // Pattern 0-0-1
     if (positionInGroup === 2 || positionInGroup === 5 || positionInGroup === 8) {
       element.style.width = '48%';
+      element.classList.add("newsp-48");  // Add class for 48% width elements
     } else {
       element.style.width = '25%';
       element.querySelector("h1").style.fontSize = '1.5em';
       element.classList.add("scroll-animation");  // Add animation class to 25% width divs
+      element.style.position = 'relative';  // Add relative position to 25% width elements
+
+      // Group the 25% width elements (0-algorithm cards) into groups of 6
+      const groupIndex = Math.floor(index / groupSize);
+      if (!zeroAlgoGroups[groupIndex]) zeroAlgoGroups[groupIndex] = [];
+      zeroAlgoGroups[groupIndex].push(element);
     }
   } else if (groupOfNine % 4 === 3) {
     // Repeating the pattern 0-1-0 again
     if (positionInGroup === 1 || positionInGroup === 4 || positionInGroup === 7) {
       element.style.width = '48%';
+      element.classList.add("newsp-48");  // Add class for 48% width elements
     } else {
       element.style.width = '25%';
       element.querySelector("h1").style.fontSize = '1.5em';
       element.classList.add("scroll-animation");  // Add animation class to 25% width divs
+      element.style.position = 'relative';  // Add relative position to 25% width elements
+
+      // Group the 25% width elements (0-algorithm cards) into groups of 6
+      const groupIndex = Math.floor(index / groupSize);
+      if (!zeroAlgoGroups[groupIndex]) zeroAlgoGroups[groupIndex] = [];
+      zeroAlgoGroups[groupIndex].push(element);
     }
   }
-})
+});
 
 // Scroll event listener for vertical scroll effect
-window.addEventListener("scroll", function () {
-  const scrollY = window.scrollY;
+let scrollPosition = 0;
+let groupIndex = 0;  // Start with the first group of 9 cards
+const scrollAmount = 100;  // Adjust the amount of scroll movement for the group
+const maxGroups = zeroAlgoGroups.length; // Number of 9-card groups
 
-  // Loop through all the .newsp elements and apply scroll animation to those with the 25% width
-  document.querySelectorAll('.newsp.scroll-animation').forEach((element) => {
-    if (element.offsetTop <= scrollY + window.innerHeight && element.offsetTop + element.offsetHeight >= scrollY) {
-      // If the element is in view, trigger the scroll animation
-      element.classList.add("scroll-animate");
+window.addEventListener("wheel", function (event) {
+  // If the user scrolls down, increase scroll position, else decrease
+  if (event.deltaY > 0) {
+    // Scrolling down
+    if (scrollPosition >= zeroAlgoGroups[groupIndex].length * 150) {
+      // If we've scrolled to the bottom of the current group
+      if (groupIndex < maxGroups - 1) {
+        groupIndex++;
+        scrollPosition = 0;  // Reset scroll position for the next group
+      }
     } else {
-      // If it's out of view, reset the scroll animation
-      element.classList.remove("scroll-animate");
+      scrollPosition += scrollAmount;
     }
+  } else {
+    // Scrolling up
+    if (scrollPosition <= 0 && groupIndex > 0) {
+      groupIndex--;
+      scrollPosition = zeroAlgoGroups[groupIndex].length * 150;  // Start at the bottom of the previous group
+    } else {
+      scrollPosition -= scrollAmount;
+    }
+  }
+
+  // Loop through all groups of 0-algorithm (25% width) cards and apply scroll
+  zeroAlgoGroups[groupIndex].forEach((element) => {
+    element.style.transform = `translateY(${scrollPosition}px)`;  // Move down or up based on scroll position
   });
 });

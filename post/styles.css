@@ -12,6 +12,7 @@
 .newspost{
   display: flex;
   flex-wrap: wrap;
+  position:relative
 }
 .newsp{
     /* width: 33%; */
@@ -64,4 +65,27 @@
     width: 80%;
     line-height: 40px;
     margin: 0 auto;
+}
+
+/* CSS for vertical scroll animation */
+.scroll-animation {
+  transition: transform 0.5s ease-in-out;
+}
+
+.scroll-animate {
+  transform: translateY(50px); /* 25% width elements' effect */
+}
+
+.scroll-animate-48 {
+  transform: translateY(80px); /* Stronger effect for 48% width elements */
+}
+
+/* #loadMore{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+} */
+.loadmore {
+    text-align: center;
+    margin: 20px 0;
 }

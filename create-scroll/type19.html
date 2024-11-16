@@ -6,50 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Smooth Horizontal Scroll on Vertical Scroll</title>
     <style>
-        html {
-            overflow-y: scroll;
-            height: 100%;
-            -webkit-overflow-scrolling: touch;
-            overflow-scrolling: touch;
-        }
-
-        body {
-            overflow-y: visible;
-            position: relative;
-            height: unset;
-            margin: 0;
-        }
-
-        html,
-        body {
-            overflow-x: hidden;
-            margin: 0;
-        }
-
-        .expand-container {
+        .panels-wrapper .expand-container {
             height: 100vh;
             display: flex;
             flex-wrap: nowrap;
         }
 
-        .firstContainer {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: yellow;
-        }
-
-        .lastContainer {
-            display: flex;
-            height: 100vh;
-            background: yellow;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .panel {
+        .panels-wrapper .panel {
             width: 100vw;
             height: 100vh;
             display: flex;
@@ -58,7 +21,7 @@
             font-size: 3rem;
         }
 
-        .panel-content {
+        .panels-wrapper .panel-content {
             font-size: 20px;
             color: white;
             margin: 0;
@@ -66,29 +29,29 @@
             width: 342px;
         }
 
-        #panel-0 {
-            background: url("./images/leaf.jpeg") no-repeat center / cover;
+        .panels-wrapper #panel-0 {
+            background: url("/wp-content/uploads/2024/11/relactioship.png") no-repeat center / cover;
         }
 
-        #panel-1 {
-            background: url("./images/painting-mountain-lake-with-mountain-background.jpg") no-repeat center / cover;
+        .panels-wrapper #panel-1 {
+            background: url("/wp-content/uploads/2024/11/relactioship.png") no-repeat center / cover;
         }
 
-        #panel-2 {
-            background: url("./images/vestrahorn-mountains-sunset-stokksnes-iceland.jpg") no-repeat center / cover;
+        .panels-wrapper #panel-2 {
+            background: url("/wp-content/uploads/2024/11/relactioship.png") no-repeat center / cover;
         }
 
-        .panels-wrapper {
+        .panels-wrapper .panels-wrapper {
             position: relative;
         }
 
-        .panel-heading-container {
+        .panels-wrapper .panel-heading-container {
             position: absolute;
             width: 100vw;
             height: 100%;
         }
 
-        .panel-heading {
+        .panels-wrapper .panel-heading {
             height: 100%;
             position: absolute;
             z-index: 1;
@@ -96,32 +59,78 @@
             background-color: transparent;
         }
 
-        .panel-heading.left-aligned.right-aligned {
+        .panels-wrapper .panel-heading.left-aligned h1 {
+            color: white;
+        }
+
+        .panels-wrapper .panel-heading.left-aligned.right-aligned {
             background-color: transparent;
         }
 
-        .panel-heading.right-aligned {
+        .panels-wrapper .panel-heading.right-aligned {
             background-color: white;
         }
 
-        .panel-heading-1 {
+        .panels-wrapper .panel-heading-1 {
             left: 0;
         }
 
-        .title {
-            /* border-left: 1px solid black; */
+        .panels-wrapper .title {
             background: #FFF5DC;
-            height: calc(100% - 200px);
+            height: calc(100% - 190px);
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            padding-bottom: 100px;
         }
 
-        .left-aligned .title {
+        .panels-wrapper .left-aligned .title {
             background: #FF5000;
             animation: colorChange 0.5s alternate ease-in-out;
             color: white;
+
+
+        }
+
+        .panels-wrapper .panel-heading h1 {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-transform: uppercase;
+        }
+
+        .panels-wrapper .scroll-text-container {
+            display: flex;
+            align-items: center;
+            width: 94vw;
+            position: absolute;
+            bottom: 89px;
+            z-index: 100;
+            margin-left: 5vw;
+        }
+
+        .panels-wrapper .line {
+            width: 100%;
+            height: 3px;
+            background-color: #ff5000;
+            min-width: 20px !important;
+            transition: width 0.5s ease;
+        }
+
+        .panels-wrapper .line-left.line {
+            width: 20px;
+        }
+
+        .panels-wrapper .scroll-text {
+            color: white;
+            margin: 0 16px;
+            cursor: grab;
+            user-select: none;
+            font-size: 20px;
+            width: 118px;
         }
 
         @keyframes colorChange {
@@ -134,38 +143,11 @@
             }
         }
 
-        h3 {
-            rotate: -90deg;
-        }
-
-        .scroll-text-container {
-            display: flex;
-            align-items: center;
-            width: 90vw;
-            position: absolute;
-            bottom: 89px;
-            z-index: 100;
-            margin-left: 5vw;
-        }
-
-        .line {
-            width: 100%;
-            height: 3px;
-            background-color: #ff5000;
-            min-width: 20px !important;
-            transition: width 0.5s ease;
-        }
-
-        .line-left.line {
-            width: 20px;
-        }
-
-        .scroll-text {
-            color: white;
-            padding: 5px 10px;
-            margin: 0 10px;
-            cursor: grab;
-            user-select: none;
+        @media (max-height: 800px) {
+            .panels-wrapper .panel-heading h1 {
+                font-size: 40px !important;
+                line-height: 40px !important;
+            }
         }
 
         @media only screen and (max-width: 1024px) {
@@ -173,52 +155,59 @@
                 overflow-y: auto;
             }
 
-            .expand-container {
+            .panels-wrapper .expand-container {
                 display: block;
                 height: auto;
             }
 
-            .scroll-text-container {
+            .panels-wrapper .scroll-text-container {
                 display: none;
             }
 
-            .panel-heading-container {
+            .panels-wrapper .panel-heading-container {
                 position: unset;
                 width: 100%;
                 height: auto;
             }
 
-            .panel-heading {
-                width: 100%;
-                height: 100px;
+            .panels-wrapper .panel-heading {
+                width: 100vw !important;
+                height: 70px;
                 position: unset;
                 cursor: default;
-                border-bottom: 1px solid #000;
             }
 
-            .panel {
+            .panels-wrapper .panel {
                 height: 0;
-                width: 100%;
                 overflow: hidden;
+                transition: 0.5 ease-in-out;
             }
 
-            .expand-container .panel.opened {
+            .panels-wrapper .expand-container .panel.opened {
                 height: 100vh;
             }
 
-            .panel-content {
+            .panels-wrapper .panel-content {
                 margin-right: 78px;
             }
 
-            .title {
-                height: 100px;
+            .panels-wrapper .title {
+                padding: 0;
+                height: auto;
                 border-left: 0;
                 background-color: #FF5000;
-                color: white;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .title h3 {
-                rotate: none;
+            .panels-wrapper .title h1 {
+                writing-mode: unset;
+                transform: unset;
+                font-size: 40px !important;
+                line-height: 40px !important;
+                color: white;
             }
 
         }
@@ -230,31 +219,38 @@
         <h1>Testing horizontal scrolling w/ four sections</h1>
         <h2>First Container</h2>
     </div>
+
     <div class="panels-wrapper">
         <div class="expand-container">
             <div id="scroll-text-container" class="scroll-text-container">
                 <div id="line-left" class="line line-left"></div>
-                <div id="scroll-text" class="scroll-text" draggable="false">[SCROLL]</div>
+                <div id="scroll-text" class="scroll-text" draggable="false">[ SCROLL ]</div>
                 <div id="line-right" class="line line-right"></div>
             </div>
             <div class="panel-heading-container">
                 <div class="panel-heading panel-heading-1 left-aligned">
                     <div class="title">
-                        <h3>ONE</h3>
+                        <div>
+                            <h1>CREATE</h1>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-heading panel-heading-2">
                     <div class="title">
-                        <h3>TWO</h3>
+                        <div>
+                            <h1>CONNECT </h1>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-heading panel-heading-3">
                     <div class="title">
-                        <h3>THREE</h3>
+                        <div>
+                            <h1> collaborate</h1>
+                        </div>
                     </div>
                 </div>
             </div>
-            <section id="panel-0" class="panel opened">
+            <div id="panel-0" class="panel opened">
                 <p class="panel-content">
                     Cross-channel integrated campaign conceptualisation & content development
                     <br></br>
@@ -264,8 +260,8 @@
                     <br></br>
                     content creation & production
                 </p>
-            </section>
-            <section id="panel-1" class="panel">
+            </div>
+            <div id="panel-1" class="panel opened">
                 <p class="panel-content">
                     Cross-channel integrated campaign conceptualisation & content development
                     <br></br>
@@ -275,8 +271,8 @@
                     <br></br>
                     content creation & production
                 </p>
-            </section>
-            <section id="panel-2" class="panel">
+            </div>
+            <div id="panel-2" class="panel opened">
                 <p class="panel-content">
                     Cross-channel integrated campaign conceptualisation & content development
                     <br></br>
@@ -286,7 +282,7 @@
                     <br></br>
                     content creation & production
                 </p>
-            </section>
+            </div>
         </div>
     </div>
     <div class="lastContainer">Last Container</div>
@@ -297,10 +293,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollToPlugin.min.js"></script>
 
     <script>
-        const panelHeadingWidth = 100;
-        const panelWrapper = document.querySelector(".panels-wrapper");
 
         if (window.innerWidth > 1024) {
+
             gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
             let sections = gsap.utils.toArray(".panel");
@@ -309,12 +304,15 @@
             const scrollText = document.querySelector('.scroll-text');
             const lineLeft = document.getElementById("line-left");
             const lineRight = document.getElementById("line-right");
+            const panelWrapper = document.querySelector(".panels-wrapper");
             const expandContainer = document.querySelector(".expand-container");
 
             let isDragging = false;
             let startX;
             let startLeftWidth;
             let animationFrameId;
+            const screenHeight = window.innerHeight;
+            const panelHeadingWidth = screenHeight < 800 ? 120 : 157;
             const panelTitleBorderLeft = "1px solid black";
 
             expandContainer.style.width = `${sections.length * 100}%`;
@@ -515,23 +513,6 @@
                 if (panelHeadings[index]) {
                     expandContainer.insertBefore(panelHeadings[index], panel);
                 }
-            });
-
-            panelHeadings.forEach((panelHeading, index) => {
-                panelHeading.addEventListener('click', () => {
-                    panelSections.forEach((panel, panelIndex) => {
-                        if (index === panelIndex) {
-                            panel.classList.add('opened');
-                            const scrollToValue = panelWrapper.offsetTop + ((panelIndex + 1) * panelHeadingWidth);
-                            window.scrollTo({
-                                top: scrollToValue - panelHeadingWidth,
-                                behavior: 'smooth'
-                            })
-                        } else {
-                            panel.classList.remove('opened');
-                        }
-                    });
-                })
             });
         }
     </script>

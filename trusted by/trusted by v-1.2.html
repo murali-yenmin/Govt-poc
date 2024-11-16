@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Horizontal Scrolling with GSAP</title>
+  <style>
+    #section1,
+    #section3 {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      background-color: #f0f0f0;
+    }
+
+
+    .trustedBy-sec {
+      position: relative;
+      overflow: hidden;
+      background-color: transparent;
+      color: white;
+      cursor: pointer;
+      height: 258px;
+      margin: 90px 0;
+    }
+
+
+    .background-text {
+      font-size: 200px;
+      font-weight: 700;
+      line-height: 180px;
+      width: max-content;
+      text-align: center;
+      z-index: 1;
+      color: white;
+      background-color: transparent;
+      text-shadow: -1px -1px 0 #ff5000, 1px -1px 0 #ff5000, -1px 1px 0 #ff5000, 1px 1px 0 #ff5000;
+    }
+
+
+    .trustedBy-text-sec {
+      position: absolute;
+      z-index: -1;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+
+    .running-section-back-trusted-sec {
+      width: 100%;
+      overflow: hidden;
+      position: absolute;
+      z-index: 4;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+
+
+    .scrolling-wrapper-back-trusted-sec {
+      display: flex;
+      animation: scroll-right-to-left-trusted-sec 10s linear infinite;
+      width: calc(300%);
+    }
+
+    .image-container-trusted-sec {
+      display: inline-block;
+      position: relative;
+    }
+
+    /* Image styling */
+    .image-container-trusted-sec img {
+      height: 112px;
+    }
+
+
+    /* Pause all images on hover */
+
+    .running-section-back-trusted-sec:hover .scrolling-wrapper-back-trusted-sec {
+      animation-play-state: paused;
+    }
+
+
+    @keyframes scroll-right-to-left-trusted-sec {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Section 1 -->
+  <section id="section1">Section 1</section>
+
+  <section class="trustedBy-sec">
+    <div class="trustedBy-text-sec">
+      <h1 class="background-text">Trusted by</h1>
+    </div>
+
+    <div class="running-section-back-trusted-sec">
+      <div class="scrolling-wrapper-back-trusted-sec"> </div>
+    </div>
+
+  </section>
+
+  <!-- Section 3 -->
+  <section id="section3">Section 3</section>
+
+
+  <script>
+
+
+    // Array with image paths and different URLs for right-to-left scrolling
+    const imageArrayBack = [
+      { imagePath: './images/1-removebg-preview.png', },
+      { imagePath: './images/2-removebg-preview.png', },
+      { imagePath: './images/3-removebg-preview.png', },
+      { imagePath: './images/4-removebg-preview.png', },
+      { imagePath: './images/1-removebg-preview.png', },
+      { imagePath: './images/2-removebg-preview.png', },
+      { imagePath: './images/3-removebg-preview.png', },
+      { imagePath: './images/4-removebg-preview.png', },
+
+    ];
+
+
+    const scrollingWrapperBack = document.querySelector('.scrolling-wrapper-back-trusted-sec');
+
+    // Function to create and append images dynamically
+    function loadImagestrusted(wrapper, imageArray) {
+      imageArray.forEach((item, index) => {
+        const container = document.createElement('div');
+        container.classList.add('image-container-trusted-sec');
+
+        const img = document.createElement('img');
+        img.src = item.imagePath;
+        img.alt = 'Running Image';
+
+        container.appendChild(img);
+        wrapper.appendChild(container);
+      });
+    }
+
+    loadImagestrusted(scrollingWrapperBack, imageArrayBack);
+    loadImagestrusted(scrollingWrapperBack, imageArrayBack);
+
+  </script>
+
+</body>
+
+</html>

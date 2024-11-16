@@ -91,10 +91,10 @@
 
         // Get the peoplecard container
         const peoplecard = document.querySelector('.peoplecard');
-        const actionBtn = "<div></div>"
+        var actionBtn = "<div class='viewMoreBtn'><div><a href='#'>View MORE</a></div></div>"
 
         // Loop through the peopleData array and create the elements
-        peopleData.forEach(person => {
+        peopleData.forEach((person,index,__self) => {
             // Create the container div for the card
             const pcard = document.createElement('div');
             const peopleInfo = document.createElement('div');
@@ -138,6 +138,14 @@
 
             // Append the pcard to the peoplecard container
             peoplecard.appendChild(pcard);
+
+
+if (index == __self.length - 1) {
+    console.log("__self.length", index, __self.length - 1)
+    // 		 peoplecard.appendChild(actionBtn);
+    peoplecard.innerHTML += actionBtn
+}
+
         });
 
         gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);

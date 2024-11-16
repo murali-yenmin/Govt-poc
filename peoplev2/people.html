@@ -15,18 +15,24 @@
 
 <body>
     <div class="sec1" id="prev-section"></div>
+
     <section class="peoplesection" id="people-section">
         <div class="peopdiv">
             <div class="peopletag">
-                <h1>People</h1>
+                <div class="textSec">
+                    <h1>People</h1>
+                </div>
             </div>
             <div class="pcnt">
                 <div class="people-cont">
-                    <h2>HOME IS WHERE THESE MISFITS ARE</h2>
+                    <p>HOME IS WHERE THESE MISFITS ARE</p>
 
                 </div>
                 <div class="peoplecard" id="peoplecard">
-                   
+                    <div
+                        class="et_pb_module et_pb_blurb et_pb_blurb_0_tb_footer actionBtn et_clickable  et_pb_text_align_left  et_pb_blurb_position_top et_pb_bg_layout_light">
+
+                    </div>
                 </div>
             </div>
 
@@ -34,9 +40,9 @@
         </div>
         <div class="scroll-b" id="scroll-id">
             <div class="scroll-bar-track"></div>
-            <h1 class="scroll-indicator" id="scroll-indicator">
-                [scroll]
-            </h1>
+            <p class="scroll-indicator" id="scroll-indicator">
+                [<span>scroll</span>]
+            </p>
         </div>
     </section>
     <div class="sec1" id="next-section"></div>
@@ -49,96 +55,103 @@
         // Get the peoplecard container
 
         const peopleData = [
-    { "src": "./assests/images/image 85.png", "name": "Leanordo", "role": "Senior Executive" },
-    { "src": "./assests/images/image 86.png", "name": "Jolene Mok", "role": "Senior Producer" },
-    { "src": "./assests/images/image 87.png", "name": "Alice Johnson", "role": "Project Manager" },
-    { "src": "./assests/images/image 88.png", "name": "Bob Smith", "role": "Software Engineer" },
-    { "src": "./assests/images/image 89.png", "name": "Charlie Brown", "role": "Marketing Lead" },
-    { "src": "./assests/images/image 90.png", "name": "David Lee", "role": "Graphic Designer" },
-    { "src": "./assests/images/image 91.png", "name": "Eva Martinez", "role": "Content Strategist" },
-    { "src": "./assests/images/image 92.png", "name": "Frank Williams", "role": "UX Designer" },
-    { "src": "./assests/images/image 93.png", "name": "Grace Clark", "role": "Business Analyst" },
-    { "src": "./assests/images/image 94.png", "name": "Henry Harris", "role": "Sales Director" },
-    { "src": "./assests/images/image 95.png", "name": "Isabella Davis", "role": "Accountant" },
-    { "src": "./assests/images/image 96.png", "name": "Jack Thompson", "role": "HR Manager" },
-    { "src": "./assests/images/image 97.png", "name": "Kimberly Evans", "role": "Customer Support Lead" },
-    { "src": "./assests/images/image 98.png", "name": "Liam Wilson", "role": "Data Scientist" },
-    { "src": "./assests/images/image 99.png", "name": "Megan Taylor", "role": "Product Owner" },
-    { "src": "./assests/images/image 100.png", "name": "Nathaniel Moore", "role": "DevOps Engineer" },
-    { "src": "./assests/images/image 101.png", "name": "Olivia Jackson", "role": "SEO Specialist" },
-    { "src": "./assests/images/image 102.png", "name": "Patrick Scott", "role": "Finance Director" },
-    { "src": "./assests/images/image 103.png", "name": "Quincy Lee", "role": "Social Media Manager" },
-    { "src": "./assests/images/image 104.png", "name": "Rita King", "role": "Operations Manager" },
-    { "src": "./assests/images/image 105.png", "name": "Samuel Perez", "role": "Software Developer" },
-    { "src": "./assests/images/image 106.png", "name": "Tina Gonzalez", "role": "Marketing Specialist" },
-    { "src": "./assests/images/image 107.png", "name": "Ursula Harris", "role": "Project Lead" },
-    { "src": "./assests/images/image 108.png", "name": "Victor White", "role": "Senior Developer" },
-    { "src": "./assests/images/image 109.png", "name": "Wendy Adams", "role": "UI Designer" },
-    { "src": "./assests/images/image 110.png", "name": "Xander Young", "role": "Cybersecurity Expert" },
-    { "src": "./assests/images/image 111.png", "name": "Yvonne Carter", "role": "Chief Marketing Officer" },
-    { "src": "./assests/images/image 112.png", "name": "Zane Mitchell", "role": "Software Engineer" },
-    { "src": "./assests/images/image 113.png", "name": "Amelia Moore", "role": "Product Manager" },
-    { "src": "./assests/images/image 114.png", "name": "Ben Foster", "role": "Data Analyst" },
-    { "src": "./assests/images/image 115.png", "name": "Catherine Brooks", "role": "QA Engineer" },
-    { "src": "./assests/images/image 116.png", "name": "Daniela Collins", "role": "Brand Strategist" }
-];
+            { "src": "./assests/images/image 85.png", "name": "Leanordo", "role": "Senior Executive" },
+            { "src": "./assests/images/image 86.png", "name": "Jolene Mok", "role": "Senior Producer" },
+            { "src": "./assests/images/image 87.png", "name": "Alice Johnson", "role": "Project Manager" },
+            { "src": "./assests/images/image 88.png", "name": "Bob Smith", "role": "Software Engineer" },
+            { "src": "./assests/images/image 89.png", "name": "Charlie Brown", "role": "Marketing Lead" },
+            { "src": "./assests/images/image 90.png", "name": "David Lee", "role": "Graphic Designer" },
+            { "src": "./assests/images/image 91.png", "name": "Eva Martinez", "role": "Content Strategist" },
+            { "src": "./assests/images/image 92.png", "name": "Frank Williams", "role": "UX Designer" },
+            { "src": "./assests/images/image 93.png", "name": "Grace Clark", "role": "Business Analyst" },
+            { "src": "./assests/images/image 94.png", "name": "Henry Harris", "role": "Sales Director" },
+            { "src": "./assests/images/image 95.png", "name": "Isabella Davis", "role": "Accountant" },
+            { "src": "./assests/images/image 96.png", "name": "Jack Thompson", "role": "HR Manager" },
+            { "src": "./assests/images/image 97.png", "name": "Kimberly Evans", "role": "Customer Support Lead" },
+            { "src": "./assests/images/image 98.png", "name": "Liam Wilson", "role": "Data Scientist" },
+            { "src": "./assests/images/image 99.png", "name": "Megan Taylor", "role": "Product Owner" },
+            { "src": "./assests/images/image 100.png", "name": "Nathaniel Moore", "role": "DevOps Engineer" },
+            { "src": "./assests/images/image 101.png", "name": "Olivia Jackson", "role": "SEO Specialist" },
+            { "src": "./assests/images/image 102.png", "name": "Patrick Scott", "role": "Finance Director" },
+            { "src": "./assests/images/image 103.png", "name": "Quincy Lee", "role": "Social Media Manager" },
+            { "src": "./assests/images/image 104.png", "name": "Rita King", "role": "Operations Manager" },
+            { "src": "./assests/images/image 105.png", "name": "Samuel Perez", "role": "Software Developer" },
+            { "src": "./assests/images/image 106.png", "name": "Tina Gonzalez", "role": "Marketing Specialist" },
+            { "src": "./assests/images/image 107.png", "name": "Ursula Harris", "role": "Project Lead" },
+            { "src": "./assests/images/image 108.png", "name": "Victor White", "role": "Senior Developer" },
+            { "src": "./assests/images/image 109.png", "name": "Wendy Adams", "role": "UI Designer" },
+            { "src": "./assests/images/image 110.png", "name": "Xander Young", "role": "Cybersecurity Expert" },
+            { "src": "./assests/images/image 111.png", "name": "Yvonne Carter", "role": "Chief Marketing Officer" },
+            { "src": "./assests/images/image 112.png", "name": "Zane Mitchell", "role": "Software Engineer" },
+            { "src": "./assests/images/image 113.png", "name": "Amelia Moore", "role": "Product Manager" },
+            { "src": "./assests/images/image 114.png", "name": "Ben Foster", "role": "Data Analyst" },
+            { "src": "./assests/images/image 115.png", "name": "Catherine Brooks", "role": "QA Engineer" },
+            { "src": "./assests/images/image 116.png", "name": "Daniela Collins", "role": "Brand Strategist" }
+        ];
 
 
-// Get the peoplecard container
 
- 
-// Get the peoplecard container
-const peoplecard = document.querySelector('.peoplecard');
 
-const actionBtn = "<div></div>"
+        // Get the peoplecard container
+        const peoplecard = document.querySelector('.peoplecard');
 
-// Loop through the peopleData array and create the elements
-peopleData.forEach(person => {
-    // Create the container div for the card
-    const pcard = document.createElement('div');
-    const peopleInfo = document.createElement('div');
-    peopleInfo.classList.add('peopleInfo');
-    pcard.classList.add('pcard');
+        var actionBtn = "<div class='viewMoreBtn'><div><a href='#'>View MORE</a></div></div>"
 
-    // Create the image overlay div
-    const imageOverlay = document.createElement('div');
-    imageOverlay.classList.add('image-overlay');
+        // Loop through the peopleData array and create the elements
+        peopleData.forEach((person, index, __self) => {
+            // Create the container div for the card
+            const pcard = document.createElement('div');
+            const peopleInfo = document.createElement('div');
+            peopleInfo.classList.add('peopleInfo');
+            pcard.classList.add('pcard');
 
-    // Create the layer div inside the overlay
-    const layer = document.createElement('div');
-    layer.classList.add('layer');
+            // Create the image overlay div
+            const imageOverlay = document.createElement('div');
+            imageOverlay.classList.add('image-overlay');
 
-    // Create the img element and set the src and alt attributes
-    const img = document.createElement('img');
-    img.setAttribute('src', person.src);
-    img.setAttribute('alt', person.name);  // Using the name as alt text
+            // Create the layer div inside the overlay
+            const layer = document.createElement('div');
+            layer.classList.add('layer');
 
-    // Append the layer and img to the imageOverlay
-    imageOverlay.appendChild(layer);
-    imageOverlay.appendChild(img);
+            // Create the img element and set the src and alt attributes
+            const img = document.createElement('img');
+            img.setAttribute('src', person.src);
+            img.setAttribute('alt', person.name);  // Using the name as alt text
 
-    // Create the h1 element for the name
-    const h1 = document.createElement('h6');
-    h1.textContent = person.name;
+            // Append the layer and img to the imageOverlay
+            imageOverlay.appendChild(layer);
+            imageOverlay.appendChild(img);
 
-    // Create the h2 element for the role
-    const h2 = document.createElement('p');
-    h2.textContent = person.role;
+            // Create the h1 element for the name
+            const h1 = document.createElement('h6');
+            h1.textContent = person.name;
 
-    // Append the imageOverlay, h1, and h2 to the pcard
-    pcard.appendChild(imageOverlay);
+            // Create the h2 element for the role
+            const h2 = document.createElement('p');
+            h2.textContent = person.role;
 
-    peopleInfo.appendChild(h1)
-    peopleInfo.appendChild(h2)
+            // Append the imageOverlay, h1, and h2 to the pcard
+            pcard.appendChild(imageOverlay);
 
-    // pcard.appendChild(h1);
-    // pcard.appendChild(h2);
-    pcard.appendChild(peopleInfo);
+            peopleInfo.appendChild(h1)
+            peopleInfo.appendChild(h2)
 
-    // Append the pcard to the peoplecard container
-    peoplecard.appendChild(pcard);
-	
-});
+            // pcard.appendChild(h1);
+            // pcard.appendChild(h2);
+            pcard.appendChild(peopleInfo);
+
+            // Append the pcard to the peoplecard container
+            peoplecard.appendChild(pcard);
+
+            if (index == __self.length - 1) {
+                console.log("__self.length", index, __self.length - 1)
+                // 		 peoplecard.appendChild(actionBtn);
+                peoplecard.innerHTML += actionBtn
+            }
+
+
+
+        });
 
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -274,6 +287,8 @@ peopleData.forEach(person => {
                 }
             });
         });
+
+
 
     </script>
 

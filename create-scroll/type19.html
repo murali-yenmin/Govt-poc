@@ -41,7 +41,7 @@
             background: url("/wp-content/uploads/2024/11/relactioship.png") no-repeat center / cover;
         }
 
-        .panels-wrapper .panels-wrapper {
+        .panels-wrapper {
             position: relative;
         }
 
@@ -79,9 +79,6 @@
             background: #FFF5DC;
             height: calc(100% - 190px);
             width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             display: flex;
             align-items: end;
             justify-content: center;
@@ -175,12 +172,12 @@
                 height: 70px;
                 position: unset;
                 cursor: default;
+                border-bottom: 1px solid #000;
             }
 
             .panels-wrapper .panel {
                 height: 0;
                 overflow: hidden;
-                transition: 0.5 ease-in-out;
             }
 
             .panels-wrapper .expand-container .panel.opened {
@@ -209,7 +206,6 @@
                 line-height: 40px !important;
                 color: white;
             }
-
         }
     </style>
 </head>
@@ -261,7 +257,7 @@
                     content creation & production
                 </p>
             </div>
-            <div id="panel-1" class="panel opened">
+            <div id="panel-1" class="panel">
                 <p class="panel-content">
                     Cross-channel integrated campaign conceptualisation & content development
                     <br></br>
@@ -272,7 +268,7 @@
                     content creation & production
                 </p>
             </div>
-            <div id="panel-2" class="panel opened">
+            <div id="panel-2" class="panel">
                 <p class="panel-content">
                     Cross-channel integrated campaign conceptualisation & content development
                     <br></br>
@@ -293,228 +289,277 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollToPlugin.min.js"></script>
 
     <script>
+        const screenHeight = window.innerHeight;
+        const panelHeadingWidth = screenHeight < 800 ? 120 : 157;
+        const panelWrapper = document.querySelector(".panels-wrapper");
 
-        if (window.innerWidth > 1024) {
+        function loadScript() {
+            if (window.innerWidth > 1024) {
+                gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-            gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+                let sections = gsap.utils.toArray(".panel");
+                let panelHeadings = gsap.utils.toArray(".panel-heading");
+                const scrollContainer = document.querySelector('.scroll-text-container');
+                const scrollText = document.querySelector('.scroll-text');
+                const lineLeft = document.getElementById("line-left");
+                const lineRight = document.getElementById("line-right");
+                const expandContainer = document.querySelector(".expand-container");
+                const panelHeadingContainer = document.querySelector('.panel-heading-container');
 
-            let sections = gsap.utils.toArray(".panel");
-            let panelHeadings = gsap.utils.toArray(".panel-heading");
-            const scrollContainer = document.querySelector('.scroll-text-container');
-            const scrollText = document.querySelector('.scroll-text');
-            const lineLeft = document.getElementById("line-left");
-            const lineRight = document.getElementById("line-right");
-            const panelWrapper = document.querySelector(".panels-wrapper");
-            const expandContainer = document.querySelector(".expand-container");
+                if (!panelHeadingContainer) {
+                    const panelHeadingContainer = document.createElement('div');
+                    panelHeadingContainer.classList.add('panel-heading-container');
 
-            let isDragging = false;
-            let startX;
-            let startLeftWidth;
-            let animationFrameId;
-            const screenHeight = window.innerHeight;
-            const panelHeadingWidth = screenHeight < 800 ? 120 : 157;
-            const panelTitleBorderLeft = "1px solid black";
+                    const headings = document.querySelectorAll('.panel-heading');
 
-            expandContainer.style.width = `${sections.length * 100}%`;
+                    headings.forEach(heading => {
+                        panelHeadingContainer.appendChild(heading);
+                    });
 
-            gsap.to(sections, {
-                xPercent: -100 * (sections.length - 1),
-                ease: "none",
-                scrollTrigger: {
-                    trigger: ".expand-container",
-                    pin: true,
-                    scrub: 1,
-                    end: () => "+=" + document.querySelector(".expand-container").offsetWidth,
-                },
-            });
+                    const expandContainer = document.querySelector('.expand-container');
+                    expandContainer.appendChild(panelHeadingContainer);
+                }
 
-            sections.forEach((panel, index) => {
-                const observer = new MutationObserver(() => {
-                    updatePanelHeading();
+                let isDragging = false;
+                let startX;
+                let startLeftWidth;
+                let animationFrameId;
+                const panelTitleBorderLeft = "1px solid black";
+
+                expandContainer.style.width = `${sections.length * 100}%`;
+
+                gsap.to(sections, {
+                    xPercent: -100 * (sections.length - 1),
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: ".expand-container",
+                        pin: true,
+                        scrub: 1,
+                        end: () => "+=" + document.querySelector(".expand-container").offsetWidth,
+                    },
                 });
 
-                observer.observe(panel, {
-                    attributes: true,
-                    attributeFilter: ["style"],
-                });
-
-                const panelContent = panel.querySelector('.panel-content');
-                const marginRight = panelHeadingWidth * (panelHeadings.length - (index + 1));
-
-                panelContent.style.marginRight = `${marginRight + 78}px`;
-            });
-
-            function updatePanelHeading() {
                 sections.forEach((panel, index) => {
-                    const panelRect = panel.getBoundingClientRect();
-                    const panelHeading = panelHeadings[index];
+                    const observer = new MutationObserver(() => {
+                        updatePanelHeading();
+                    });
 
-                    panelHeading.style.width = `${panelHeadingWidth}px`;
+                    observer.observe(panel, {
+                        attributes: true,
+                        attributeFilter: ["style"],
+                    });
 
-                    // panel heading postion changed
-                    let minLeft = index * panelHeadingWidth,
-                        maxLeft = (sections.length - index) * panelHeadingWidth;
-                    if (index !== 0) {
-                        if (panelRect.width - panelRect.left < maxLeft) {
-                            panelHeading.style.left = `${panelRect.width - maxLeft}px`;
-                            panelHeading.classList.add('right-aligned');
-                        } else if (panelRect.left < panelRect.width) {
-                            if (panelRect.left < minLeft) {
-                                panelHeading.style.left = `${minLeft}px`;
-                                panelHeading.classList.add('left-aligned');
-                            } else {
-                                panelHeading.style.left = `${panelRect.left}px`;
-                                panelHeading.classList.remove('left-aligned');
-                                panelHeading.classList.remove('right-aligned');
-                                panelHeading.querySelector('.title').style.borderLeft = '0px'
+                    const panelContent = panel.querySelector('.panel-content');
+                    const marginRight = panelHeadingWidth * (panelHeadings.length - (index + 1));
+
+                    panelContent.style.marginRight = `${marginRight + 78}px`;
+                });
+
+                function updatePanelHeading() {
+                    sections.forEach((panel, index) => {
+                        const panelRect = panel.getBoundingClientRect();
+                        const panelHeading = panelHeadings[index];
+
+                        panelHeading.style.width = `${panelHeadingWidth}px`;
+
+                        // panel heading postion changed
+                        let minLeft = index * panelHeadingWidth,
+                            maxLeft = (sections.length - index) * panelHeadingWidth;
+                        if (index !== 0) {
+                            if (panelRect.width - panelRect.left < maxLeft) {
+                                panelHeading.style.left = `${panelRect.width - maxLeft}px`;
+                                panelHeading.classList.add('right-aligned');
+                            } else if (panelRect.left < panelRect.width) {
+                                if (panelRect.left < minLeft) {
+                                    panelHeading.style.left = `${minLeft}px`;
+                                    panelHeading.classList.add('left-aligned');
+                                } else {
+                                    panelHeading.style.left = `${panelRect.left}px`;
+                                    panelHeading.classList.remove('left-aligned');
+                                    panelHeading.classList.remove('right-aligned');
+                                    panelHeading.querySelector('.title').style.borderLeft = '0px'
+                                }
                             }
                         }
+
+                        const leftAligned = document.querySelectorAll('.left-aligned');
+                        const rightAligned = document.querySelectorAll('.right-aligned');
+
+                        Array.from(leftAligned).forEach((leftPanel, leftIndex) => {
+                            if (leftIndex > 0) {
+                                leftPanel.querySelector('.title').style.borderLeft = panelTitleBorderLeft;
+                            } else {
+                                leftPanel.querySelector('.title').style.borderLeft = "0px";
+                            }
+                        });
+
+                        Array.from(rightAligned).forEach((rightPanel, rightIndex) => {
+                            if (rightIndex > 0) {
+                                rightPanel.querySelector('.title').style.borderLeft = panelTitleBorderLeft;
+                            } else {
+                                rightPanel.querySelector('.title').style.borderLeft = "0px";
+                            }
+                        });
+                    });
+                    calculateScrollPercentage();
+                }
+
+                function moveScrollText(percentage) {
+                    const rightValue = 100 - percentage;
+
+                    lineLeft.style.width = `${percentage}%`;
+                    lineRight.style.width = `${rightValue}%`;
+                }
+
+                function viewPanel(panelIndex, event) {
+                    const scrollStart = panelWrapper.offsetTop;
+                    const scrollEnd = panelWrapper.scrollHeight;
+                    const diff = (scrollEnd - scrollStart) / (sections.length - 1);
+
+                    window.scrollTo({
+                        top: scrollStart + panelIndex * diff,
+                    });
+                }
+
+                function calculateScrollPercentage() {
+                    const scrollStart = panelWrapper.offsetTop;
+                    const scrollEnd = panelWrapper.scrollHeight;
+
+                    if (window.scrollY < scrollStart) return 0;
+                    if (window.scrollY > scrollEnd) return 100;
+
+                    const percentage =
+                        ((window.scrollY - scrollStart) / (scrollEnd - scrollStart)) * 100;
+                    moveScrollText(percentage);
+                }
+
+                const panelsHeading = document.querySelectorAll(".panel-heading");
+                panelsHeading.forEach((panel, index) => {
+                    panel.addEventListener("click", function (event) {
+                        viewPanel(index, event);
+                    });
+                });
+
+                // Start dragging
+                scrollText.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startX = e.clientX;
+                    startLeftWidth = lineLeft.clientWidth;
+                    scrollText.style.cursor = 'grabbing';
+                });
+
+                // Update the line widths using requestAnimationFrame
+                const updateLines = (e) => {
+                    const total = panelWrapper.scrollHeight;
+                    const minScroll = panelWrapper.offsetTop;
+
+                    const containerWidth = scrollContainer.clientWidth;
+                    const percentage = (e.clientX / containerWidth) * 100;
+
+                    const result = (percentage / 100) * total;
+
+                    if (result > total) {
+                        window.scrollTo({
+                            top: total
+                        });
+                    } else if (result < minScroll) {
+                        window.scrollTo({
+                            top: minScroll
+                        });
+                    } else {
+                        window.scrollTo({
+                            top: result
+                        });
                     }
+                    lineLeft.style.width = `${percentage}%`;
+                    lineRight.style.width = `${100 - percentage}%`;
+                };
 
-                    const leftAligned = document.querySelectorAll('.left-aligned');
-                    const rightAligned = document.querySelectorAll('.right-aligned');
+                // Dragging
+                const handleMouseMove = (e) => {
+                    if (isDragging) {
+                        // Cancel any previous frame to prevent multiple updates in the same frame
+                        if (animationFrameId) {
+                            cancelAnimationFrame(animationFrameId);
+                        }
 
-                    Array.from(leftAligned).forEach((leftPanel, leftIndex) => {
-                        if (leftIndex > 0) {
-                            leftPanel.querySelector('.title').style.borderLeft = panelTitleBorderLeft;
-                        } else {
-                            leftPanel.querySelector('.title').style.borderLeft = "0px";
+                        // Request animation frame for smoother update
+                        animationFrameId = requestAnimationFrame(() => updateLines(e));
+                    }
+                };
+
+                // Attach the mousemove event
+                document.addEventListener('mousemove', handleMouseMove);
+
+                // Stop dragging
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        scrollText.style.cursor = 'grab';
+                        if (animationFrameId) {
+                            cancelAnimationFrame(animationFrameId);
+                        }
+                    }
+                });
+            } else {
+                gsap.utils.toArray(".panel").forEach((panel) => {
+                    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+                });
+
+                // Select the original panel headings container
+                const panelHeadingContainer = document.querySelector('.panel-heading-container');
+
+                if (panelHeadingContainer) {
+                    // Select all panel headings
+                    const panelHeadings = Array.from(panelHeadingContainer.querySelectorAll('.panel-heading'));
+
+                    // Select all panel sections
+                    const panelSections = document.querySelectorAll('.panel');
+
+                    // Parent container to insert the headings and sections in sequence
+                    const expandContainer = document.querySelector('.expand-container');
+
+                    // Remove the original panel heading container
+                    panelHeadingContainer.remove();
+
+                    // Iterate through each panel and insert the heading followed by its section
+                    panelSections.forEach((panel, index) => {
+                        if (panelHeadings[index]) {
+                            expandContainer.insertBefore(panelHeadings[index], panel);
                         }
                     });
 
-                    Array.from(rightAligned).forEach((rightPanel, rightIndex) => {
-                        if (rightIndex > 0) {
-                            rightPanel.querySelector('.title').style.borderLeft = panelTitleBorderLeft;
-                        } else {
-                            rightPanel.querySelector('.title').style.borderLeft = "0px";
-                        }
-                    });
-                });
-                calculateScrollPercentage();
-            }
-
-            function moveScrollText(percentage) {
-                const rightValue = 100 - percentage;
-
-                lineLeft.style.width = `${percentage}%`;
-                lineRight.style.width = `${rightValue}%`;
-            }
-
-            function viewPanel(panelIndex, event) {
-                const scrollStart = panelWrapper.offsetTop;
-                const scrollEnd = panelWrapper.scrollHeight;
-                const diff = (scrollEnd - scrollStart) / (sections.length - 1);
-
-                window.scrollTo({
-                    top: scrollStart + panelIndex * diff,
-                });
-            }
-
-            function calculateScrollPercentage() {
-                const scrollStart = panelWrapper.offsetTop;
-                const scrollEnd = panelWrapper.scrollHeight;
-
-                if (window.scrollY < scrollStart) return 0;
-                if (window.scrollY > scrollEnd) return 100;
-
-                const percentage =
-                    ((window.scrollY - scrollStart) / (scrollEnd - scrollStart)) * 100;
-                moveScrollText(percentage);
-            }
-
-            const panelsHeading = document.querySelectorAll(".panel-heading");
-            panelsHeading.forEach((panel, index) => {
-                panel.addEventListener("click", function (event) {
-                    viewPanel(index, event);
-                });
-            });
-
-            // Start dragging
-            scrollText.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                startX = e.clientX;
-                startLeftWidth = lineLeft.clientWidth;
-                scrollText.style.cursor = 'grabbing';
-            });
-
-            // Update the line widths using requestAnimationFrame
-            const updateLines = (e) => {
-                const total = panelWrapper.scrollHeight;
-                const minScroll = panelWrapper.offsetTop;
-
-                const containerWidth = scrollContainer.clientWidth;
-                const percentage = (e.clientX / containerWidth) * 100;
-
-                const result = (percentage / 100) * total;
-
-                if (result > total) {
-                    window.scrollTo({
-                        top: total
-                    });
-                } else if (result < minScroll) {
-                    window.scrollTo({
-                        top: minScroll
-                    });
-                } else {
-                    window.scrollTo({
-                        top: result
+                    panelHeadings.forEach((panelHeading, index) => {                        
+                        panelHeading.addEventListener('click', () => {
+                            panelSections.forEach((panel, panelIndex) => {
+                                if (index === panelIndex) {
+                                    panel.classList.add('opened');
+                                    const scrollToValue = panelWrapper.offsetTop + ((panelIndex + 1) * panelHeading.getBoundingClientRect().height);
+                                    window.scrollTo({
+                                        top: scrollToValue - panelHeading.getBoundingClientRect().height,
+                                        behavior: 'smooth'
+                                    })
+                                } else {
+                                    panel.classList.remove('opened');
+                                }
+                            });
+                        })
                     });
                 }
-                lineLeft.style.width = `${percentage}%`;
-                lineRight.style.width = `${100 - percentage}%`;
-            };
-
-            // Dragging
-            const handleMouseMove = (e) => {
-                if (isDragging) {
-                    // Cancel any previous frame to prevent multiple updates in the same frame
-                    if (animationFrameId) {
-                        cancelAnimationFrame(animationFrameId);
-                    }
-
-                    // Request animation frame for smoother update
-                    animationFrameId = requestAnimationFrame(() => updateLines(e));
-                }
-            };
-
-            // Attach the mousemove event
-            document.addEventListener('mousemove', handleMouseMove);
-
-            // Stop dragging
-            document.addEventListener('mouseup', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    scrollText.style.cursor = 'grab';
-                    if (animationFrameId) {
-                        cancelAnimationFrame(animationFrameId);
-                    }
-                }
-            });
-        } else {
-            document.querySelector('.scroll-text-container').remove();
-
-            // Select the original panel headings container
-            const panelHeadingContainer = document.querySelector('.panel-heading-container');
-
-            // Select all panel headings
-            const panelHeadings = Array.from(panelHeadingContainer.querySelectorAll('.panel-heading'));
-
-            // Select all panel sections
-            const panelSections = document.querySelectorAll('.panel');
-
-            // Parent container to insert the headings and sections in sequence
-            const expandContainer = document.querySelector('.expand-container');
-
-            // Remove the original panel heading container
-            panelHeadingContainer.remove();
-
-            // Iterate through each panel and insert the heading followed by its section
-            panelSections.forEach((panel, index) => {
-                if (panelHeadings[index]) {
-                    expandContainer.insertBefore(panelHeadings[index], panel);
-                }
-            });
+            }
         }
+
+        loadScript();
+
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        window.addEventListener('resize', debounce(loadScript, 500));
     </script>
 </body>
 

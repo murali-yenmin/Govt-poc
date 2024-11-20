@@ -4,20 +4,878 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="./styles.css">
+    <title>Dynamic Flexbox Layout with Load More</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .flex-container {
+            display: flex;
+        }
+
+        .column {
+            padding: 0px 26px;
+        }
+
+        .column-1 {
+            width: 48%;
+            /* border-right: 3px solid black; */
+        }
+
+        .column-2 {
+            width: 26%;
+            /* border-right: 3px solid black; */
+        }
+
+        .column-3 {
+            width: 26%;
+            /* border-right: 3px solid black; */
+        }
+
+        .flex-container .column:nth-child(2) {
+            border-left: 1px solid black;
+        }
+
+        .flex-container .column:nth-child(3) {
+            border-left: 1px solid black;
+        }
+
+        .image-handler img {
+            width: 100%;
+            transition: transform 0.3s ease;
+
+        }
+
+        .image-handler img:hover {
+            transform: scale(1.1);
+
+        }
+
+        .card {
+            border-bottom: 1px solid black;
+            padding: 20px 0px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .newsp {
+            border-right: 2px solid black;
+        }
+
+        .image-handler {
+            overflow: hidden;
+            text-align: center;
+            padding-bottom: 40px;
+            width: 95%;
+            margin: 0 auto;
+        }
+
+        .tag-date {
+            margin: 20px 0px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .tag-date h4 {
+            text-transform: uppercase;
+        }
+
+        .card h1 {
+            font-size: 30px;
+            font-weight: 700;
+            line-height: 31.8px;
+            text-align: center;
+        }
+
+        .card h4 {
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 19.08px;
+            text-align: center;
+            opacity: 0.5;
+
+        }
+
+        .load-more {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .load-more:hover {
+            background-color: #0056b3;
+        }
+
+        .head {
+            height: 200px;
+            width: 100%;
+            background-color: #0056b3;
+        }
+
+        @media screen and (max-width: 1025px) {
+            .column-1 {
+                width: 50%;
+            }
+
+            .column-2 {
+                width: 50%;
+            }
+
+        }
+
+        @media screen and (max-width: 576px) {
+            .column-1 {
+                width: 100%;
+                /* border-right: 3px solid black; */
+            }
+
+            .flex-container {
+                display: block;
+            }
+            .column{
+                padding: 0;
+            }
+        }
+
+        @media screen and (max-width: 426px) {
+            .column-1 {
+                width: 100%;
+                /* border-right: 3px solid black; */
+            }
+
+            .flex-container {
+                display: block;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div class="newspost" id="newspost">
+    <div class="head"></div>
+    <div id="parent"></div>
+    <button class="load-more" id="newsLoadMoreBtn">Load More</button>
+    <div class="head"></div>
 
-       
-    </div>
-    <div class="loadmore">
-        <button id="loadMore">Load More</button>
-    </div>
+    <script>
+        const newsData = [
+            {
+                src: "./Mask group.png",
+                title: "Israel Expands Military Operations Amid Conflict Escalation",
+                tag: "News",
+                date: "12/10/2024",
+            },
+            {
+                src: "./Mask group (1).png",
+                title: "US Inflation Shows Signs of Easing in Latest Report",
+                tag: "Economy",
+                date: "12/09/2024",
+            },
+            {
+                src: "./Mask group (2).png",
+                title: "Amazon Announces Major Layoffs in Response to Market Conditions",
+                tag: "Tech",
+                date: "12/08/2024",
+            },
+            {
+                src: "./Mask group (3).png",
+                title: "UN Calls for Immediate Ceasefire in Sudan as Crisis Worsens",
+                tag: "World",
+                date: "12/07/2024",
+            },
+            {
+                src: "./Mask group (4).png",
+                title: "Meta's New AI Toolset Promises Major Advances for Developers",
+                tag: "Tech",
+                date: "12/06/2024",
+            },
+            {
+                src: "./Mask group (5).png",
+                title: "Elon Musk Unveils New Twitter Features Amid Criticism",
+                tag: "Tech",
+                date: "12/05/2024",
+            },
+            {
+                src: "./Mask group (6).png",
+                title: "Global Climate Summit Kicks Off with Key Initiatives",
+                tag: "Environment",
+                date: "12/04/2024",
+            },
+            {
+                src: "./Mask group (7).png",
+                title: "China Launches New Lunar Probe to Collect Moon Samples",
+                tag: "Science",
+                date: "12/03/2024",
+            },
+            {
+                src: "./Mask group (8).png",
+                title: "Ukraine Seeks More International Aid Following Recent Attacks",
+                tag: "Politics",
+                date: "12/02/2024",
+            },
+            {
+                src: "./Mask group.png",
+                title: "Israel Expands Military Operations Amid Conflict Escalation",
+                tag: "News",
+                date: "12/10/2024",
+            },
+            {
+                src: "./Mask group (1).png",
+                title: "US Inflation Shows Signs of Easing in Latest Report",
+                tag: "Economy",
+                date: "12/09/2024",
+            },
+            {
+                src: "./Mask group (2).png",
+                title: "Amazon Announces Major Layoffs in Response to Market Conditions",
+                tag: "Tech",
+                date: "12/08/2024",
+            },
+            {
+                src: "./Mask group (3).png",
+                title: "UN Calls for Immediate Ceasefire in Sudan as Crisis Worsens",
+                tag: "World",
+                date: "12/07/2024",
+            },
+            {
+                src: "./Mask group (4).png",
+                title: "Meta's New AI Toolset Promises Major Advances for Developers",
+                tag: "Tech",
+                date: "12/06/2024",
+            },
+            {
+                src: "./Mask group (5).png",
+                title: "Elon Musk Unveils New Twitter Features Amid Criticism",
+                tag: "Tech",
+                date: "12/05/2024",
+            },
+            {
+                src: "./Mask group (6).png",
+                title: "Global Climate Summit Kicks Off with Key Initiatives",
+                tag: "Environment",
+                date: "12/04/2024",
+            },
+            {
+                src: "./Mask group (7).png",
+                title: "China Launches New Lunar Probe to Collect Moon Samples",
+                tag: "Science",
+                date: "12/03/2024",
+            },
+            {
+                src: "./Mask group (8).png",
+                title: "Ukraine Seeks More International Aid Following Recent Attacks",
+                tag: "Politics",
+                date: "12/02/2024",
+            },
+            {
+                src: "./Mask group.png",
+                title: "Israel Expands Military Operations Amid Conflict Escalation",
+                tag: "News",
+                date: "12/10/2024",
+            },
+            {
+                src: "./Mask group (1).png",
+                title: "US Inflation Shows Signs of Easing in Latest Report",
+                tag: "Economy",
+                date: "12/09/2024",
+            },
+            {
+                src: "./Mask group (2).png",
+                title: "Amazon Announces Major Layoffs in Response to Market Conditions",
+                tag: "Tech",
+                date: "12/08/2024",
+            },
+            {
+                src: "./Mask group (3).png",
+                title: "UN Calls for Immediate Ceasefire in Sudan as Crisis Worsens",
+                tag: "World",
+                date: "12/07/2024",
+            },
+            {
+                src: "./Mask group (4).png",
+                title: "Meta's New AI Toolset Promises Major Advances for Developers",
+                tag: "Tech",
+                date: "12/06/2024",
+            },
+            {
+                src: "./Mask group (5).png",
+                title: "Elon Musk Unveils New Twitter Features Amid Criticism",
+                tag: "Tech",
+                date: "12/05/2024",
+            },
+            {
+                src: "./Mask group (6).png",
+                title: "Global Climate Summit Kicks Off with Key Initiatives",
+                tag: "Environment",
+                date: "12/04/2024",
+            },
+            {
+                src: "./Mask group (7).png",
+                title: "China Launches New Lunar Probe to Collect Moon Samples",
+                tag: "Science",
+                date: "12/03/2024",
+            },
+            {
+                src: "./Mask group (8).png",
+                title: "Ukraine Seeks More International Aid Following Recent Attacks",
+                tag: "Politics",
+                date: "12/02/2024",
+            },
+            {
+                src: "./Mask group.png",
+                title: "Israel Expands Military Operations Amid Conflict Escalation",
+                tag: "News",
+                date: "12/10/2024",
+            },
+            {
+                src: "./Mask group (1).png",
+                title: "US Inflation Shows Signs of Easing in Latest Report",
+                tag: "Economy",
+                date: "12/09/2024",
+            },
+            {
+                src: "./Mask group (2).png",
+                title: "Amazon Announces Major Layoffs in Response to Market Conditions",
+                tag: "Tech",
+                date: "12/08/2024",
+            },
+            {
+                src: "./Mask group (3).png",
+                title: "UN Calls for Immediate Ceasefire in Sudan as Crisis Worsens",
+                tag: "World",
+                date: "12/07/2024",
+            },
+            {
+                src: "./Mask group (4).png",
+                title: "Meta's New AI Toolset Promises Major Advances for Developers",
+                tag: "Tech",
+                date: "12/06/2024",
+            },
+            {
+                src: "./Mask group (5).png",
+                title: "Elon Musk Unveils New Twitter Features Amid Criticism",
+                tag: "Tech",
+                date: "12/05/2024",
+            },
+            {
+                src: "./Mask group (6).png",
+                title: "Global Climate Summit Kicks Off with Key Initiatives",
+                tag: "Environment",
+                date: "12/04/2024",
+            },
+            {
+                src: "./Mask group (7).png",
+                title: "China Launches New Lunar Probe to Collect Moon Samples",
+                tag: "Science",
+                date: "12/03/2024",
+            },
+            {
+                src: "./Mask group (8).png",
+                title: "Ukraine Seeks More International Aid Following Recent Attacks",
+                tag: "Politics",
+                date: "12/02/2024",
+            },
+            {
+                src: "./Mask group.png",
+                title: "Israel Expands Military Operations Amid Conflict Escalation",
+                tag: "News",
+                date: "12/10/2024",
+            },
+            {
+                src: "./Mask group (1).png",
+                title: "US Inflation Shows Signs of Easing in Latest Report",
+                tag: "Economy",
+                date: "12/09/2024",
+            },
+            {
+                src: "./Mask group (2).png",
+                title: "Amazon Announces Major Layoffs in Response to Market Conditions",
+                tag: "Tech",
+                date: "12/08/2024",
+            },
+            {
+                src: "./Mask group (3).png",
+                title: "UN Calls for Immediate Ceasefire in Sudan as Crisis Worsens",
+                tag: "World",
+                date: "12/07/2024",
+            },
+            {
+                src: "./Mask group (4).png",
+                title: "Meta's New AI Toolset Promises Major Advances for Developers",
+                tag: "Tech",
+                date: "12/06/2024",
+            },
+            {
+                src: "./Mask group (5).png",
+                title: "Elon Musk Unveils New Twitter Features Amid Criticism",
+                tag: "Tech",
+                date: "12/05/2024",
+            },
+            {
+                src: "./Mask group (6).png",
+                title: "Global Climate Summit Kicks Off with Key Initiatives",
+                tag: "Environment",
+                date: "12/04/2024",
+            },
+            {
+                src: "./Mask group (7).png",
+                title: "China Launches New Lunar Probe to Collect Moon Samples",
+                tag: "Science",
+                date: "12/03/2024",
+            },
+            {
+                src: "./Mask group (8).png",
+                title: "Ukraine Seeks More International Aid Following Recent Attacks",
+                tag: "Politics",
+                date: "12/02/2024",
+            },
+            {
+                src: "./Mask group.png",
+                title: "Israel Expands Military Operations Amid Conflict Escalation",
+                tag: "News",
+                date: "12/10/2024",
+            },
+            {
+                src: "./Mask group (1).png",
+                title: "US Inflation Shows Signs of Easing in Latest Report",
+                tag: "Economy",
+                date: "12/09/2024",
+            },
+            {
+                src: "./Mask group (2).png",
+                title: "Amazon Announces Major Layoffs in Response to Market Conditions",
+                tag: "Tech",
+                date: "12/08/2024",
+            },
+            {
+                src: "./Mask group (3).png",
+                title: "UN Calls for Immediate Ceasefire in Sudan as Crisis Worsens",
+                tag: "World",
+                date: "12/07/2024",
+            },
+            {
+                src: "./Mask group (4).png",
+                title: "Meta's New AI Toolset Promises Major Advances for Developers",
+                tag: "Tech",
+                date: "12/06/2024",
+            },
+            {
+                src: "./Mask group (5).png",
+                title: "Elon Musk Unveils New Twitter Features Amid Criticism",
+                tag: "Tech",
+                date: "12/05/2024",
+            },
+            {
+                src: "./Mask group (6).png",
+                title: "Global Climate Summit Kicks Off with Key Initiatives",
+                tag: "Environment",
+                date: "12/04/2024",
+            },
+            {
+                src: "./Mask group (7).png",
+                title: "China Launches New Lunar Probe to Collect Moon Samples",
+                tag: "Science",
+                date: "12/03/2024",
+            },
+            {
+                src: "./Mask group (8).png",
+                title: "Ukraine Seeks More International Aid Following Recent Attacks",
+                tag: "Politics",
+                date: "12/02/2024",
+            },
 
-    <script src="./script.js"></script>
+        ];
+        const totalCards = newsData.length;
+        console.log(window.innerWidth <= 1024);
+
+        if (window.innerWidth <= 576) {
+            const totalCards = newsData.length;
+            let loadedCards = 0;
+            const cardsPerLoad = 3; // Load 3 cards at a time
+            const newsLoadMoreBtn = document.getElementById('newsLoadMoreBtn');
+
+            function createCards(start, end) {
+                const parent = document.getElementById('parent');
+
+                // Determine the section number based on how many cards have been loaded
+                const sectionNumber = Math.floor(loadedCards / cardsPerLoad) + 1;
+                const sectionClassName = `sec${sectionNumber}`;
+                console.log(sectionNumber);
+
+                // Check if the section already exists to avoid duplicate section creation
+                if (document.querySelector(`.flex-container.${sectionClassName}`)) {
+                    return; // Prevent creating a section if it already exists
+                }
+
+                const flexContainer = document.createElement('div');
+                flexContainer.className = `flex-container ${sectionClassName}`; // Add section class
+
+                // Create only one column
+                const column = document.createElement('div');
+                column.className = 'column column-1'; // Only one column
+
+                // Loop to create the cards
+                for (let i = start; i < end; i++) {
+                    if (i >= totalCards) break;
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+
+                    // Assign width to all cards in the column
+                    card.classList.add('w-48'); // All cards in this single column will have the same width
+
+                    const title = document.createElement('h1');
+                    title.textContent = newsData[i].title;
+
+                    const date = document.createElement('h4');
+                    date.textContent = newsData[i].date;
+
+                    const imageHandler = document.createElement('div');
+                    imageHandler.className = 'image-handler';
+
+                    const img = document.createElement('img');
+                    img.src = newsData[i].src;
+                    imageHandler.appendChild(img);
+                    card.appendChild(imageHandler);
+
+                    card.appendChild(title);
+                    card.appendChild(date);
+
+                    column.appendChild(card);
+                }
+
+                flexContainer.appendChild(column);
+                parent.appendChild(flexContainer);
+            }
+
+            createCards(0, cardsPerLoad); // Create the first set of cards
+            newsLoadMoreBtn.addEventListener('click', function () {
+                loadedCards += cardsPerLoad;
+
+                if (loadedCards < totalCards) {
+                    createCards(loadedCards, Math.min(loadedCards + cardsPerLoad, totalCards));
+                }
+                if (loadedCards + cardsPerLoad >= totalCards) {
+                    newsLoadMoreBtn.style.display = 'none'; 
+                }
+            });
+        }
+        else if (window.innerWidth <= 1024) {
+            const totalCards = newsData.length;
+            let loadedCards = 0;
+            const cardsPerLoad = 6; // Load 6 cards at a time
+            const newsLoadMoreBtn = document.getElementById('newsLoadMoreBtn');
+
+            function createCards(start, end) {
+                const parent = document.getElementById('parent');
+
+                // Determine the section name (sec1, sec2, etc.)
+                const sectionNumber = Math.floor(loadedCards / cardsPerLoad) + 1;
+                const sectionClassName = `sec${sectionNumber}`;
+
+                const flexContainer = document.createElement('div');
+                flexContainer.className = `flex-container ${sectionClassName}`; // Add section class
+
+                const columnPatterns = [
+                    ['column-1', 'column-2'],
+                    ['column-2', 'column-1'],
+                ];
+
+                const pattern = columnPatterns[Math.floor(loadedCards / cardsPerLoad) % 2];
+
+                for (let i = 0; i < 2; i++) {
+                    const column = document.createElement('div');
+                    column.className = `column ${pattern[i]}`;
+
+                    for (let j = start + i * Math.ceil((end - start) / 2); j < start + (i + 1) * Math.ceil((end - start) / 2); j++) {
+                        if (j >= end) break;
+
+                        const card = document.createElement('div');
+                        card.className = 'card';
+
+                        // Assign width based on column
+                        if (pattern[i] === 'column-1') {
+                            card.classList.add('w-48');
+                        } else {
+                            card.classList.add('w-26');
+                        }
+
+                        const title = document.createElement('h1');
+                        title.textContent = newsData[j].title;
+
+                        const date = document.createElement('h4');
+                        date.textContent = newsData[j].date;
+
+                        const imageHandler = document.createElement('div');
+                        imageHandler.className = 'image-handler';
+
+                        const img = document.createElement('img');
+                        img.src = newsData[j].src;
+                        imageHandler.appendChild(img);
+                        card.appendChild(imageHandler);
+
+                        card.appendChild(title);
+                        card.appendChild(date);
+
+                        column.appendChild(card);
+                    }
+
+                    flexContainer.appendChild(column);
+                }
+
+                parent.appendChild(flexContainer);
+            }
+
+            createCards(0, cardsPerLoad);
+            newsLoadMoreBtn.addEventListener('click', function () {
+                loadedCards += cardsPerLoad;
+
+                if (loadedCards < totalCards) {
+                    createCards(loadedCards, Math.min(loadedCards + cardsPerLoad, totalCards));
+                }
+                if (loadedCards + cardsPerLoad >= totalCards) {
+                    newsLoadMoreBtn.style.display = 'none'; 
+                }
+            });
+
+
+            // Scroll animation effect
+            function handleScroll() {
+                const sections = document.querySelectorAll('.flex-container'); // Sections like sec1, sec2, etc.
+                const scrollPosition = window.scrollY;
+                if (scrollPosition === 0) {
+                    const cards = document.querySelectorAll('.card');
+                    cards.forEach(card => {
+                        card.style.transform = 'translateY(0px)';
+                    });
+                }
+                sections.forEach((section) => {
+                    const { top: sectionTop, height: sectionHeight } = getSectionInfo(section);
+
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        const cardsCol1 = section.querySelectorAll('.column-1 .card');
+                        const cardsCol2 = section.querySelectorAll('.column-2 .card');
+
+                        const totalHeightForCardsCol1 = Array.from(cardsCol1).reduce(
+                            (total, card) => total + card.offsetHeight,
+                            0
+                        );
+                        const totalHeightForCardsCol2 = Array.from(cardsCol2).reduce(
+                            (total, card) => total + card.offsetHeight,
+                            0
+                        );
+
+                        const relativeScrollPosition = scrollPosition - sectionTop;
+
+                        const columns = [
+                            { cards: cardsCol1, totalHeight: totalHeightForCardsCol1, slowdownFactor: 0.5 },
+                            { cards: cardsCol2, totalHeight: totalHeightForCardsCol2, slowdownFactor: 0.5 },
+                        ];
+
+                        columns.forEach(({ cards, totalHeight, slowdownFactor }) => {
+                            const adjustedSlowdown = sectionHeight / totalHeight;
+
+                            const columnScrollEffect =
+                                (relativeScrollPosition / sectionHeight) * sectionHeight * slowdownFactor * adjustedSlowdown;
+
+                            cards.forEach((card) => {
+                                let scrollEffect = Math.min(columnScrollEffect, sectionHeight - totalHeight);
+                                if (scrollEffect < 0) scrollEffect = 0;
+
+                                card.style.transform = `translateY(${scrollEffect}px)`;
+                            });
+                        });
+                    }
+                });
+            }
+
+            function getSectionInfo(section) {
+                const rect = section.getBoundingClientRect();
+                return {
+                    top: rect.top + window.scrollY,
+                    height: rect.height,
+                };
+            }
+
+            // Attach the scroll listener
+            window.addEventListener('scroll', handleScroll);
+        }
+        else {
+            let loadedCards = 0;
+            const cardsPerLoad = 9;
+            const newsLoadMoreBtn = document.getElementById('newsLoadMoreBtn');
+
+            function createCards(start, end) {
+                const parent = document.getElementById('parent');
+
+                // Determine the section name (sec1, sec2, etc.)
+                const sectionNumber = Math.floor(loadedCards / cardsPerLoad) + 1;
+                const sectionClassName = `sec${sectionNumber}`;
+
+                const flexContainer = document.createElement('div');
+                flexContainer.className = `flex-container ${sectionClassName}`;  // Add section class
+
+                const columnPatterns = [
+                    ['column-1', 'column-2', 'column-3'],
+                    ['column-2', 'column-1', 'column-3'],
+                    ['column-3', 'column-2', 'column-1'],
+                    ['column-2', 'column-1', 'column-3'],
+                ];
+
+                const pattern = columnPatterns[Math.floor(loadedCards / cardsPerLoad) % 4];
+
+                for (let i = 0; i < 3; i++) {
+                    const column = document.createElement('div');
+                    column.className = `column ${pattern[i]}`;
+
+                    for (let j = start + i * Math.ceil((end - start) / 3); j < start + (i + 1) * Math.ceil((end - start) / 3); j++) {
+                        if (j >= end) break;
+
+                        const card = document.createElement('div');
+                        card.className = 'card';
+
+                        if (pattern[i] === 'column-1') {
+                            card.classList.add('w-48');
+                        } else {
+                            card.classList.add('w-26');
+                        }
+
+                        const title = document.createElement('h1');
+                        title.textContent = newsData[j].title;
+
+                        // const tagDate = document.createElement('div');
+                        // tagDate.className = 'tag-date';
+
+                        // const tag = document.createElement('h4');
+                        // tag.textContent = newsData[j].tag;
+                        // tagDate.appendChild(tag);
+
+                        const date = document.createElement('h4');
+                        date.textContent = newsData[j].date;
+                        // tagDate.appendChild(date);
+
+                        const imageHandler = document.createElement('div');
+                        imageHandler.className = 'image-handler';
+
+                        const img = document.createElement('img');
+                        img.src = newsData[j].src;
+                        imageHandler.appendChild(img);
+                        card.appendChild(imageHandler);
+
+                        card.appendChild(title);
+                        card.appendChild(date);
+
+                        column.appendChild(card);
+                    }
+
+                    flexContainer.appendChild(column);
+                }
+
+                parent.appendChild(flexContainer);
+            }
+
+            createCards(0, cardsPerLoad);
+
+            newsLoadMoreBtn.addEventListener('click', function () {
+                loadedCards += cardsPerLoad;
+
+                if (loadedCards < totalCards) {
+                    createCards(loadedCards, Math.min(loadedCards + cardsPerLoad, totalCards));
+                }
+                if (loadedCards + cardsPerLoad >= totalCards) {
+                    newsLoadMoreBtn.style.display = 'none'; // Hide the button initially if no more cards are left to load
+                }
+            });
+
+            // Scroll animation effect
+            // Utility to get section offset and height
+            function handleScroll() {
+                const sections = document.querySelectorAll('.flex-container'); // Sections like sec1, sec2, etc.
+                const scrollPosition = window.scrollY;
+                if (scrollPosition === 0) {
+                    const cards = document.querySelectorAll('.card');
+                    cards.forEach(card => {
+                        card.style.transform = 'translateY(0px)';
+                    });
+                }
+                sections.forEach((section) => {
+                    const { top: sectionTop, height: sectionHeight } = getSectionInfo(section);
+
+                    // Check if the section is in the viewport
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        const cardsCol1 = section.querySelectorAll('.column-1 .card');
+                        const cardsCol2 = section.querySelectorAll('.column-2 .card');
+                        const cardsCol3 = section.querySelectorAll('.column-3 .card');
+
+                        const totalHeightForCardsCol1 = Array.from(cardsCol1).reduce(
+                            (total, card) => total + card.offsetHeight,
+                            0
+                        );
+                        const totalHeightForCardsCol2 = Array.from(cardsCol2).reduce(
+                            (total, card) => total + card.offsetHeight,
+                            0
+                        );
+                        const totalHeightForCardsCol3 = Array.from(cardsCol3).reduce(
+                            (total, card) => total + card.offsetHeight,
+                            0
+                        );
+
+                        const relativeScrollPosition = scrollPosition - sectionTop;
+
+                        const columns = [
+                            { cards: cardsCol2, totalHeight: totalHeightForCardsCol2, slowdownFactor: 0.5 },
+                            { cards: cardsCol3, totalHeight: totalHeightForCardsCol3, slowdownFactor: 0.3 }, // Slower scroll for col3
+                        ];
+
+                        columns.forEach(({ cards, totalHeight, slowdownFactor }) => {
+                            // Adjust the slowdown factor to ensure the last card reaches the bottom
+                            const adjustedSlowdown = sectionHeight / totalHeight;
+
+                            const columnScrollEffect =
+                                (relativeScrollPosition / sectionHeight) * sectionHeight * slowdownFactor * adjustedSlowdown;
+
+                            cards.forEach((card) => {
+                                // Ensure the scroll effect stays within bounds
+                                let scrollEffect = Math.min(columnScrollEffect, sectionHeight - totalHeight);
+                                if (scrollEffect < 0) scrollEffect = 0;
+
+                                card.style.transform = `translateY(${scrollEffect}px)`;
+                            });
+                        });
+                    }
+                });
+            }
+
+            // Utility to get section offset and height
+            function getSectionInfo(section) {
+                const rect = section.getBoundingClientRect();
+                return {
+                    top: rect.top + window.scrollY,
+                    height: rect.height,
+                };
+            }
+
+            // Attach the scroll listener
+            window.addEventListener('scroll', handleScroll);
+
+
+        }
+
+    </script>
+
 </body>
 
 </html>

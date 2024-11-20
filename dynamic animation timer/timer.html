@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Animation Timing</title>
+    <style>
+        /* Style for the container */
+        #animatedContainer {
+            width: 200px;
+            height: 200px;
+            background-color: lightblue;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 50px auto;
+            font-size: 1.5em;
+            text-align: center;
+            animation: move 10s infinite;
+        }
+
+        /* Default animation keyframes */
+        @keyframes move {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-50px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="animatedContainer">Hello!</div>
+
+    <script>
+        // Target the container element
+        const container = document.getElementById('animatedContainer');
+
+        // Define the array
+        const dataArray = new Array(45); // Example array with length 45
+
+        // Determine animation duration based on array length
+        let animationDuration;
+        if (dataArray.length > 100) {
+            animationDuration = '100s';
+        } else if (dataArray.length > 40) {
+            animationDuration = '1s';
+        }
+        else if (dataArray.length > 10) {
+            animationDuration = '25s';
+        }
+        else {
+            animationDuration = '10s'; // Default
+        }
+
+        // Apply the animation duration to the container
+        container.style.animationDuration = animationDuration;
+    </script>
+</body>
+
+</html>

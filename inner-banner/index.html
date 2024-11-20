@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>GOVT</title>
+    <!-- <link href="app.css" rel="stylesheet"> -->
+</head>
+<style>
+    .dummy-section {
+        width: 95vw;
+        height: 100vh;
+    }
+
+    .people-banner *,
+    .people-banner ::before,
+    .people-banner ::after {
+        --tw-translate-x: 0;
+        --tw-translate-y: 0;
+        --tw-rotate: 0;
+        --tw-skew-x: 0;
+        --tw-skew-y: 0;
+        --tw-scale-x: 1;
+        --tw-scale-y: 1;
+    }
+
+    .-animation-translate-y-1\/3 {
+        --tw-translate-y: -33.333333%;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+    }
+
+    .opacity-0 {
+        opacity: 0
+    }
+
+    .opacity-80 {
+        opacity: .8
+    }
+
+    .hover\:-animation-translate-x-1\/4:hover {
+        --tw-translate-x: -25%;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+    }
+
+    .hover\:-animation-translate-y-2\/3:hover {
+        --tw-translate-y: -66.666667%;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+    }
+
+    .hover\:animation-translate-x-1:hover {
+        --tw-translate-x: .25rem;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+    }
+
+    .hover\:animation-translate-x-1\/4:hover {
+        --tw-translate-x: 25%;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+    }
+
+    .hover\:animation-translate-y-1:hover {
+        --tw-translate-y: .25rem;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+    }
+
+    .hover\:animation-translate-y-1\/4:hover {
+        --tw-translate-y: 25%;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+    }
+
+    .group:hover .group-hover\:animation-translate-y-0 {
+        --tw-translate-y: 0px;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+    }
+
+    /* for plus symbol*/
+    .group:hover .group-hover\:opacity-0 {
+        opacity: 0
+    }
+
+    .group:hover .group-hover\:opacity-100 {
+        opacity: 1
+    }
+
+    /* 5.C3gLwbo2.css code */
+    .inner-hero-line.video-play {
+        display: flex;
+        height: 36px;
+        align-items: flex-start;
+        justify-content: flex-start;
+        text-wrap: nowrap;
+        font-size: 44px;
+        line-height: .94
+    }
+
+    .hero-div {
+        opacity: 0;
+        position: relative;
+        z-index: 10;
+        padding: 20px 0;
+        max-width: 100%;
+        margin: 0 auto;
+
+    }
+
+    .hero-div .outer-container {
+        max-width: 1920px;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .outer-container h1 {
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .outer-container .inner-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        z-index: 50;
+    }
+
+    .inner-hero-line .hero-txt {
+        margin-right: 10px;
+        flex: none;
+    }
+
+    .video-bubble img {
+        width: 100%;
+    }
+
+    @media (min-width: 1280px) {
+        .inner-hero-line.video-play {
+            height: 125px;
+            font-size: 140px
+        }
+    }
+
+    .vid-svg {
+        color: #FFF;
+        opacity: 0.8;
+        z-index: 10;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .inner-hero-line.video-play {
+        display: flex;
+        height: 36px;
+        align-items: flex-start;
+        justify-content: flex-start;
+        text-wrap: nowrap;
+        font-size: 44px;
+        line-height: .94
+    }
+
+    @media (min-width: 640px) {
+        .inner-hero-line.video-play {
+            height: 66px;
+            font-size: 78px
+        }
+    }
+
+    @media (min-width: 768px) {
+        .inner-hero-line.video-play {
+            height: 78px;
+            font-size: 95px
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .inner-hero-line.video-play {
+            height: 90px;
+            font-size: 110px
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .inner-hero-line.video-play {
+            height: 125px;
+            font-size: 140px
+        }
+    }
+
+    .video-bubble.video-play {
+        position: relative;
+        height: 36px;
+        width: 48vw;
+        flex: none;
+        transform: translate3d(var(--tw-translate-x), var(--tw-translate-y), 0) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        align-items: center;
+        overflow: hidden;
+        border-radius: .75rem;
+        --tw-bg-opacity: 1;
+        background-color: rgb(148 163 184 / var(--tw-bg-opacity));
+        transition-property: all;
+        transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+        transition-duration: .15s;
+        will-change: transform
+    }
+
+    .video-bubble.video-play:hover {
+        z-index: 9999;
+        height: 27vw;
+        --tw-scale-x: 1.5;
+        --tw-scale-y: 1.5;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / .25);
+        --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
+        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+    }
+
+    @media (min-width: 640px) {
+        .video-bubble.video-play {
+            height: 66px
+        }
+    }
+
+    @media (min-width: 768px) {
+        .video-bubble.video-play {
+            height: 78px
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .video-bubble.video-play {
+            height: 90px
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .video-bubble.video-play {
+            height: 125px
+        }
+    }
+</style>
+
+<body class="people-banner">
+    <section class="dummy-section"></section>
+    <div class="hero-txt hero-div " style="opacity: 1; ">
+        <div class="outer-container ">
+            <h1 class="">
+                AI-powered enterprise video campaigns</h1>
+            <div class="inner-container ">
+                <div class="inner-hero-line relative video-play" style="opacity: 1;">
+                    <div class="hero-txt opacity-0 " style="opacity: 1;">
+                        Videos and</div>
+                    <div
+                        class="video-bubble relative group hover:-animation-translate-x-1/4 hover:animation-translate-y-1/4 video-play">
+                        <div
+                            class="-animation-translate-y-1/3 group-hover:animation-translate-y-0 transition-transform">
+                            <img src="dummy-img.jpg">
+                            <track kind="captions">
+                            </img>
+                        </div>
+                    </div>
+                </div>
+                <div class="inner-hero-line video-play">
+                    <div class="video-bubble hover:animation-translate-x-1/4 group mr-3 lg:mr-8 video-play">
+
+                        <div
+                            class="-animation-translate-y-1/3 group-hover:animation-translate-y-0 transition-transform">
+                            <img src="dummy-img.jpg">
+                            <track kind="captions">
+                            </img>
+                        </div>
+                    </div>
+                    <div class="hero-txt">Events</div>
+                </div>
+                <div class="bg-splash"></div>
+            </div>
+
+        </div>
+    </div>
+    <section class="dummy-section"></section>
+</body>
+
+</html>

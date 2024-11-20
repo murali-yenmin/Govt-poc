@@ -171,7 +171,7 @@
 
 <body>
     <div class="head"></div>
-    <div id="parent"></div>
+    <div id="newsList"></div>
     <button class="load-more" id="newsLoadMoreBtn">Load More</button>
     <div class="head"></div>
 
@@ -657,7 +657,7 @@
 
         function createCards(start, end, columnPatterns, colNumber, loadedCards, cardsPerLoad) {
 
-            const parent = document.getElementById('parent');
+            const parent = document.getElementById('newsList');
 
             // Determine the section name (sec1, sec2, etc.)
             const sectionNumber = Math.floor(loadedCards / cardsPerLoad) + 1;

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .container {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container-1 {
+            background-color: red;
+        }
+
+        .container-2 {
+            background-color: blue;
+            height: auto;
+            display: block;
+            position: relative;
+        }
+
+        .container-2 section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container-3 {
+            background-color: green;
+        }
+
+        .vertical-scroll-line-container {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .vertical-scroll-line-container .vertical-scroll-line {
+            width: 3px;
+            background: rgb(255, 255, 255);
+            height: 100%;
+            min-height: 30px;
+        }
+
+        .vertical-scroll-line-container .vertical-scroll-text {
+            color: white;
+            writing-mode: vertical-lr;
+            margin: 20px 0;
+            cursor: grab;
+            user-select: none;
+            rotate: 180deg;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container container-1">Container 1</div>
+    <div class="container container-2">
+        <section>Container 2 - Section 1</section>
+        <section>Container 2 - section 2</section>
+        <div class="vertical-scroll-line-container">
+            <div class="vertical-scroll-line vertical-scroll-line-left"></div>
+            <div class="vertical-scroll-text">[SCROLL]</div>
+            <div class="vertical-scroll-line vertical-scroll-line-right"></div>
+        </div>
+    </div>
+    <div class="container container-3">Container 3</div>
+
+    <script>
+        function loadVerticalScrollScript(startSection, endSection) {
+            const container1 = document.querySelector(startSection);
+            const container2 = document.querySelector(endSection);
+            const verticalScrollLineLeft = document.querySelector('.vertical-scroll-line-left');
+            const verticalScrollLineRight = document.querySelector('.vertical-scroll-line-right');
+            const verticalScrollText = document.querySelector('.vertical-scroll-text');
+            const verticalScrollContainer = document.querySelector('.vertical-scroll-line-container');
+
+            const container1Top = container1.getBoundingClientRect().top + window.scrollY;
+
+            const container2Bottom = container2.getBoundingClientRect().bottom + window.scrollY;
+
+            const totalHeight = container2Bottom - container1Top;
+            let isVerticalScrollTextDrag = false;
+            let refScrollId = null;
+            let refMouseMoveRef = null;
+
+            verticalScrollContainer.style.height = `${totalHeight}px`;
+            verticalScrollContainer.style.top = `0`;
+
+            function valueToPercentage(value, min, max) {
+                if (value < min) value = min;
+                if (value > max) value = max;
+                return ((value - min) / (max - min)) * 100;
+            }
+
+            function percentageToValue(percentage, min, max) {
+                if (percentage < 0) percentage = 0;
+                if (percentage > 100) percentage = 100;
+                return min + (percentage / 100) * (max - min);
+            }
+
+
+            function setLineWidths() {
+                const max = container2Bottom - window.innerHeight;
+                const percentage = valueToPercentage(window.pageYOffset, container1Top, max);
+                const rightValue = 100 - percentage;
+
+                verticalScrollLineLeft.style.height = `${percentage}%`;
+                verticalScrollLineRight.style.height = `${rightValue}%`;
+
+                refScrollId = null;
+            }
+
+            setLineWidths();
+
+            function handleScroll() {
+                if (refScrollId && !isVerticalScrollTextDrag) {
+                    cancelAnimationFrame(refScrollId);
+                }
+
+                refScrollId = requestAnimationFrame(setLineWidths);
+            }
+
+            window.addEventListener("scroll", handleScroll);
+
+            verticalScrollText.addEventListener("mousedown", e => {
+                isVerticalScrollTextDrag = true;
+                verticalScrollText.style.cursor = "grabbing";
+            })
+
+            document.addEventListener("mouseup", e => {
+                isVerticalScrollTextDrag = false;
+                verticalScrollText.style.cursor = "grab";
+            })
+
+            function updateVerticalScrollLines(e) {
+                const containerRect = verticalScrollContainer.getBoundingClientRect();
+                const containerTop = containerRect.top;
+                const containerHeight = containerRect.height;
+                const max = container2Bottom - window.innerHeight;
+
+                let currentPosition = e.clientY - containerTop;
+
+                currentPosition = Math.max(0, Math.min(currentPosition, containerHeight));
+
+                const percentage = (currentPosition / containerHeight) * 100;
+
+                const result = percentageToValue(percentage, container1Top, max);
+
+                if (result > max) {
+                    window.scrollTo({
+                        top: max
+                    });
+                } else if (result < container1Top) {
+                    window.scrollTo({
+                        top: container1Top
+                    });
+                } else {
+                    window.scrollTo({
+                        top: result
+                    });
+                }
+            };
+
+            const handleMouseMove = (e) => {
+                if (isVerticalScrollTextDrag) {
+                    if (refMouseMoveRef) {
+                        cancelAnimationFrame(refMouseMoveRef);
+                    }
+
+                    refMouseMoveRef = requestAnimationFrame(() => updateVerticalScrollLines(e));
+                }
+            };
+
+            document.addEventListener('mousemove', handleMouseMove);
+        }
+
+        loadVerticalScrollScript('.container-2', '.container-2');
+    </script>
+</body>
+
+</html>

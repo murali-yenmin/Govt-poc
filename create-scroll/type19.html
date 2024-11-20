@@ -30,15 +30,18 @@
         }
 
         .panels-wrapper #panel-0 {
-            background: url("/wp-content/uploads/2024/11/relactioship.png") no-repeat center / cover;
+            /* background: url("/wp-content/uploads/2024/11/relactioship.png") no-repeat center / cover; */
+            background: url("./images/leaf.jpeg") no-repeat center / cover;
         }
 
         .panels-wrapper #panel-1 {
-            background: url("/wp-content/uploads/2024/11/relactioship.png") no-repeat center / cover;
+            /* background: url("/wp-content/uploads/2024/11/relactioship.png") no-repeat center / cover; */
+            background: url("./images/painting-mountain-lake-with-mountain-background.jpg") no-repeat center / cover;
         }
 
         .panels-wrapper #panel-2 {
-            background: url("/wp-content/uploads/2024/11/relactioship.png") no-repeat center / cover;
+            /* background: url("/wp-content/uploads/2024/11/relactioship.png") no-repeat center / cover; */
+            background: url("./images/vestrahorn-mountains-sunset-stokksnes-iceland.jpg") no-repeat center / cover;
         }
 
         .panels-wrapper {
@@ -207,10 +210,50 @@
                 color: white;
             }
         }
+
+        .firstContainer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background: yellow;
+        }
+
+        .lastContainer {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            background: yellow;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body {
+            overflow-x: hidden;
+            margin: 0;
+        }
     </style>
 </head>
 
 <body>
+    <div class="firstContainer">
+        <h1>Testing horizontal scrolling w/ four sections</h1>
+        <h2>First Container</h2>
+    </div>
+    <div class="firstContainer">
+        <h1>Testing horizontal scrolling w/ four sections</h1>
+        <h2>First Container</h2>
+    </div>
+    <div class="firstContainer">
+        <h1>Testing horizontal scrolling w/ four sections</h1>
+        <h2>First Container</h2>
+    </div>
+    <div class="firstContainer">
+        <h1>Testing horizontal scrolling w/ four sections</h1>
+        <h2>First Container</h2>
+    </div>
     <div class="firstContainer">
         <h1>Testing horizontal scrolling w/ four sections</h1>
         <h2>First Container</h2>
@@ -281,6 +324,10 @@
             </div>
         </div>
     </div>
+    <div class="lastContainer">Last Container</div>
+    <div class="lastContainer">Last Container</div>
+    <div class="lastContainer">Last Container</div>
+    <div class="lastContainer">Last Container</div>
     <div class="lastContainer">Last Container</div>
 
     <!-- GSAP CDN -->
@@ -529,7 +576,7 @@
                         }
                     });
 
-                    panelHeadings.forEach((panelHeading, index) => {                        
+                    panelHeadings.forEach((panelHeading, index) => {
                         panelHeading.addEventListener('click', () => {
                             panelSections.forEach((panel, panelIndex) => {
                                 if (index === panelIndex) {

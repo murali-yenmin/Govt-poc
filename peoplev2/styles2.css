@@ -120,7 +120,7 @@
   align-items: center;
 }
 
-.line {
+.people-scroll-indicator-line {
   min-width: 20px;
   width: 100%;
   background-color: #ff5000;

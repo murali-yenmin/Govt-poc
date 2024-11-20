@@ -30,11 +30,11 @@
 
             </div>
             <div class="scroll-b" id="scroll-id">
-                <div class="line left-line"></div>
+                <div class="people-scroll-indicator-line people-scroll-indicator-left-line"></div>
                 <h1 class="scroll-indicator" id="scroll-indicator">
                     [scroll]
                 </h1>
-                <div class="line right-line"></div>
+                <div class="people-scroll-indicator-line people-scroll-indicator-right-line"></div>
             </div>
         </section>
     </div>
@@ -134,14 +134,14 @@
         // Wrap the peoplecard container
         const peopleWrapper = document.querySelector('.people-wrapper');
         const peopleCardWrapper = document.querySelector('.peoplecard');
-        const lineLeft = document.querySelector('.left-line');
-        const lineRight = document.querySelector('.right-line');
-        const scrollText = document.querySelector('.scroll-indicator');
-        const scrollContainer = document.querySelector('.scroll-b');
+        const peopleScrollIndicatorLeftLine = document.querySelector('.people-scroll-indicator-left-line');
+        const peopleScrollIndicatorRightLine = document.querySelector('.people-scroll-indicator-right-line');
+        const peopleScrollIndicator = document.querySelector('.scroll-indicator');
+        const peopleScrollContainer = document.querySelector('.scroll-b');
 
         const totalWidth = peopleCardWrapper.scrollWidth + 169;
-        let isDragging = false;
-        let animationFrameId;
+        let isPeopleDragging = false;
+        let peopleAnimationFrameId;
 
         // Set up GSAP scroll animation
         gsap.to(peopleCardWrapper, {
@@ -159,13 +159,18 @@
         function moveScrollText(percentage) {
             const rightValue = 100 - percentage;
 
-            lineLeft.style.width = `${percentage}%`;
-            lineRight.style.width = `${rightValue}%`;
+            peopleScrollIndicatorLeftLine.style.width = `${percentage}%`;
+            peopleScrollIndicatorRightLine.style.width = `${rightValue}%`;
         }
 
         const observer = new MutationObserver(() => {
-            const startScroll = peopleWrapper.offsetTop;
-            const endScroll = peopleWrapper.scrollHeight;
+            // const startScroll = peopleWrapper.offsetTop;
+            // const endScroll = peopleWrapper.scrollHeight;
+
+            // for wordpress used alternate method
+            const startScroll = peopleWrapper.getBoundingClientRect().top + window.pageYOffset;
+            const endScroll = peopleWrapper.getBoundingClientRect().bottom + window.pageYOffset - startScroll;
+
             if (window.scrollY < startScroll) return 0;
             if (window.scrollY > endScroll) return 100;
 
@@ -182,19 +187,23 @@
 
 
         // Start dragging
-        scrollText.addEventListener('mousedown', (e) => {
-            isDragging = true;
+        peopleScrollIndicator.addEventListener('mousedown', (e) => {
+            isPeopleDragging = true;
             startX = e.clientX;
-            startLeftWidth = lineLeft.clientWidth;
-            scrollText.style.cursor = 'grabbing';
+            startLeftWidth = peopleScrollIndicatorLeftLine.clientWidth;
+            peopleScrollIndicator.style.cursor = 'grabbing';
         });
 
         // Update the line widths using requestAnimationFrame
-        const updateLines = (e) => {
-            const total = peopleWrapper.scrollHeight;
-            const minScroll = peopleWrapper.offsetTop;
+        const updateIndicatorLines = (e) => {
+            // const total = peopleWrapper.scrollHeight;
+            // const minScroll = peopleWrapper.offsetTop;
 
-            const containerWidth = scrollContainer.clientWidth;
+            // for wordpress used alternate method
+            const minScroll = peopleWrapper.getBoundingClientRect().top + window.pageYOffset;
+            const total = peopleWrapper.getBoundingClientRect().bottom + window.pageYOffset - minScroll;
+
+            const containerWidth = peopleScrollContainer.clientWidth;
             const percentage = (e.clientX / containerWidth) * 100;
 
             const result = (percentage / 100) * total;
@@ -212,20 +221,20 @@
                     top: result
                 });
             }
-            lineLeft.style.width = `${percentage}%`;
-            lineRight.style.width = `${100 - percentage}%`;
+            peopleScrollIndicatorLeftLine.style.width = `${percentage}%`;
+            peopleScrollIndicatorRightLine.style.width = `${100 - percentage}%`;
         };
 
         // Dragging
         const handleMouseMove = (e) => {
-            if (isDragging) {
+            if (isPeopleDragging) {
                 // Cancel any previous frame to prevent multiple updates in the same frame
-                if (animationFrameId) {
-                    cancelAnimationFrame(animationFrameId);
+                if (peopleAnimationFrameId) {
+                    cancelAnimationFrame(peopleAnimationFrameId);
                 }
 
                 // Request animation frame for smoother update
-                animationFrameId = requestAnimationFrame(() => updateLines(e));
+                peopleAnimationFrameId = requestAnimationFrame(() => updateIndicatorLines(e));
             }
         };
 
@@ -234,11 +243,11 @@
 
         // Stop dragging
         document.addEventListener('mouseup', () => {
-            if (isDragging) {
-                isDragging = false;
-                scrollText.style.cursor = 'grab';
-                if (animationFrameId) {
-                    cancelAnimationFrame(animationFrameId);
+            if (isPeopleDragging) {
+                isPeopleDragging = false;
+                peopleScrollIndicator.style.cursor = 'grab';
+                if (peopleAnimationFrameId) {
+                    cancelAnimationFrame(peopleAnimationFrameId);
                 }
             }
         });

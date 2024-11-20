@@ -540,9 +540,9 @@
                             panelSections.forEach((panel, panelIndex) => {
                                 if (index === panelIndex) {
                                     panel.classList.add('opened');
-                                    const scrollToValue = panelWrapper.offsetTop + ((panelIndex + 1) * panelHeadingWidth);
+                                    const scrollToValue = panelWrapper.offsetTop + ((panelIndex + 1) * panelHeading.getBoundingClientRect().height);
                                     window.scrollTo({
-                                        top: scrollToValue - panelHeadingWidth,
+                                        top: scrollToValue - panelHeading.getBoundingClientRect().height,
                                         behavior: 'smooth'
                                     })
                                 } else {

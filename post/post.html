@@ -10,9 +10,11 @@
             margin: 0;
             padding: 0;
         }
-        .no-data{
+
+        .no-data {
             display: none;
         }
+
         html {
             scroll-behavior: smooth;
         }
@@ -193,6 +195,24 @@
                 date: "12/09/2024",
             },
             {
+                src: "./Mask group (1).png",
+                title: "US Inflation Shows Signs of Easing in Latest Report",
+                tag: "Economy",
+                date: "12/09/2024",
+            },
+            {
+                src: "./Mask group.png",
+                title: "Israel Expands Military Operations Amid Conflict Escalation",
+                tag: "News",
+                date: "12/10/2024",
+            },
+            {
+                src: "./Mask group (1).png",
+                title: "US Inflation Shows Signs of Easing in Latest Report",
+                tag: "Economy",
+                date: "12/09/2024",
+            },
+            {
                 src: "./Mask group (2).png",
                 title: "Amazon Announces Major Layoffs in Response to Market Conditions",
                 tag: "Tech",
@@ -211,34 +231,16 @@
                 date: "12/06/2024",
             },
             {
-                src: "./Mask group (3).png",
-                title: "UN Calls for Immediate Ceasefire in Sudan as Crisis Worsens",
-                tag: "World",
-                date: "12/07/2024",
-            },
-            {
                 src: "./Mask group (4).png",
                 title: "Meta's New AI Toolset Promises Major Advances for Developers",
                 tag: "Tech",
                 date: "12/06/2024",
             },
             {
-                src: "./Mask group (3).png",
-                title: "UN Calls for Immediate Ceasefire in Sudan as Crisis Worsens",
-                tag: "World",
-                date: "12/07/2024",
-            },
-            {
                 src: "./Mask group (4).png",
                 title: "Meta's New AI Toolset Promises Major Advances for Developers",
                 tag: "Tech",
                 date: "12/06/2024",
-            },
-            {
-                src: "./Mask group.png",
-                title: "Israel Expands Military Operations Amid Conflict Escalation",
-                tag: "News",
-                date: "12/10/2024",
             },
 
 
@@ -389,8 +391,6 @@
         }
 
         function createCards(start, end, columnPatterns, colNumber, loadedCards, cardsPerLoad, algo) {
-            console.log(start, end, columnPatterns, colNumber, loadedCards, cardsPerLoad, algo);
-
             const parent = document.getElementById('newsList');
 
             // Determine the section name (sec1, sec2, etc.)
@@ -400,22 +400,16 @@
             const flexContainer = document.createElement('div');
             flexContainer.className = `flex-container ${sectionClassName}`; // Add section class
 
-
-
             const pattern = columnPatterns[Math.floor(loadedCards / cardsPerLoad) % colNumber];
+
+            let cardsPerColumn = Math.ceil((end - start) / algo); // Dynamically adjust cards per column
 
             for (let i = 0; i < algo; i++) {
                 const column = document.createElement('div');
-                if ((i == 1 || i == 2) && (end - start == 1)) {
+                column.className = `newscolumn ${pattern[i]}`;
 
-                    column.className = `newscolumn ${pattern[i]} no-data`;
-                }else{
-
-                    column.className = `newscolumn ${pattern[i]}`;
-                }
-
-                for (let j = start + i * Math.ceil((end - start) / colNumber); j < start + (i + 1) * Math.ceil((end - start) / colNumber); j++) {
-                    if (j >= end) break;
+                for (let j = start + i * cardsPerColumn; j < start + (i + 1) * cardsPerColumn; j++) {
+                    if (j >= end) break; // Break if all cards are loaded
 
                     const card = document.createElement('div');
                     card.className = 'newscard';
@@ -428,21 +422,18 @@
                     }
 
                     const anchor = document.createElement('a');
-                    anchor.href = newsData[j].url;  // Set the URL for the anchor tag
+                    anchor.href = newsData[j].url; // Set the URL for the anchor tag
                     anchor.target = '_blank';
 
-
                     const title = document.createElement('h1');
-
-                    title.textContent = newsData[j].title;// Open link in a new tab 
-                    anchor.appendChild(title)
-
+                    title.textContent = newsData[j].title; // Set title text
+                    anchor.appendChild(title);
 
                     const date = document.createElement('h4');
                     date.textContent = newsData[j].date;
 
                     const imageAnch = document.createElement('a');
-                    imageAnch.href = newsData[j].url;  // Set the URL for the imageAnch tag
+                    imageAnch.href = newsData[j].url; // Set the URL for the image tag
                     imageAnch.target = '_blank';
 
                     const imageHandler = document.createElement('div');
@@ -451,16 +442,19 @@
                     const img = document.createElement('img');
                     img.src = newsData[j].src;
                     imageHandler.appendChild(img);
-                    imageAnch.appendChild(imageHandler)
-                    card.appendChild(imageAnch);
+                    imageAnch.appendChild(imageHandler);
 
+                    card.appendChild(imageAnch);
                     card.appendChild(anchor);
                     card.appendChild(date);
 
                     column.appendChild(card);
                 }
 
-                flexContainer.appendChild(column);
+                // Only append the column if it contains cards
+                if (column.children.length > 0) {
+                    flexContainer.appendChild(column);
+                }
             }
 
             parent.appendChild(flexContainer);

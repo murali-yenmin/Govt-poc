@@ -13,68 +13,71 @@
         }
 
         body {
-            overflow: hidden; /* Prevent scrolling */
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
         }
 
-        .container {
+        .contact-interactive {
             position: relative;
             width: 100%;
-            height: 100vh;
-            overflow: hidden;
+            height: 100%;
             display: flex;
         }
 
         .contactgravity {
-            position: relative;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             background: #f3f3f3;
-            border-right: 2px solid #000;
-            display: flex;
             justify-content: center;
             align-items: center;
             transition: transform 0.5s ease;
-        }
-
-        .newbussiness,
-        .email,
-        .fb,
-        .enterarrow {
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-            cursor: grab;
-            z-index: 1;
+            position: relative;
         }
 
         .newbussiness {
-            width: 788px;
-            height: 195px;
+            font-size: 35px;
+            width: 700px;
+            height: 149px;
             background: #FF5000;
-            top: 50px;
-            left: 50px;
+            text-transform: uppercase;
+            position: absolute;
+            display: grid;
+        }
+
+        .newbussiness a {
+            margin: auto;
+            cursor: pointer;
+            text-decoration: none;
+            color: #fff;
         }
 
         .email {
-            width: 500px;
-            height: 195px;
+            padding: 30px;
+            width: 350px;
             background: #FEE7B5;
             color: #141414;
-            top: 300px;
-            left: 200px;
+            position: absolute;
+        }
+
+        .email h1 {
+            overflow: hidden;
+            cursor: pointer;
+
+        }
+
+        .email h3 {
+            cursor: pointer;
+
         }
 
         .fb {
+            display: grid;
             width: 185px;
             height: 185px;
             background: #FEE7B5;
             color: #141414;
-            top: 150px;
-            left: 600px;
+            position: absolute;
         }
 
         .enterarrow {
@@ -83,14 +86,28 @@
             background: #D9D9D9;
             border-radius: 50%;
             color: #141414;
-            top: 400px;
-            left: 400px;
+            display: grid;
+            position: absolute;
+        }
+
+        .enterarrow img {
+            transform: rotate(120deg);
+            margin: auto;
+            cursor: pointer;
+        }
+
+        .fb a {
+            margin: auto;
+        }
+
+        .fb img {
+            transform: rotate(-22deg);
         }
 
         .fullpage-form {
             position: absolute;
             top: 0;
-            right: -100%;
+            right: -200%;
             width: 100%;
             height: 100%;
             background-color: #fff;
@@ -102,7 +119,7 @@
         }
 
         .fullpage-form.active {
-            transform: translateX(-100%);
+            transform: translateX(-200%);
         }
 
         .contactgravity.move-left {
@@ -155,16 +172,44 @@
         .back-button:hover {
             background-color: #e44d00;
         }
+
+        @keyframes rotate360 {
+            from {
+                transform: rotate(120deg);
+            }
+
+            to {
+                transform: rotate(480deg);
+            }
+        }
+
+        /* Hover animation for arrow image */
+        .enterarrow img:hover {
+            animation: rotate360 2s linear infinite;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="contact-interactive">
         <div class="contactgravity">
-            <div class="newbussiness">New Business</div>
-            <div class="email">Email: together@gmail.com</div>
-            <div class="fb">FB Icon</div>
-            <div class="enterarrow">Enter</div>
+            <div class="newbussiness">
+                <a href="https://govt.yenmin.in/">
+                    <h1>New business</h1>
+                </a>
+            </div>
+            <div class="email">
+                <h3>Contact</h3>
+                <h1 class="email-copy">together@gmail.com</h1>
+            </div>
+            <div class="fb">
+                <a href="https://www.facebook.com/pocketfmtamil/" target="_blank">
+                    <img src="./Vector.png" alt="">
+                </a>
+            </div>
+            <div class="enterarrow">
+                <img src="./Group 71.png" alt="">
+            </div>
         </div>
 
         <div class="fullpage-form" id="fullpageForm">
@@ -181,66 +226,89 @@
 
     <script>
         const container = document.querySelector('.contactgravity');
-        const divs = document.querySelectorAll('.newbussiness, .email, .fb, .enterarrow');
-        const enterArrow = document.querySelector('.enterarrow');
+        const enterArrow = document.querySelector('.enterarrow img');
         const fullpageForm = document.getElementById('fullpageForm');
         const backButton = document.getElementById('backButton');
 
+        // Animate form when "Enter" is clicked
+        enterArrow.addEventListener('click', () => {
+            container.classList.add('move-left');
+            fullpageForm.classList.add('active');
+        });
+
+        // Bring back the contact category when "Back" is clicked
+        backButton.addEventListener('click', () => {
+            container.classList.remove('move-left');
+            fullpageForm.classList.remove('active');
+        });
+
+        // Gravity and dragging effects for contact category
+        const divs = document.querySelectorAll('.newbussiness, .email, .fb, .enterarrow');
         const gravity = 0.5;
         const friction = 0.8;
-        const throwFactor = 0.2;
-
         const states = Array.from(divs).map(() => ({
             velocityX: 0,
             velocityY: 0,
             isDragging: false,
             lastMouseX: 0,
             lastMouseY: 0,
+            offsetX: 0,
+            offsetY: 0,
+            angle: 0, // Random angle for throw effect
+            throwSpeed: 0, // Initial speed for throw
         }));
 
-        function animate() {
+        function animateGravity() {
             divs.forEach((div, index) => {
                 if (states[index].isDragging) return;
 
-                let x = div.offsetLeft;
-                let y = div.offsetTop;
+                const rect = container.getBoundingClientRect();
+                let x = div.offsetLeft + states[index].velocityX;
+                let y = div.offsetTop + states[index].velocityY;
 
-                x += states[index].velocityX;
-                y += states[index].velocityY;
-
-                const containerRect = container.getBoundingClientRect();
-                if (x <= 0 || x + div.offsetWidth >= containerRect.width) {
+                // Check for boundary collisions and apply friction
+                if (x <= 0 || x + div.offsetWidth >= rect.width) {
                     states[index].velocityX = -states[index].velocityX * friction;
-                    x = Math.max(0, Math.min(x, containerRect.width - div.offsetWidth));
+                    x = Math.max(0, Math.min(x, rect.width - div.offsetWidth));
                 }
 
-                if (y <= 0 || y + div.offsetHeight >= containerRect.height) {
+                if (y <= 0 || y + div.offsetHeight >= rect.height) {
                     states[index].velocityY = -states[index].velocityY * friction;
-                    y = Math.max(0, Math.min(y, containerRect.height - div.offsetHeight));
+                    y = Math.max(0, Math.min(y, rect.height - div.offsetHeight));
                 }
 
-                if (y + div.offsetHeight < containerRect.height) {
-                    states[index].velocityY += gravity;
-                }
-
-                states[index].velocityX *= 0.98;
-                states[index].velocityY *= 0.98;
+                states[index].velocityY += gravity; // Apply gravity
 
                 div.style.left = `${x}px`;
                 div.style.top = `${y}px`;
+
+                // Slow down the velocity due to friction
+                states[index].velocityX *= 0.99;
+                states[index].velocityY *= 0.99;
             });
 
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animateGravity);
         }
 
+        // Apply random "throwing" behavior initially for each element
+        divs.forEach((div, index) => {
+            const rect = div.getBoundingClientRect();
+            // Set a random angle for each element's initial throw
+            states[index].angle = Math.random() * 2 * Math.PI; // Random angle between 0 and 2π
+            states[index].throwSpeed = 10 + Math.random() * 5; // Random throw speed between 10 and 15
+            states[index].velocityX = Math.cos(states[index].angle) * states[index].throwSpeed;
+            states[index].velocityY = Math.sin(states[index].angle) * states[index].throwSpeed;
+            div.style.left = `${Math.random() * (window.innerWidth - rect.width)}px`; // Random starting position
+            div.style.top = `${Math.random() * (window.innerHeight - rect.height)}px`; // Random starting position
+        });
+
+        // Dragging behavior
         divs.forEach((div, index) => {
             div.addEventListener('mousedown', (e) => {
+                e.preventDefault();
                 states[index].isDragging = true;
                 states[index].lastMouseX = e.clientX;
                 states[index].lastMouseY = e.clientY;
-                states[index].velocityX = 0;
-                states[index].velocityY = 0;
-                div.style.cursor = 'grabbing';
             });
 
             document.addEventListener('mousemove', (e) => {
@@ -261,21 +329,31 @@
 
             document.addEventListener('mouseup', () => {
                 states[index].isDragging = false;
-                div.style.cursor = 'grab';
             });
         });
 
-        enterArrow.addEventListener('click', () => {
-            container.classList.add('move-left');
-            fullpageForm.classList.add('active');
-        });
+        animateGravity();
 
-        backButton.addEventListener('click', () => {
-            container.classList.remove('move-left');
-            fullpageForm.classList.remove('active');
-        });
+        const emailCopy = document.querySelector('.email-copy');
 
-        animate();
+        // Add event listener to email-copy class
+        emailCopy.addEventListener('click', () => {
+            // Create a temporary input element to copy the text
+            const textToCopy = emailCopy.textContent;
+            const tempInput = document.createElement('input');
+            document.body.appendChild(tempInput);
+            tempInput.value = textToCopy;
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            // Show "Copied" message inside the email box
+            const originalText = emailCopy.textContent;
+            emailCopy.textContent = 'Copied';
+            setTimeout(() => {
+                emailCopy.textContent = originalText;  // Restore original text after 2 seconds
+            }, 2000);
+        });
     </script>
 </body>
 

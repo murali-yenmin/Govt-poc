@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continuous Scrolling Ads</title>
+    <style>
+        /* Main container styling */
+        .work-inner-running-section {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            background-color: #f3f3f3;
+            padding: 20px;
+            align-items: center;
+        }
+
+
+
+        /* ======== Card style ===========  */
+        .workInfo {
+            display: inline-block;
+            position: relative;
+            margin: 9px;
+            margin-bottom: 9px;
+            width: 290px;
+            height: 290px;
+        }
+
+        .workInfo .workImage {
+            height: 290px;
+            min-width: 290px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .workInfo .workDetails {
+            display: block;
+            position: absolute;
+            top: 40px;
+            left: 186px;
+            min-width: 263px;
+            background: #FF5000;
+            z-index: 99;
+            overflow: hidden;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            transition: 0.5s ease-in-out;
+        }
+
+        .sliderRow:first-child .workInfo {
+            margin-top: 18px;
+        }
+
+        .sliderRow:nth-child(2) .workInfo {
+            margin: 9px;
+        }
+
+        .sliderRow:last-child .workInfo {
+            margin-bottom: 18px;
+        }
+
+        .workInfo:hover .workDetails {
+            opacity: 1;
+            width: auto;
+            height: auto;
+            overflow: unset;
+            top: 40px;
+        }
+
+        .workInfo .workDetails:hover {
+            cursor: pointer;
+        }
+
+        .workInfo .workDetails .workLogo {
+            height: 75px;
+            display: flex;
+            margin: 0 auto;
+        }
+
+        .workInfo .workDetails .arrowSecWrapper {
+            padding: 20px;
+            padding-right: 60px;
+            position: relative;
+        }
+
+        .workInfo .workDetails .arrowIcon {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+        }
+
+        .workInfo .workDetails .workTitle {
+            font-size: 30px;
+            line-height: 28px;
+            color: white;
+            text-transform: uppercase;
+            font-family: 'Oswald', Helvetica, Arial, Lucida, sans-serif;
+            font-weight: 700;
+        }
+
+        .workImagsec {
+            width: 100%;
+            padding: 20px;
+            background: white;
+        }
+
+        /* ============= */
+        .carousel-container {
+            /* width: 100%; */
+            display: inline-flex;
+            flex-wrap: nowrap;
+            overflow: hidden;
+
+        }
+
+        .work-running-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+
+        }
+
+
+        .move-forward {
+            display: flex;
+            animation: move-forward linear infinite;
+            animation-duration: 25s;
+        }
+
+        .move-backward {
+            display: flex;
+            animation: move-backward linear infinite;
+            animation-duration: 25s;
+        }
+
+
+        /* Keyframes for continuous scrolling animation */
+        @keyframes move-backward {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-100%);
+            }
+        }
+
+        @keyframes move-forward {
+            from {
+                transform: translateX(-100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="work-inner-running-section sliderRow" id="allworks"> </div>
+
+    <div id="workloadMore"
+        style="width: 100%; display: flex;justify-content: center;visibility: visible; text-align: center;font-size: 50px;">
+        load more
+    </div>
+
+    <script>
+        // Array with image paths and URLs for left-to-right scrolling
+        const workList = [
+            { imagePath: "./images/1.jpg", content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=2', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=3', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=4', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=5', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=6', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=7', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=8', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=9', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=10', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: "https://via.placeholder.com/200x300?text=11", content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=12', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=13', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=14', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=15', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=16', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=17', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=18', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=19', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=20', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: "https://via.placeholder.com/200x300?text=21", content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=22', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=23', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=24', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=25', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=26', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=27', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=28', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=29', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=30', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: "https://via.placeholder.com/200x300?text=31", content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=32', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=33', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=34', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=35', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=36', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=37', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=38', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=39', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=40', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: "https://via.placeholder.com/200x300?text=41", content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=42', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=43', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=44', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=45', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=46', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            { imagePath: 'https://via.placeholder.com/200x300?text=47', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=48', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=49', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=50', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: "https://via.placeholder.com/200x300?text=51", content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=52', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=53', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=54', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=55', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=56', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=57', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=58', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=59', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=60', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: "https://via.placeholder.com/200x300?text=61", content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=62', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=63', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=64', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=65', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=66', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=67', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=68', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=69', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=70', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: "https://via.placeholder.com/200x300?text=71", content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=72', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=73', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=74', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=75', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+            // { imagePath: 'https://via.placeholder.com/200x300?text=76', content: "NTUC FIRST CAMPUS", targetUrl: 'https://example.com/page1', logo: "./images/1.jpg" },
+
+        ]
+
+        // Define the function to get the show count based on the window size
+        function getShowCount() {
+            if (window.innerWidth > 1024) {
+                return 15; // Desktop
+            } else if (window.innerWidth > 768) {
+                return 10; // Tablet
+            } else {
+                return 5;  // Mobile
+            }
+        }
+
+
+        // Get the initial show count
+        let showCount = getShowCount();
+        let currentIndex = 0;
+        let initialRows = 5;
+        let lastSetDirection;
+        let calcRows = Math.ceil(workList.length / showCount);
+        let maxIteration = calcRows <= initialRows ? calcRows : initialRows;
+
+
+
+        const workSection = document.getElementById("allworks");
+        const workloadMoreBtn = document.getElementById('workloadMore')
+
+
+        function workloadImages(wrapper, slicedArray, count, loopindex) {
+
+            const carouselContainer = document.createElement('div');
+            carouselContainer.classList.add('carousel-container');
+
+            const direction = document.createElement('div');
+            lastSetDirection = loopindex % 2 === 0 ? 'move-backward' : 'move-forward'
+            direction.classList.add(lastSetDirection);
+
+            carouselContainer.addEventListener('mouseenter', () => {
+                const childElements = carouselContainer.childNodes;
+                childElements.forEach((child) => {
+                    child.style.animationPlayState = 'paused';
+                });
+            });
+
+            carouselContainer.addEventListener('mouseleave', () => {
+                const childElements = carouselContainer.childNodes;
+                childElements.forEach((child) => {
+                    child.style.animationPlayState = 'running';
+                });
+            });
+
+            slicedArray.forEach((item, index) => {
+
+                const container = document.createElement('div');
+                container.classList.add('workInfo');
+
+                const arrowSecWrapper = document.createElement('div');
+                arrowSecWrapper.classList.add('arrowSecWrapper');
+
+                const img = document.createElement('img');
+                img.src = item.imagePath;
+                img.classList.add('workImage');
+                img.alt = item?.content;
+
+                const workImagsec = document.createElement('div');
+                workImagsec.classList.add('workImagsec');
+
+
+                const logoImg = document.createElement('img');
+                logoImg.src = item.logo ? item.logo : "";
+                logoImg.classList.add('workLogo');
+                logoImg.alt = 'logo Image';
+
+                const arrowImg = document.createElement('img');
+                arrowImg.src = '/wp-content/uploads/2024/11/arrow.svg';
+                arrowImg.classList.add('arrowIcon');
+                arrowImg.alt = 'arrow Image';
+
+
+                const info = document.createElement('div');
+                info.classList.add('workDetails');
+                info.onclick = () => {
+                    window.open(item.targetUrl, '_blank');  // Open URL in a new tab
+                };
+
+                const infoTxt = document.createElement('div');
+                infoTxt.classList.add('workTitle');
+                infoTxt.innerHTML = item?.content || "";
+
+
+
+                arrowSecWrapper.appendChild(infoTxt)
+                arrowSecWrapper.appendChild(arrowImg)
+                workImagsec.appendChild(logoImg)
+                if (item.logo.includes("https://")) {
+                    info.appendChild(workImagsec);
+                }
+                info.appendChild(arrowSecWrapper);
+
+                container.appendChild(img);
+                container.appendChild(info);
+                direction.appendChild(container);
+
+                carouselContainer.appendChild(direction);
+                wrapper.appendChild(carouselContainer);
+            });
+
+            direction.style.animationDuration = `${count * 4.5}s`;
+
+            let clone = direction.cloneNode(true);
+            clone.setAttribute('aria-hidden', 'true');
+            carouselContainer.appendChild(clone);
+
+            let visibleImgCunt = currentIndex + count;
+
+            currentIndex += count;
+
+            if (visibleImgCunt >= workList.length) {
+                workloadMoreBtn.style.display = 'none';
+            } else {
+                workloadMoreBtn.style.display = 'block';
+            }
+        }
+
+
+
+        const createWorks = () => {
+
+            workSection.innerHTML = ""
+
+            // initial row load
+            for (let i = 0; i < maxIteration; i++) {
+                let start;
+                let end;
+                if (i === 0) {
+                    start = 0;
+                    end = (i + 1) * showCount
+                } else {
+                    start = (i) * showCount;
+                    end = (i + 1) * showCount;
+                }
+
+                const slicedArray = workList.slice(start, end);
+
+                if (slicedArray.length !== showCount) {
+                    const getBanalce = Math.abs(slicedArray.length - showCount)
+                    const sliceFromStart = workList.slice(0, getBanalce);
+                    const newArray = slicedArray.concat(sliceFromStart)
+                    workloadImages(workSection, newArray, showCount, i);
+                } else {
+
+                    workloadImages(workSection, slicedArray, showCount, i);
+                }
+            }
+        }
+
+        function workLoadMore() {
+
+            if (currentIndex < workList.length) {
+                const start = currentIndex
+                const end = start + showCount;
+                const slicedArray = workList.slice(start, end);
+                setDirection = lastSetDirection === "move-forward" ? 2 : 3
+
+
+                if (slicedArray.length !== showCount) {
+                    const getBanalce = Math.abs(slicedArray.length - showCount)
+                    const sliceFromStart = workList.slice(0, getBanalce);
+                    const newArray = slicedArray.concat(sliceFromStart)
+                    workloadImages(workSection, newArray, showCount, setDirection);
+                }
+                else {
+                    workloadImages(workSection, slicedArray, showCount, setDirection);
+                }
+            }
+        }
+
+        workloadMoreBtn.addEventListener("click", () => workLoadMore())
+
+        window.addEventListener('resize', () => {
+            const newShowCount = getShowCount();
+            if (newShowCount !== showCount) {
+                showCount = newShowCount;
+                calcRows = Math.round(workList.length / showCount);
+                maxIteration = calcRows <= initialRows ? calcRows : initialRows;
+                createAllWorks();
+            }
+        });
+        createWorks()
+    </script>
+
+</body>
+
+</html>

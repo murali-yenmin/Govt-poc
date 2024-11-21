@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .contactgravity {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #f3f3f3;
+            border-right: 2px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.5s ease;
+        }
+
+        .newbussiness,
+        .email,
+        .fb,
+        .enterarrow {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            cursor: grab;
+            z-index: 1;
+        }
+
+        .newbussiness {
+            width: 788px;
+            height: 195px;
+            background: #FF5000;
+            top: 50px;
+            left: 50px;
+        }
+
+        .email {
+            width: 500px;
+            height: 195px;
+            background: #FEE7B5;
+            color: #141414;
+            top: 300px;
+            left: 200px;
+        }
+
+        .fb {
+            width: 185px;
+            height: 185px;
+            background: #FEE7B5;
+            color: #141414;
+            top: 150px;
+            left: 600px;
+        }
+
+        .enterarrow {
+            width: 229px;
+            height: 229px;
+            background: #D9D9D9;
+            border-radius: 50%;
+            color: #141414;
+            top: 400px;
+            left: 400px;
+        }
+
+        .fullpage-form {
+            position: absolute;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.5s ease;
+        }
+
+        .fullpage-form.active {
+            transform: translateX(-100%);
+        }
+
+        .contactgravity.move-left {
+            transform: translateX(-100%);
+        }
+
+        .fullpage-form h2 {
+            margin-bottom: 20px;
+        }
+
+        .fullpage-form form {
+            display: flex;
+            flex-direction: column;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .fullpage-form input,
+        .fullpage-form textarea,
+        .fullpage-form button {
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .fullpage-form button {
+            background-color: #FF5000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .fullpage-form button:hover {
+            background-color: #e44d00;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #FF5000;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: #e44d00;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="contactgravity">
+            <div class="newbussiness">New Business</div>
+            <div class="email">Email: together@gmail.com</div>
+            <div class="fb">FB Icon</div>
+            <div class="enterarrow">Enter</div>
+        </div>
+
+        <div class="fullpage-form" id="fullpageForm">
+            <button class="back-button" id="backButton">Back</button>
+            <h2>Contact Us</h2>
+            <form>
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea placeholder="Your Message" rows="5" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const container = document.querySelector('.contactgravity');
+        const divs = document.querySelectorAll('.newbussiness, .email, .fb, .enterarrow');
+        const enterArrow = document.querySelector('.enterarrow');
+        const fullpageForm = document.getElementById('fullpageForm');
+        const backButton = document.getElementById('backButton');
+
+        const gravity = 0.5;
+        const friction = 0.8;
+        const throwFactor = 0.2;
+
+        const states = Array.from(divs).map(() => ({
+            velocityX: 0,
+            velocityY: 0,
+            isDragging: false,
+            lastMouseX: 0,
+            lastMouseY: 0,
+        }));
+
+        function animate() {
+            divs.forEach((div, index) => {
+                if (states[index].isDragging) return;
+
+                let x = div.offsetLeft;
+                let y = div.offsetTop;
+
+                x += states[index].velocityX;
+                y += states[index].velocityY;
+
+                const containerRect = container.getBoundingClientRect();
+                if (x <= 0 || x + div.offsetWidth >= containerRect.width) {
+                    states[index].velocityX = -states[index].velocityX * friction;
+                    x = Math.max(0, Math.min(x, containerRect.width - div.offsetWidth));
+                }
+
+                if (y <= 0 || y + div.offsetHeight >= containerRect.height) {
+                    states[index].velocityY = -states[index].velocityY * friction;
+                    y = Math.max(0, Math.min(y, containerRect.height - div.offsetHeight));
+                }
+
+                if (y + div.offsetHeight < containerRect.height) {
+                    states[index].velocityY += gravity;
+                }
+
+                states[index].velocityX *= 0.98;
+                states[index].velocityY *= 0.98;
+
+                div.style.left = `${x}px`;
+                div.style.top = `${y}px`;
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        divs.forEach((div, index) => {
+            div.addEventListener('mousedown', (e) => {
+                states[index].isDragging = true;
+                states[index].lastMouseX = e.clientX;
+                states[index].lastMouseY = e.clientY;
+                states[index].velocityX = 0;
+                states[index].velocityY = 0;
+                div.style.cursor = 'grabbing';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!states[index].isDragging) return;
+
+                const dx = e.clientX - states[index].lastMouseX;
+                const dy = e.clientY - states[index].lastMouseY;
+
+                states[index].lastMouseX = e.clientX;
+                states[index].lastMouseY = e.clientY;
+
+                div.style.left = `${div.offsetLeft + dx}px`;
+                div.style.top = `${div.offsetTop + dy}px`;
+
+                states[index].velocityX = dx;
+                states[index].velocityY = dy;
+            });
+
+            document.addEventListener('mouseup', () => {
+                states[index].isDragging = false;
+                div.style.cursor = 'grab';
+            });
+        });
+
+        enterArrow.addEventListener('click', () => {
+            container.classList.add('move-left');
+            fullpageForm.classList.add('active');
+        });
+
+        backButton.addEventListener('click', () => {
+            container.classList.remove('move-left');
+            fullpageForm.classList.remove('active');
+        });
+
+        animate();
+    </script>
+</body>
+
+</html>

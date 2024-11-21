@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GOVT - Perfect Animations</title>
+    <style>
+        .hero-div {
+            position: relative;
+            z-index: 10;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .inner-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Hero line and text */
+        .inner-hero-line {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .hero-txt {
+            font-size: 120px;
+            font-weight: 700;
+            line-height: 55px;
+        }
+
+        /* Video bubble */
+        .video-bubble {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center center;
+            cursor: pointer;
+        }
+
+        .video-bubble img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.5);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .video-bubble.hover-effect {
+            transform: scale(5); /* Scale image on hover */
+            z-index: 9999;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-bubble.hover-effect img {
+            transform: scale(1.2);
+        }
+
+        @media (min-width: 768px) {
+            .video-bubble {
+                width: 110px;
+                height: 52px;
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero-txt hero-div" style="opacity: 1;">
+        <div class="outer-container">
+            <div class="inner-container">
+                <div class="inner-hero-line video-play">
+                    <div class="video-bubble">
+                        <img src="dummy-img.jpg" alt="Dummy Image">
+                    </div>
+                    <div class="hero-txt">Videos and</div>
+                    <div class="video-bubble">
+                        <img src="dummy-img.jpg" alt="Dummy Image">
+                    </div>
+                    <div class="hero-txt">Events</div>
+                    <div class="video-bubble">
+                        <img src="dummy-img.jpg" alt="Dummy Image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add hover effect with positioning adjustments
+        document.querySelectorAll('.video-bubble').forEach((bubble) => {
+            bubble.addEventListener('mouseenter', (event) => {
+                const img = event.currentTarget;
+                const rect = img.getBoundingClientRect();
+                const scale = 5;
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                // Calculate available space
+                const spaceLeft = rect.left;
+                const spaceRight = windowWidth - rect.right;
+                const spaceTop = rect.top;
+                const spaceBottom = windowHeight - rect.bottom;
+
+                // Add hover effect class
+                img.classList.add('hover-effect');
+                img.style.transformOrigin = 'center center'; // Default center position
+
+                // Adjust the transform origin for horizontal position
+                if (spaceRight < rect.width * scale) {
+                    img.style.transformOrigin = 'right center'; // Align right if not enough space
+                } else if (spaceLeft < rect.width * scale) {
+                    img.style.transformOrigin = 'left center'; // Align left if not enough space
+                }
+
+                // Adjust the transform origin for vertical position
+                if (spaceBottom < rect.height * scale) {
+                    img.style.transformOrigin = img.style.transformOrigin + ' top'; // Align top if bottom space is insufficient
+                } else if (spaceTop < rect.height * scale) {
+                    img.style.transformOrigin = img.style.transformOrigin + ' bottom'; // Align bottom if top space is insufficient
+                }
+            });
+
+            bubble.addEventListener('mouseleave', (event) => {
+                const img = event.currentTarget;
+                img.classList.remove('hover-effect'); // Remove hover effect
+                img.style.transformOrigin = 'center center'; // Reset transform origin
+            });
+        });
+    </script>
+</body>
+
+</html>

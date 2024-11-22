@@ -63,12 +63,10 @@
         .email h1 {
             overflow: hidden;
             cursor: pointer;
-
         }
 
         .email h3 {
             cursor: pointer;
-
         }
 
         .fb {
@@ -173,7 +171,7 @@
             background-color: #e44d00;
         }
 
-        @keyframes rotate360 {
+        /* @keyframes rotate360 {
             from {
                 transform: rotate(120deg);
             }
@@ -184,9 +182,9 @@
         }
 
         /* Hover animation for arrow image */
-        .enterarrow img:hover {
+        /* .enterarrow img:hover {
             animation: rotate360 2s linear infinite;
-        }
+        } */ 
     </style>
 </head>
 
@@ -242,10 +240,10 @@
             fullpageForm.classList.remove('active');
         });
 
-        // Gravity and dragging effects for contact category
+        // Gravity, drag, and throw effects for contact category
         const divs = document.querySelectorAll('.newbussiness, .email, .fb, .enterarrow');
-        const gravity = 0.5;
-        const friction = 0.8;
+        const gravity = 2;
+        const friction = 0.6;
         const states = Array.from(divs).map(() => ({
             velocityX: 0,
             velocityY: 0,
@@ -258,102 +256,165 @@
             throwSpeed: 0, // Initial speed for throw
         }));
 
-        function animateGravity() {
-            divs.forEach((div, index) => {
-                if (states[index].isDragging) return;
+        // Prevent overlap by adjusting position
+        function preventOverlap(element, nextX, nextY) {
+            const containerRect = container.getBoundingClientRect(); // Get container's bounds
+            const rect = element.getBoundingClientRect();
+            const elementWidth = rect.width;
+            const elementHeight = rect.height;
 
-                const rect = container.getBoundingClientRect();
-                let x = div.offsetLeft + states[index].velocityX;
-                let y = div.offsetTop + states[index].velocityY;
+            // Prevent going outside the container (left, right, top, bottom)
+            if (nextX < containerRect.left) nextX = containerRect.left; // Prevent going left
+            if (nextX + elementWidth > containerRect.right) nextX = containerRect.right - elementWidth; // Prevent going right
+            if (nextY < containerRect.top) nextY = containerRect.top; // Prevent going up
+            if (nextY + elementHeight > containerRect.bottom) nextY = containerRect.bottom - elementHeight; // Prevent going down
 
-                // Check for boundary collisions and apply friction
-                if (x <= 0 || x + div.offsetWidth >= rect.width) {
-                    states[index].velocityX = -states[index].velocityX * friction;
-                    x = Math.max(0, Math.min(x, rect.width - div.offsetWidth));
+            // Prevent overlap with other elements
+            divs.forEach(otherElement => {
+                if (otherElement === element) return;
+
+                const otherRect = otherElement.getBoundingClientRect();
+
+                if (
+                    nextX < otherRect.right &&
+                    nextX + elementWidth > otherRect.left &&
+                    nextY < otherRect.bottom &&
+                    nextY + elementHeight > otherRect.top
+                ) {
+                    // Adjust position to avoid overlap
+                    if (nextY + elementHeight > otherRect.top) {
+                        nextY = otherRect.top - elementHeight;
+                    } else {
+                        nextY += 10; // Slight move down to ensure it clears other element
+                    }
                 }
-
-                if (y <= 0 || y + div.offsetHeight >= rect.height) {
-                    states[index].velocityY = -states[index].velocityY * friction;
-                    y = Math.max(0, Math.min(y, rect.height - div.offsetHeight));
-                }
-
-                states[index].velocityY += gravity; // Apply gravity
-
-                div.style.left = `${x}px`;
-                div.style.top = `${y}px`;
-
-                // Slow down the velocity due to friction
-                states[index].velocityX *= 0.99;
-                states[index].velocityY *= 0.99;
             });
 
-            requestAnimationFrame(animateGravity);
+            return { nextX, nextY };
         }
 
-        // Apply random "throwing" behavior initially for each element
+        // Add drag and throw effects
         divs.forEach((div, index) => {
-            const rect = div.getBoundingClientRect();
-            // Set a random angle for each element's initial throw
-            states[index].angle = Math.random() * 2 * Math.PI; // Random angle between 0 and 2π
-            states[index].throwSpeed = 10 + Math.random() * 5; // Random throw speed between 10 and 15
-            states[index].velocityX = Math.cos(states[index].angle) * states[index].throwSpeed;
-            states[index].velocityY = Math.sin(states[index].angle) * states[index].throwSpeed;
-            div.style.left = `${Math.random() * (window.innerWidth - rect.width)}px`; // Random starting position
-            div.style.top = `${Math.random() * (window.innerHeight - rect.height)}px`; // Random starting position
-        });
-
-        // Dragging behavior
-        divs.forEach((div, index) => {
-            div.addEventListener('mousedown', (e) => {
-                e.preventDefault();
+            div.addEventListener('mousedown', (event) => {
                 states[index].isDragging = true;
-                states[index].lastMouseX = e.clientX;
-                states[index].lastMouseY = e.clientY;
+                states[index].lastMouseX = event.clientX;
+                states[index].lastMouseY = event.clientY;
+                states[index].offsetX = div.offsetLeft;
+                states[index].offsetY = div.offsetTop;
+
+                event.preventDefault();
             });
 
-            document.addEventListener('mousemove', (e) => {
+            document.addEventListener('mousemove', (event) => {
                 if (!states[index].isDragging) return;
 
-                const dx = e.clientX - states[index].lastMouseX;
-                const dy = e.clientY - states[index].lastMouseY;
+                const deltaX = event.clientX - states[index].lastMouseX;
+                const deltaY = event.clientY - states[index].lastMouseY;
 
-                states[index].lastMouseX = e.clientX;
-                states[index].lastMouseY = e.clientY;
+                const newX = states[index].offsetX + deltaX;
+                const newY = states[index].offsetY + deltaY;
 
-                div.style.left = `${div.offsetLeft + dx}px`;
-                div.style.top = `${div.offsetTop + dy}px`;
+                const newPosition = preventOverlap(div, newX, newY);
 
-                states[index].velocityX = dx;
-                states[index].velocityY = dy;
+                div.style.left = `${newPosition.nextX}px`;
+                div.style.top = `${newPosition.nextY}px`;
+
+                event.preventDefault();
             });
 
             document.addEventListener('mouseup', () => {
-                states[index].isDragging = false;
+                if (states[index].isDragging) {
+                    states[index].isDragging = false;
+
+                    // Save the final position after dragging
+                    states[index].offsetX = div.offsetLeft;
+                    states[index].offsetY = div.offsetTop;
+
+                    // Set velocity to 0 so the element doesn't keep moving after drag release
+                    states[index].velocityX = 0;
+                    states[index].velocityY = 0;
+                }
             });
         });
 
-        animateGravity();
+        // Apply gravity and velocity for throw effect
+       // Modify the mouseup event to set an initial throw velocity
 
-        const emailCopy = document.querySelector('.email-copy');
 
-        // Add event listener to email-copy class
-        emailCopy.addEventListener('click', () => {
-            // Create a temporary input element to copy the text
-            const textToCopy = emailCopy.textContent;
-            const tempInput = document.createElement('input');
-            document.body.appendChild(tempInput);
-            tempInput.value = textToCopy;
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
+// Apply gravity and velocity for smooth throw effect
+function checkBalance(div, index) {
+            const rect = div.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
 
-            // Show "Copied" message inside the email box
-            const originalText = emailCopy.textContent;
-            emailCopy.textContent = 'Copied';
-            setTimeout(() => {
-                emailCopy.textContent = originalText;  // Restore original text after 2 seconds
-            }, 2000);
-        });
+            const centerX = rect.left + rect.width / 2;
+            const isBalanced = centerX > containerRect.left && centerX < containerRect.right;
+
+            if (!isBalanced) {
+                states[index].isFalling = true;
+                states[index].angle += 5;
+                div.style.transform = `rotate(${states[index].angle}deg)`;
+            } else {
+                states[index].isFalling = false;
+                div.style.transform = `rotate(0deg)`;
+            }
+        }
+function animateGravity() {
+    divs.forEach((div, index) => {
+        if (states[index].isDragging) return; // Skip if the element is being dragged
+
+        // Check balance before applying gravity
+
+        if (states[index].isFalling) {
+            // Apply rotation and gravity when falling
+            states[index].velocityY += gravity;
+            states[index].angle += 5; // Adjust rotation speed
+            div.style.transform = `rotate(${states[index].angle}deg)`;
+        } else {
+            // Apply regular gravity
+            states[index].velocityY += gravity;
+        }
+
+        // Apply friction to horizontal velocity
+        states[index].velocityX *= friction;
+        states[index].velocityY *= friction;
+
+        // Update position based on velocity
+        let newX = div.offsetLeft + states[index].velocityX;
+        let newY = div.offsetTop + states[index].velocityY;
+
+        // Prevent the element from moving outside the container
+        const newPosition = preventOverlap(div, newX, newY);
+
+        div.style.left = `${newPosition.nextX}px`;
+        div.style.top = `${newPosition.nextY}px`;
+
+        // Stop movement if velocity is very small
+        if (Math.abs(states[index].velocityX) < 0.1 && Math.abs(states[index].velocityY) < 0.1) {
+            states[index].velocityX = 0;
+            states[index].velocityY = 0;
+        }
+    });
+
+    requestAnimationFrame(animateGravity);
+}
+
+
+animateGravity(); // Start the gravity animation
+const emailCopy = document.querySelector('.email-copy');
+
+emailCopy.addEventListener('click', async () => {
+        // Copy the email text to clipboard
+        await navigator.clipboard.writeText(emailCopy.textContent);
+
+        // Temporarily change the text to "Copied!"
+        const originalText = emailCopy.textContent;
+        emailCopy.textContent = "Copied!";
+
+        // Revert back to original text after 1 second
+        setTimeout(() => {
+            emailCopy.textContent = originalText;
+        }, 1000);
+});
     </script>
 </body>
 

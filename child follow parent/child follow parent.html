@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hover Effect</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .parent {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            background-color: #ccc;
+            border: 2px solid #333;
+            overflow: hidden;
+        }
+
+        .child {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: #ff6347;
+            transform: translate(-50%, -50%);
+            display: none;
+            /* Hidden by default */
+        }
+
+        .parent:hover .child {
+            display: block;
+            /* Show on hover */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="parent">
+        <a href="http://google.com" target="_blank" rel="noopener noreferrer">
+            <div class="child">
+
+            </div>
+        </a>
+    </div>
+    <div class="parent">
+        <a href="http://google.com" target="_blank" rel="noopener noreferrer">
+            <div class="child">
+
+            </div>
+        </a>
+    </div>
+    <div class="parent">
+        <a href="http://google.com" target="_blank" rel="noopener noreferrer">
+            <div class="child">
+
+            </div>
+        </a>
+    </div>
+
+    <script>
+        document.querySelectorAll('.parent').forEach(parent => {
+            const child = parent.querySelector('.child');
+
+            parent.addEventListener('mousemove', (event) => {
+                const rect = parent.getBoundingClientRect();
+                const mouseX = event.clientX - rect.left;
+                const mouseY = event.clientY - rect.top;
+
+                child.style.left = `${mouseX}px`;
+                child.style.top = `${mouseY}px`;
+            });
+        });
+    </script>
+</body>
+
+</html>

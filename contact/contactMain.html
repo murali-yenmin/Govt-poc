@@ -25,7 +25,7 @@
             font-weight: bold;
         }
 
-       
+
         #form-container {
             position: fixed;
             top: 0;
@@ -455,7 +455,7 @@
                         context.rotate(body.angle); // Rotate the context by the shape's angle
 
                         // Render title and text inside the shape
-                       if (shape.type === 'image' && shape.img) {
+                        if (shape.type === 'image' && shape.img) {
                             context.drawImage(shape.img, -shape.width / 2, -shape.height / 2, shape.width, shape.height);
                         } else {
                             context.font = `${shape.fontWeight} ${shape.fontSize} Arial`; // Font for shape title and text
@@ -478,21 +478,46 @@
                 requestAnimationFrame(renderText);
             })();
 
-            function hoverStyle() {
-                let isHovering = false;
-                SHAPES.forEach(shape => {
-                    const body = shape.body;
-                    if (body && shape.hoverCursor) {
-                        const distance = Math.hypot(event.clientX - body.position.x, event.clientY - body.position.y);
-                        if (distance < 100) {
-                            isHovering = true;
-                        }
-                    }
-                });
+            function hoverStyle(event) {
+    if (!event) return; // Ensure the event object is defined
 
-                // Set cursor style based on hovering state
-                render.canvas.style.cursor = isHovering ? 'pointer' : 'default';
+    let isHovering = false;
+    const rect = render.canvas.getBoundingClientRect(); // Get canvas bounds
+    const mouseX = event.clientX - rect.left; // Adjust mouse X position
+    const mouseY = event.clientY - rect.top;  // Adjust mouse Y position
+console.log(SHAPES);
+
+    SHAPES.forEach(shape => {
+        const body = shape.body;
+
+        console.log(shape.id);
+        // if (body && shape.hoverCursor) {
+            
+            // Update bounds to match the current shape's position
+            Matter.Bounds.update(body.bounds, body.vertices);
+            const bounds = body.bounds;
+
+            // Check if the mouse is within the bounds
+            if (
+                mouseX >= bounds.min.x &&
+                mouseX <= bounds.max.x &&
+                mouseY >= bounds.min.y &&
+                mouseY <= bounds.max.y
+            ) {
+                // Precise hit detection using the shape's vertices
+                if (Matter.Vertices.contains(body.vertices, { x: mouseX, y: mouseY })) {
+                    isHovering = true;
+                }
             }
+        // }
+    });
+
+    // Set cursor style based on hovering state
+    render.canvas.style.cursor = isHovering ? 'pointer' : 'default';
+}
+
+// Attach the hoverStyle function to the mousemove event
+render.canvas.addEventListener('mousemove', hoverStyle);
 
             let clickStartTime = 0;
             let clickStartPosition = { x: 0, y: 0 };
@@ -517,44 +542,59 @@
             });
 
             render.canvas.addEventListener('mouseup', function (event) {
+                const rect = render.canvas.getBoundingClientRect(); // Get canvas bounds for proper scaling
+                const mouseX = event.clientX - rect.left;
+                const mouseY = event.clientY - rect.top;
+
                 const duration = Date.now() - clickStartTime;
+
+                // Check if the mouse was clicking (not dragging) and within the click threshold
                 if (!isDragging && isClicking && duration < CLICK_THRESHOLD) {
                     SHAPES.forEach(shape => {
                         const body = shape.body;
-                        if (shape.id === "arrow") {
-                            if (body) {
-                                const distance = Math.hypot(event.clientX - body.position.x, event.clientY - body.position.y);
-                                if (distance < 100) {
-                                    document.getElementById('world').style.transform = 'translateX(-100%)';
-                                    document.getElementById('form-container').style.right = '0';
+                        if (body) {
+                            // Update bounds to ensure they match the shape's current position
+                            Matter.Bounds.update(body.bounds, body.vertices);
+                            const bounds = body.bounds;
+
+                            // Check if the mouse click is within the shape's bounds
+                            if (
+                                mouseX >= bounds.min.x &&
+                                mouseX <= bounds.max.x &&
+                                mouseY >= bounds.min.y &&
+                                mouseY <= bounds.max.y
+                            ) {
+                                // Fine-grained hit detection using the shape's vertices
+                                if (Matter.Vertices.contains(body.vertices, { x: mouseX, y: mouseY })) {
+                                    // Open a link in a new tab
+                                    if (shape.link) {
+                                        window.open(shape.link, '_blank');
+                                    }
+
+                                    // Copy text to clipboard
+                                    if (shape.copyText) {
+                                        navigator.clipboard.writeText(shape.text).then(() => {
+                                            shape.text = "Copied!"; // Change text to indicate copy
+                                            shape.textX = -112;
+
+                                            // Optional: Restore the original text after a short delay
+                                            setTimeout(() => {
+                                                shape.text = "example@example.com";
+                                                shape.textX = 0;
+                                            }, 2000);
+                                        });
+                                    }
+
+                                    // Trigger form container slide-in for the arrow shape
+                                    if (shape.id === "arrow") {
+                                        document.getElementById('world').style.transform = 'translateX(-100%)';
+                                        document.getElementById('form-container').style.right = '0';
+                                    }
                                 }
                             }
                         }
-                        const distance = Math.hypot(event.clientX - body.position.x, event.clientY - body.position.y);
-                        if (distance < 100) {
-                            if (shape.link) {
-                                window.open(shape.link, '_blank');
-                            }
-                            if (shape.copyText) {
-                                const previousText = shape.text;
-                                const previousTextX = shape.textX;
-                                navigator.clipboard.writeText(shape.text).then(() => {
-                                    // Change the text of the shape to "Copied!"
-                                    shape.text = "Copied!";
-                                    shape.textX = -112;
-
-                                    // Optional: Restore the original text after a short delay
-                                    setTimeout(() => {
-                                        shape.text = previousText; // Replace with the original text
-                                        shape.textX = previousTextX; // Replace with the original text
-                                    }, 1000); // Delay in milliseconds
-                                });
-                            }
-                        }
-
                     });
                 }
-                isClicking = false;
             });
 
             document.getElementById('back-button').addEventListener('click', function () {

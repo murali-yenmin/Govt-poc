@@ -24,13 +24,87 @@
             color: #000;
             font-weight: bold;
         }
+
+       
+        #form-container {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: right 0.5s ease;
+        }
+
+        #form-container form {
+            width: 100%;
+            height: 100vh;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        #form-container form h2 {
+            margin: 0 0 20px;
+        }
+
+        #form-container form input,
+        #form-container form textarea {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #form-container form button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #form-container form button:hover {
+            background-color: #45a049;
+        }
+
+        #back-button {
+            background-color: #FF6F61;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #back-button:hover {
+            background-color: #E65C55;
+        }
     </style>
 </head>
 
 <body>
 
     <div id="loading">Loading...</div> <!-- Loading screen -->
-
+    <div id="form-container">
+        <form>
+            <button id="back-button" type="button">Back</button>
+            <h2>Contact Us</h2>
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
     <canvas id="world"></canvas>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
@@ -61,6 +135,7 @@
         // },
         const SHAPESDATA = [
             {
+                id: "business",
                 type: 'box',
                 color: '#FF5000',
                 title: '',
@@ -81,6 +156,7 @@
                 hoverCursor: true
             },
             {
+                id: "careers",
                 type: 'box',
                 color: '#FF5000',
                 title: '',
@@ -101,6 +177,7 @@
                 hoverCursor: true
             },
             {
+                id: "collaboration",
                 type: 'box',
                 color: '#FFF5DC',
                 title: '',
@@ -121,6 +198,7 @@
                 hoverCursor: true
             },
             {
+                id: "location",
                 type: 'box',
                 color: '#D9D9D9',
                 title: '',
@@ -140,6 +218,7 @@
                 fontWeight: '700'
             },
             {
+                id: "contact",
                 type: 'box',
                 color: '#FFF5DC',
                 title: 'CONTACT',
@@ -210,10 +289,10 @@
                 restitution: 0
             },
             {
+                id: "arrow",
                 type: 'image',
                 src: './image/arrow.PNG',
                 title: 'Image Shape',
-                link: 'https://arrow.com',
                 x: getRandomNumber(minRandomValue, maxRandomValue),
                 y: 0,
                 width: 185,
@@ -376,7 +455,7 @@
                         context.rotate(body.angle); // Rotate the context by the shape's angle
 
                         // Render title and text inside the shape
-                        if (shape.type === 'image' && shape.img) {
+                       if (shape.type === 'image' && shape.img) {
                             context.drawImage(shape.img, -shape.width / 2, -shape.height / 2, shape.width, shape.height);
                         } else {
                             context.font = `${shape.fontWeight} ${shape.fontSize} Arial`; // Font for shape title and text
@@ -442,8 +521,15 @@
                 if (!isDragging && isClicking && duration < CLICK_THRESHOLD) {
                     SHAPES.forEach(shape => {
                         const body = shape.body;
-                        console.log("body: ", body);
-
+                        if (shape.id === "arrow") {
+                            if (body) {
+                                const distance = Math.hypot(event.clientX - body.position.x, event.clientY - body.position.y);
+                                if (distance < 100) {
+                                    document.getElementById('world').style.transform = 'translateX(-100%)';
+                                    document.getElementById('form-container').style.right = '0';
+                                }
+                            }
+                        }
                         const distance = Math.hypot(event.clientX - body.position.x, event.clientY - body.position.y);
                         if (distance < 100) {
                             if (shape.link) {
@@ -469,6 +555,11 @@
                     });
                 }
                 isClicking = false;
+            });
+
+            document.getElementById('back-button').addEventListener('click', function () {
+                document.getElementById('world').style.transform = 'translateX(0)';
+                document.getElementById('form-container').style.right = '-100%';
             });
         }
     </script>

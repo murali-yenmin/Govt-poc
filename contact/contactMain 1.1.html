@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matter.js Simulation with Rotating Text</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: #000;
+            font-weight: bold;
+        }
+
+
+        #form-container {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: right 0.5s ease;
+        }
+
+        #form-container form {
+            width: 100%;
+            height: 100vh;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        #form-container form h2 {
+            margin: 0 0 20px;
+        }
+
+        #form-container form input,
+        #form-container form textarea {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #form-container form button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #form-container form button:hover {
+            background-color: #45a049;
+        }
+
+        #back-button {
+            background-color: #FF6F61;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #back-button:hover {
+            background-color: #E65C55;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading">Loading...</div> <!-- Loading screen -->
+    <div id="form-container">
+        <form>
+            <button id="back-button" type="button">Back</button>
+            <h2>Contact Us</h2>
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <canvas id="world"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
+
+    <script>
+        const { Engine, Render, World, Bodies, Body, Events, Composite, Mouse, MouseConstraint, Vector } = Matter;
+
+        const minRandomValue = window.innerWidth * 0.2;
+        const maxRandomValue = window.innerWidth * 0.8;
+
+        function getRandomNumber(x, y) {
+            return Math.floor(Math.random() * (y - x + 1)) + x;
+        }
+
+        // sample circle
+        // {
+        //     type: 'circle',
+        //     color: 'red',
+        //     title: 'Red Circle',
+        //     text: 'Circle',
+        //     radius: 50,
+        //     x: topCenter,
+        //     y: 0,
+        //     restitution: 0,
+        //     link: 'https://example333.com',
+        //     fontSize: '16px',
+        //     fontWeight: 'normal'
+        // },
+        const SHAPESDATA = [
+            {
+                id: "business",
+                type: 'box',
+                color: '#FF5000',
+                title: '',
+                text: 'NEW BUSINESS',
+                width: 700,
+                height: 154,
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                restitution: 0,
+                link: 'https://newBussiness.com',
+                fontSize: '70px',
+                fontWeight: '700',
+                titleY: 0,
+                textY: 0,
+                titleX: 0,
+                textX: 0,
+                textColor: 'white',
+                hoverCursor: true
+            },
+            {
+                id: "careers",
+                type: 'box',
+                color: '#FF5000',
+                title: '',
+                text: 'CAREERS',
+                width: 400,
+                height: 144,
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                restitution: 0,
+                link: 'https://careers.com',
+                fontSize: '50px',
+                titleY: 0,
+                textY: 0,
+                titleX: 0,
+                textX: 0,
+                fontWeight: '700',
+                textColor: 'white',
+                hoverCursor: true
+            },
+            {
+                id: "collaboration",
+                type: 'box',
+                color: '#FFF5DC',
+                title: '',
+                text: 'COLLABORATION',
+                width: 750,
+                height: 144,
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                restitution: 0,
+                link: 'https://collaboration.com',
+                fontSize: '70px',
+                titleY: 0,
+                textY: 0,
+                titleX: 0,
+                textX: 0,
+                textColor: 'black',
+                fontWeight: '700',
+                hoverCursor: true
+            },
+            {
+                id: "location",
+                type: 'box',
+                color: '#D9D9D9',
+                title: '',
+                text: 'LOCATION',
+                width: 500,
+                height: 144,
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                restitution: 0,
+                link: 'https://location.com',
+                fontSize: '70px',
+                titleY: 0,
+                textY: 0,
+                titleX: 0,
+                textX: 0,
+                textColor: 'black',
+                fontWeight: '700'
+            },
+            {
+                id: "contact",
+                type: 'box',
+                color: '#FFF5DC',
+                title: 'CONTACT',
+                text: 'example@example.com',
+                width: 400,
+                height: 144,
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                restitution: 0,
+                fontSize: '30px',
+                titleY: -10,
+                textY: 20,
+                titleX: -114,
+                textX: 0,
+                textColor: 'black',
+                fontWeight: '500',
+                titleFontWeight: '500',
+                titleFontSize: '20px',
+                hoverCursor: true,
+                copyText: true
+            },
+            {
+                type: 'image',
+                src: './image/insta.PNG',
+                title: 'Image Shape',
+                link: 'https://insta.com',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                width: 185,
+                height: 185,
+                hoverCursor: true,
+                restitution: 0
+            },
+            {
+                type: 'image',
+                src: './image/insta.PNG',
+                title: 'Image Shape',
+                link: 'https://facebook.com',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                width: 185,
+                height: 185,
+                hoverCursor: true,
+                restitution: 0
+            },
+            {
+                type: 'image',
+                src: './image/insta.PNG',
+                title: 'Image Shape',
+                link: 'https://telegram.com',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                width: 185,
+                height: 185,
+                hoverCursor: true,
+                restitution: 0
+            },
+            {
+                type: 'image',
+                src: './image/insta.PNG',
+                title: 'Image Shape',
+                link: 'https://youtube.com',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                width: 185,
+                height: 185,
+                hoverCursor: true,
+                restitution: 0
+            },
+            {
+                id: "arrow",
+                type: "circleWithArrow",
+                circleX: 50,           // Circle center X-coordinate
+                circleY: 50,           // Circle center Y-coordinate
+                arrowWidth: 60,         // Arrow body width
+                arrowHeight: 10,        // Arrow body height (thickness)
+                arrowHeadWidth: 40,     // Arrowhead width
+                arrowHeadHeight: 80,    // Arrowhead height
+                arrowThickness: 35,      // Arrow line thickness
+                arrowColor: "#000000",  // Arrow color
+                arrowSpeed: 15,          // Speed of arrow animation
+                gap: 10,                // Gap between arrow shaft and head
+                restitution: 0.6,       // Bounciness of the shape (optional)
+                circleRadius: 110,          // Radius of the circle
+                color: '#D9D9D9'
+            },
+        ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Randomize SHAPES array
+        const SHAPES = shuffleArray([...SHAPESDATA]);
+
+        // Preload all images
+        const preloadImages = () => {
+            const imagePromises = SHAPES.filter(shape => shape.type === 'image').map(shape => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.src = shape.src;
+                    img.onload = () => {
+                        shape.img = img;
+                        resolve(img);
+                    };
+                    img.onerror = reject;
+                });
+            });
+
+            return Promise.all(imagePromises); // Wait for all images to load
+        };
+
+        // Trigger image loading as soon as the page loads
+        window.onload = function () {
+            preloadImages()
+                .then(() => {
+                    document.getElementById('loading').style.display = 'none'; // Hide loading screen once images are loaded
+                    startSimulation(); // Start the simulation
+                })
+                .catch(error => {
+                    console.error("Error loading images:", error);
+                    document.getElementById('loading').textContent = 'Error loading images, please try again.';
+                });
+        };
+
+        function startSimulation() {
+            const engine = Engine.create();
+            const world = engine.world;
+
+            const render = Render.create({
+                element: document.body,
+                canvas: document.getElementById('world'),
+                engine: engine,
+                options: {
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                    wireframes: false,
+                    background: '#f0f0f0'
+                }
+            });
+
+            const boundaryThickness = 100;
+
+            const boundaries = [
+                Bodies.rectangle(window.innerWidth / 2, -boundaryThickness / 2, window.innerWidth, boundaryThickness, {
+                    isStatic: true,
+                    render: { fillStyle: '#8b8b8b' }
+                }),
+                Bodies.rectangle(-boundaryThickness / 2, window.innerHeight / 2, boundaryThickness, window.innerHeight, {
+                    isStatic: true,
+                    render: { fillStyle: '#8b8b8b' }
+                }),
+                Bodies.rectangle(window.innerWidth + boundaryThickness / 2, window.innerHeight / 2, boundaryThickness, window.innerHeight, {
+                    isStatic: true,
+                    render: { fillStyle: '#8b8b8b' }
+                }),
+                Bodies.rectangle(window.innerWidth / 2, window.innerHeight + boundaryThickness / 2, window.innerWidth, boundaryThickness, {
+                    isStatic: true,
+                    render: { fillStyle: '#8b8b8b' }
+                })
+            ];
+
+            World.add(world, boundaries);
+
+            let shapeIndex = 0; // Start index for shape creation
+            let delay = 1000; // Initial delay (1 second)
+
+            // Create shapes one by one with a delay
+            function createNextShape() {
+                if (shapeIndex < SHAPES.length) {
+                    const shape = SHAPES[shapeIndex];
+                    let body;
+                    let randomAngle = Math.random() * 2 * Math.PI; // Random angle between 0 and 2π
+                    let randomAngularVelocity = (Math.random() - 0.5) * 0.05; // Random angular velocity
+
+                    if (shape.type === 'box') {
+                        body = Bodies.rectangle(shape.x, shape.y, shape.width, shape.height, {
+                            restitution: shape.restitution,
+                            render: { fillStyle: shape.color },
+                            angle: randomAngle, // Set the initial random rotation
+                        });
+                    } else if (shape.type === 'circle') {
+                        body = Bodies.circle(shape.x, shape.y, shape.radius, {
+                            restitution: shape.restitution,
+                            render: { fillStyle: shape.color },
+                            angle: randomAngle, // Set the initial random rotation
+                        });
+                    } else if (shape.type === 'image' && shape.img) {
+                        body = Bodies.rectangle(shape.x, shape.y, shape.width, shape.height, {
+                            restitution: shape.restitution,
+                            render: { fillStyle: 'transparent' },
+                        });
+                    }
+                    else if (shape.type === "circleWithArrow") {
+                        body = drawCircleWithArrow(shape); // Create the circle with arrow
+                    }
+
+                    // Apply a random angular velocity to make the shape rotate while falling
+                    if (body) {
+                        Body.setAngularVelocity(body, randomAngularVelocity);
+                        World.add(world, body); // Add the body to the world
+                        shape.body = body; // Store the body in shape for later reference
+                        shapeIndex++;
+
+                        // Reduce the delay for the next shape
+                        delay = Math.max(200, delay - 100); // Decrease delay, but keep it above 200ms
+                        setTimeout(createNextShape, delay); // Delay in ms
+                    }
+                }
+            }
+
+            // Start the shape creation process
+            createNextShape();
+
+            // Create the mouse constraint for drag functionality
+            const mouse = Mouse.create(render.canvas);
+            const mouseConstraint = MouseConstraint.create(engine, {
+                mouse: mouse,
+                constraint: {
+                    stiffness: 0.2,
+                    render: { visible: false }
+                }
+            });
+            World.add(world, mouseConstraint);
+
+
+            Engine.run(engine);
+            Render.run(render);
+
+            (function renderText() {
+                const context = render.context;
+
+                SHAPES.forEach((shape) => {
+                    const body = shape.body;
+                    if (body) {
+                        context.save(); // Save the current context
+                        context.translate(body.position.x, body.position.y); // Move the context to the shape's position
+                        context.rotate(body.angle); // Rotate the context by the shape's angle
+
+                        // Render title and text inside the shape
+                        if (shape.type === 'image' && shape.img) {
+                            context.drawImage(shape.img, -shape.width / 2, -shape.height / 2, shape.width, shape.height);
+                        } else {
+                            context.font = `${shape.fontWeight} ${shape.fontSize} Arial`; // Font for shape title and text
+                            context.fillStyle = shape.textColor; // Shape text color
+                            context.textAlign = 'center';
+                            context.textBaseline = 'middle';
+                            context.fillText(shape.text, shape.textX, shape.textY); // Text inside the box
+
+                            if (shape.title) {
+                                context.font = `${shape.titleFontWeight} ${shape.titleFontSize} Arial`; // Font for shape title and text
+                                context.fillStyle = shape.titleColor; // Shape text color
+                                context.fillText(shape.title, shape.titleX, shape.titleY); // Title at the top of the box
+                            }
+                        }
+
+                        context.restore();
+                    }
+                });
+
+                requestAnimationFrame(renderText);
+            })();
+
+            function hoverStyle() {
+                let isHovering = false;
+                SHAPES.forEach(shape => {
+                    const body = shape.body;
+                    if (body && shape.hoverCursor) {
+                        const distance = Math.hypot(event.clientX - body.position.x, event.clientY - body.position.y);
+                        if (distance < 100) {
+                            isHovering = true;
+                        }
+                    }
+                });
+
+                // Set cursor style based on hovering state
+                render.canvas.style.cursor = isHovering ? 'pointer' : 'default';
+            }
+
+            let clickStartTime = 0;
+            let clickStartPosition = { x: 0, y: 0 };
+            let isDragging = false;
+            let isClicking = false;
+            const DRAG_THRESHOLD = 10;
+            const CLICK_THRESHOLD = 300;
+
+            render.canvas.addEventListener('mousedown', function (event) {
+                clickStartTime = Date.now();
+                clickStartPosition = { x: event.clientX, y: event.clientY };
+                isDragging = false;
+                isClicking = true;
+            });
+
+            render.canvas.addEventListener('mousemove', function (event) {
+                hoverStyle();
+                const distance = Math.hypot(event.clientX - clickStartPosition.x, event.clientY - clickStartPosition.y);
+                if (distance > DRAG_THRESHOLD) {
+                    isDragging = true;
+                }
+            });
+
+            render.canvas.addEventListener('mouseup', function (event) {
+                const duration = Date.now() - clickStartTime;
+                if (!isDragging && isClicking && duration < CLICK_THRESHOLD) {
+                    SHAPES.forEach(shape => {
+                        const body = shape.body;
+                        if (shape.id === "arrow") {
+                            if (body) {
+                                const distance = Math.hypot(event.clientX - body.position.x, event.clientY - body.position.y);
+                                if (distance < 100) {
+                                    document.getElementById('world').style.transform = 'translateX(-100%)';
+                                    document.getElementById('form-container').style.right = '0';
+                                }
+                            }
+                        }
+                        const distance = Math.hypot(event.clientX - body.position.x, event.clientY - body.position.y);
+                        if (distance < 100) {
+                            if (shape.link) {
+                                window.open(shape.link, '_blank');
+                            }
+                            if (shape.copyText) {
+                                const previousText = shape.text;
+                                const previousTextX = shape.textX;
+                                navigator.clipboard.writeText(shape.text).then(() => {
+                                    // Change the text of the shape to "Copied!"
+                                    shape.text = "Copied!";
+                                    shape.textX = -112;
+
+                                    // Optional: Restore the original text after a short delay
+                                    setTimeout(() => {
+                                        shape.text = previousText; // Replace with the original text
+                                        shape.textX = previousTextX; // Replace with the original text
+                                    }, 1000); // Delay in milliseconds
+                                });
+                            }
+                        }
+
+                    });
+                }
+                isClicking = false;
+            });
+
+            document.getElementById('back-button').addEventListener('click', function () {
+                document.getElementById('world').style.transform = 'translateX(0)';
+                document.getElementById('form-container').style.right = '-100%';
+            });
+        }
+
+        function drawCircleWithArrow(shape) {
+            const {
+                circleX,
+                circleY,
+                circleRadius,
+                arrowWidth,
+                arrowHeight,
+                arrowHeadWidth,
+                arrowHeadHeight,
+                arrowThickness,
+                arrowColor,
+                arrowSpeed,
+                gap,
+            } = shape;
+
+            let arrowOffset = 0; // Start in the center of the circle
+            let isHovering = false; // Track if the mouse is inside the circle
+
+            // Create the physics body for the circle
+            const body = Bodies.circle(circleX, circleY, circleRadius, {
+                restitution: shape.restitution,
+                render: {
+                    fillStyle: shape.color || "transparent", // Fill color for the circle
+                    lineWidth: 0, // Set border width to 0
+                    strokeStyle: "transparent", // Make the border transparent
+                    visible: false,
+                },
+            });
+
+            // Get the canvas and context
+            const canvas = document.getElementById("world");
+            const ctx = canvas.getContext("2d");
+
+            // Function to draw the arrow
+            function drawArrow(circleX, circleY, offset) {
+                const startX = circleX - arrowWidth / 1.2 + offset; // Adjust horizontally using offset
+                const startY = circleY - arrowHeight / 2; // Center vertically
+
+                // Arrow body
+                ctx.beginPath();
+                ctx.moveTo(startX + gap, startY);
+                ctx.lineTo(startX + arrowWidth - gap, startY);
+                ctx.lineWidth = arrowThickness;
+                ctx.lineCap = "round";
+                ctx.lineJoin = "round";
+                ctx.strokeStyle = arrowColor;
+                ctx.stroke();
+
+                // Arrowhead
+                ctx.beginPath();
+                ctx.moveTo(startX + arrowWidth - gap, startY - arrowHeadHeight / 2);
+                ctx.lineTo(startX + arrowWidth - gap + arrowHeadWidth, startY);
+                ctx.lineTo(startX + arrowWidth - gap, startY + arrowHeadHeight / 2);
+                ctx.lineWidth = arrowThickness;
+                ctx.strokeStyle = arrowColor;
+                ctx.stroke();
+            }
+
+            // Function to animate the arrow
+            function animateArrow() {
+
+                const { x: currentX, y: currentY } = body.position; // Get the current position of the circle
+
+                // Draw the circle
+                ctx.beginPath();
+                ctx.arc(currentX, currentY, circleRadius, 0, Math.PI * 2);
+                ctx.fillStyle = shape.color || "transparent";
+                ctx.fill();
+                ctx.lineWidth = 0;
+                ctx.strokeStyle = "green"; // Change to desired border color
+                ctx.stroke();
+
+                // Restrict drawing to the circle area using clipping
+                ctx.save(); // Save the current canvas state
+                ctx.beginPath();
+                ctx.arc(currentX, currentY, circleRadius, 0, Math.PI * 2); // Define the circular clipping path
+                ctx.clip(); // Apply the clipping path
+
+                // Update arrow position if hovering
+                if (isHovering) {
+                    arrowOffset += arrowSpeed;
+                    if (arrowOffset > circleRadius * 2) {
+                        arrowOffset = -circleRadius * 2; // Loop the arrow position
+                    }
+                } else {
+                    arrowOffset = 0; // Reset offset if not hovering
+                }
+
+                // Draw the arrow with the current offset
+                drawArrow(currentX, currentY, arrowOffset);
+
+                ctx.restore(); // Restore the canvas state (remove clipping)
+                requestAnimationFrame(animateArrow); // Continue the animation
+            }
+
+            // Function to check if the mouse is inside the circle
+            function isMouseInCircle(mouseX, mouseY) {
+                const dx = mouseX - body.position.x;
+                const dy = mouseY - body.position.y;
+                return dx * dx + dy * dy <= circleRadius * circleRadius;
+            }
+
+            // Mouse move event listener
+            canvas.addEventListener("mousemove", (event) => {
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = event.clientX - rect.left;
+                const mouseY = event.clientY - rect.top;
+
+                if (isHovering === false) {
+
+                    isHovering = isMouseInCircle(mouseX, mouseY); // Update hovering state
+                    setTimeout(() => {
+                        isHovering = false;
+                    }, 400);
+                }
+            });
+
+            canvas.addEventListener("mouseleave", () => {
+                isHovering = false; // Reset hovering state when mouse leaves the canvas
+
+
+            });
+
+            // Start the animation
+            animateArrow();
+
+            return body; // Return the physics body to be added to the world
+        }
+
+    </script>
+
+</body>
+
+</html>

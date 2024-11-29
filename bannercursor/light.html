@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People</title>
+    <link
+    href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Oswald:wght@200..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            font-family: "Oswald", serif;
+        }
+:root {
+	--pointerX: 50vw;
+	--pointerY: 50vh;
+}
+
+.peopleBanner:before {
+	content: '';
+	position: fixed;
+	width: 100%;
+    height: 100%;
+	background: radial-gradient(circle 7vmax at var(--pointerX) var(--pointerY), rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0.95) 100%);
+}
+.peopleBanner{
+    cursor: none;
+    background: #000;
+    height: 100vh;
+    position: relative;
+}
+
+.peopleBannerCnt {
+    
+	color: white;
+	font-size: 110px;
+}
+
+.bannerletter h1{
+    font-family: "Oswald", serif;
+    font-weight: 700;
+    text-transform:uppercase;
+    color: #ff5000;
+    font-size: 420px;
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    
+}
+    </style>
+</head>
+<body>
+   <div class="peopleBanner">
+    <div class="peopleBannerCnt">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.  Voluptas ven Voluptas veniam distinctio similique,Voluptas ven Voluptas veniam distinctio similique,iam distinctio similique, Voluptas veniam distinctio similique, odit nulla cum accusamus temporibus illo rerum, perferendis beatae obcaecati, nobis dolore nostrum velit aperiam quae ipsa corrupti. </p>
+      </div>
+  <div class="bannerletter">
+    <h1>People</h1>
+  </div>  
+   </div>
+    <script>
+      window.addEventListener('mousemove', function(e) {
+        document.documentElement.style.setProperty('--pointerX', e.clientX + 'px');
+        document.documentElement.style.setProperty('--pointerY', e.clientY + 'px');
+      })
+    </script>
+  </body>
+</html>

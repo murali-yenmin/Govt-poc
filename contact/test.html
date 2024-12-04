@@ -1001,6 +1001,80 @@
                 // Get the canvas and context
                 const canvas = document.getElementById("world");
                 const ctx = canvas.getContext("2d");
+// Variables for touch handling
+let touchStartY = 0; // Initial touch position for scroll
+let activeBox = null; // The box being interacted with, if any
+let isDragging = false; // Tracks if a box is being dragged
+
+// Touch start event
+canvas.addEventListener("touchstart", (event) => {
+    const touchPos = getTouchPosition(event);
+    activeBox = getTouchedBox(touchPos);
+
+    if (!activeBox) {
+        // If no box is touched, start scrolling
+        touchStartY = touchPos.y;
+    } else {
+        isDragging = true;
+    }
+});
+
+// Touch move event
+canvas.addEventListener("touchmove", (event) => {
+    const touchPos = getTouchPosition(event);
+
+    if (activeBox && isDragging) {
+        // Apply force to the touched box to simulate dragging
+        const forceX = (touchPos.x - activeBox.position.x) * 0.05;
+        const forceY = (touchPos.y - activeBox.position.y) * 0.05;
+        Matter.Body.applyForce(activeBox, activeBox.position, { x: forceX, y: forceY });
+
+        event.preventDefault(); // Prevent scrolling when dragging a box
+    } else if (!activeBox) {
+        // If no box is touched, allow scrolling
+        const scrollDistance = touchStartY - touchPos.y;
+
+        if (Math.abs(scrollDistance) > 10) {
+            window.scrollBy(0, scrollDistance); // Scroll the page vertically
+            touchStartY = touchPos.y; // Update the touch start position
+            event.preventDefault();
+        }
+    }
+});
+
+// Touch end event
+canvas.addEventListener("touchend", () => {
+    // Reset states after touch ends
+    activeBox = null;
+    isDragging = false;
+});
+
+// Utility function: Get the touch position
+function getTouchPosition(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: event.touches[0].clientX - rect.left,
+        y: event.touches[0].clientY - rect.top,
+    };
+}
+
+// Utility function: Check if the touch intersects with a box
+function getTouchedBox(touchPos) {
+    for (let i = 0; i < SHAPES.length; i++) {
+        const boxBody = world.bodies[i + 4]; // Adjust index if needed
+        const distance = Math.sqrt(
+            Math.pow(touchPos.x - boxBody.position.x, 2) +
+            Math.pow(touchPos.y - boxBody.position.y, 2)
+        );
+console.log(world.bodies[i]);
+
+        // Check if the touch is within the radius of the box
+        // if (distance < boxWidth / 2) {
+        //     return boxBody;
+        // }
+    }
+    return null; // No box found at the touch position
+}
 
                 canvas.addEventListener('wheel', (event) => {
                     event.stopPropagation(); // Prevent canvas-specific scroll handling
@@ -1106,6 +1180,7 @@
                     isHovering = false; // Reset hovering state when mouse leaves the canvas
                 });
 
+              
                 // Start the animation
                 animateArrow();
 
@@ -1113,7 +1188,7 @@
             }
         }
         
-
+      
     </script>
 
 </body>

@@ -821,30 +821,69 @@
             const DRAG_THRESHOLD = 10;
             const CLICK_THRESHOLD = 300;
 
-            render.canvas.addEventListener('mousedown', function (event) {
+            function handleStart(event) {
                 if (event.button === 0) {
                     clickStartTime = Date.now();
                     clickStartPosition = { x: event.clientX, y: event.clientY };
                     isDragging = false;
                     isClicking = true;
-                }
-            });
+                } else if (event.touches) {
+                    clickStartTime = Date.now();
+                    const touch = event.touches[0];
+                    clickStartPosition = { x: touch.clientX, y: touch.clientY };
+                    isDragging = false;
+                    isClicking = true;
+                    console.log("ewdfwewa");
 
-            render.canvas.addEventListener('mousemove', function (event) {
-                const distance = Math.hypot(event.clientX - clickStartPosition.x, event.clientY - clickStartPosition.y);
-                if (distance > DRAG_THRESHOLD) {
-                    isDragging = true;
                 }
-            });
+            }
 
-            render.canvas.addEventListener('mouseup', function (event) {
+            render.canvas.addEventListener('mousedown', handleStart);
+            render.canvas.addEventListener('touchstart', function (event) {
+                handleStart(event);
+            }, { passive: false });
+
+            function handleMove(event) {
+                let currentX, currentY;
+
+                if (event.type === 'mousemove') {
+                    currentX = event.clientX;
+                    currentY = event.clientY;
+                } else if (event.type === 'touchmove' && event.touches) {
+                    const touch = event.touches[0];
+                    currentX = touch.clientX;
+                    currentY = touch.clientY;
+                }
+
+                if (currentX !== undefined && currentY !== undefined) {
+                    const distance = Math.hypot(currentX - clickStartPosition.x, currentY - clickStartPosition.y);
+                    if (distance > DRAG_THRESHOLD) {
+                        isDragging = true;
+                    }
+                }
+            }
+
+            render.canvas.addEventListener('mousemove', handleMove);
+            render.canvas.addEventListener('touchmove', handleMove, { passive: false });
+
+            function handleEnd(event) {
                 const rect = render.canvas.getBoundingClientRect(); // Get canvas bounds for proper scaling
-                const mouseX = event.clientX - rect.left;
-                const mouseY = event.clientY - rect.top;
+                let mouseX, mouseY;
+
+                if (event.type === 'touchend' && event.changedTouches) {
+                    // Handle touch events
+                    const touch = event.changedTouches[0];
+                    mouseX = touch.clientX - rect.left;
+                    mouseY = touch.clientY - rect.top;
+                } else {
+                    // Handle mouse events
+                    mouseX = event.clientX - rect.left;
+                    mouseY = event.clientY - rect.top;
+                }
 
                 const duration = Date.now() - clickStartTime;
 
-                // Check if the mouse was clicking (not dragging) and within the click threshold
+                // Check if it was a click/tap (not dragging) and within the click threshold
                 if (!isDragging && isClicking && duration < CLICK_THRESHOLD) {
                     SHAPES.forEach(shape => {
                         const body = shape.body;
@@ -853,7 +892,7 @@
                             Matter.Bounds.update(body.bounds, body.vertices);
                             const bounds = body.bounds;
 
-                            // Check if the mouse click is within the shape's bounds
+                            // Check if the click/tap is within the shape's bounds
                             if (
                                 mouseX >= bounds.min.x &&
                                 mouseX <= bounds.max.x &&
@@ -893,7 +932,11 @@
                         }
                     });
                 }
-            });
+            }
+
+            // Add event listeners for mouse and touch end events
+            render.canvas.addEventListener('mouseup', handleEnd);
+            render.canvas.addEventListener('touchend', handleEnd);
 
             document.getElementById('back-button').addEventListener('click', function () {
                 document.getElementById('world').style.transform = 'translateX(0)';

@@ -352,7 +352,6 @@
                 type: "circleWithArrow",
                 circleX: 50,           // Circle center X-coordinate
                 circleY: 50,           // Circle center Y-coordinate
-                arrowColor: "#000000",  // Arrow color
                 restitution: 0.6,       // Bounciness of the shape (optional)
                 color: grey,
                 x: getRandomNumber(minRandomValue, maxRandomValue),
@@ -381,7 +380,6 @@
         arrowImg.src = arrowSource; // Replace with the actual image path
         arrowImg.onload = () => {
             console.log('Arrow image loaded successfully');
-            console.log('Image dimensions:', arrowImg.naturalWidth, arrowImg.naturalHeight);
         };
 
         // Preload all images
@@ -792,10 +790,6 @@
                     circleRadius,
                     arrowWidth,
                     arrowHeight,
-                    arrowHeadWidth,
-                    arrowHeadHeight,
-                    arrowThickness,
-                    arrowColor,
                     arrowSpeed,
                     gap,
                 } = shape;

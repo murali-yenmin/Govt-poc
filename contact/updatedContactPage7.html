@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matter.js Simulation with Rotating Text</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@100;200;300;400;500;600;700&family=Lora:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+
+    <style>
+        body {
+            margin: 0;
+            /* overflow: hidden; */
+            overflow-x: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: #000;
+            font-weight: bold;
+        }
+
+
+        #form-container {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: right 0.5s ease;
+        }
+
+        #form-container form {
+            width: 100%;
+            height: 100vh;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        #form-container form h2 {
+            margin: 0 0 20px;
+        }
+
+        #form-container form input,
+        #form-container form textarea {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #form-container form button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #form-container form button:hover {
+            background-color: #45a049;
+        }
+
+        #back-button {
+            background-color: #FF6F61;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #back-button:hover {
+            background-color: #E65C55;
+        }
+
+        .contact-canvas {
+            position: relative;
+        }
+
+        .contact-canvas .reloadButton {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border: 1px solid #FF5000;
+            color: #FF5000;
+            border-radius: 30px;
+            display: none;
+        }
+
+
+        .test-container {
+            height: 100vh;
+            width: 100vw;
+            background-color: yellow;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading">Loading...</div> <!-- Loading screen -->
+    <div id="form-container">
+        <form>
+            <button id="back-button" type="button">Back</button>
+            <h2>Contact Us</h2>
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <div class="test-container"></div>
+    <div class="contact-canvas">
+        <canvas id="world"></canvas>
+        <button id="reloadButton" class="reloadButton">Bring Back All</button>
+    </div>
+    <div class="test-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
+
+    <script>
+        const { Engine, Render, World, Bodies, Body, Events, Composite, Mouse, MouseConstraint, Vector } = Matter;
+
+        const minRandomValue = window.innerWidth * 0.2;
+        const maxRandomValue = window.innerWidth * 0.8;
+
+        function getRandomNumber(x, y) {
+            return Math.floor(Math.random() * (y - x + 1)) + x;
+        }
+
+        const orange = '#FF5000';
+        const white = '#ffffff';
+        const lightOrange = '#FFF5DC';
+        const black = 'black';
+        const grey = '#D9D9D9';
+        const contactCanvasBG = '#000';
+        const arrowSource = './image/arrow.png';
+
+        const isDesktop = window.innerWidth >= 1024;
+        const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
+
+        function scaledValue() {
+            const originalWidth = 1920; //origin width of design 
+            const currentWidth = window.innerWidth < originalWidth ? window.innerWidth : originalWidth;
+            return currentWidth / originalWidth;
+        }
+
+        const SHAPESDATA = [
+            {
+                id: "business",
+                type: 'box',
+                color: orange,
+                title: '',
+                text: 'NEW BUSINESS',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                restitution: 0,
+                link: 'https://newBussiness.com',
+                titleY: 0,
+                textY: scaledValue() * 10,
+                titleX: 0,
+                textX: 0,
+                textColor: white,
+                hoverCursor: true,
+                width: scaledValue() * 788,
+                height: scaledValue() * 194,
+                fontSize: `${scaledValue() * 101}px`,
+                fontWeight: '700',
+            },
+            {
+                id: "careers",
+                type: 'box',
+                color: orange,
+                title: '',
+                text: 'CAREERS',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                restitution: 0,
+                link: 'https://careers.com',
+                titleY: 0,
+                textY: scaledValue() * 10,
+                titleX: 0,
+                textX: 0,
+                textColor: white,
+                hoverCursor: true,
+                width: scaledValue() * 454,
+                height: scaledValue() * 152,
+                fontSize: `${scaledValue() * 80}px`,
+                fontWeight: '700',
+            },
+            {
+                id: "collaboration",
+                type: 'box',
+                color: lightOrange,
+                title: '',
+                text: 'COLLABORATION',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                restitution: 0,
+                link: 'https://collaboration.com',
+                titleY: 0,
+                textY: scaledValue() * 10,
+                titleX: 0,
+                textX: 0,
+                textColor: black,
+                width: scaledValue() * 891,
+                height: scaledValue() * 194,
+                fontSize: `${scaledValue() * 101}px`,
+                fontWeight: '700',
+                hoverCursor: true
+            },
+            {
+                id: "location",
+                type: 'box',
+                color: grey,
+                title: '',
+                text: 'LOCATION',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                restitution: 0,
+                titleY: 0,
+                textY: scaledValue() * 10,
+                titleX: 0,
+                textX: 0,
+                textColor: black,
+                width: scaledValue() * 453,
+                height: scaledValue() * 175,
+                fontSize: `${scaledValue() * 80}px`,
+                fontWeight: '700'
+            },
+            {
+                id: "contact",
+                type: 'box',
+                color: lightOrange,
+                title: 'CONTACT',
+                text: 'example@example.com',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                restitution: 0,
+                textColor: black,
+                hoverCursor: true,
+                copyText: true,
+                width: scaledValue() * 551,
+                height: scaledValue() * 175,
+                fontSize: `${scaledValue() * 40}px`,
+                fontWeight: '500',
+                titleFontWeight: '500',
+                titleFontSize: `${scaledValue() * 26}px`,
+                titleX: -(scaledValue() * 180),
+                titleY: -(scaledValue() * 20),
+                textX: -(scaledValue() * 65),
+                textY: (scaledValue() * 20),
+            },
+            {
+                id: "insta",
+                type: 'image',
+                src: './image/insta.PNG',
+                title: 'Image Shape',
+                link: 'https://insta.com',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                hoverCursor: true,
+                shapeType: "box",
+                restitution: 0,
+                width: scaledValue() * 185,
+                height: scaledValue() * 185,
+            },
+            {
+                id: "facebook",
+                type: 'image',
+                src: './image/insta.PNG',
+                title: 'Image Shape',
+                link: 'https://facebook.com',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                hoverCursor: true,
+                shapeType: "box",
+                restitution: 0,
+                width: scaledValue() * 185,
+                height: scaledValue() * 185,
+            },
+            {
+                id: "linkedin",
+                type: 'image',
+                src: './image/insta.PNG',
+                title: 'Image Shape',
+                link: 'https://telegram.com',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                hoverCursor: true,
+                restitution: 0,
+                shapeType: "box",
+                width: scaledValue() * 185,
+                height: scaledValue() * 185,
+            },
+            {
+                id: 'insta2',
+                type: 'image',
+                src: './image/insta.PNG',
+                title: 'Image Shape',
+                link: 'https://youtube.com',
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                hoverCursor: true,
+                shapeType: "box",
+                restitution: 0,
+                width: scaledValue() * 185,
+                height: scaledValue() * 185,
+            },
+            // {
+            //     id: "arrow",
+            //     type: 'image',
+            //     shapeType: "circle",
+            //     src: './image/arrow.PNG',
+            //     title: 'Image Shape',
+            //     x: getRandomNumber(minRandomValue, maxRandomValue),
+            //     y: 0,
+            //     width: 185,
+            //     height: 185,
+            //     restitution: 0,
+            //     hoverCursor: true
+            // },
+            {
+                id: "circleWithArrow",
+                type: "circleWithArrow",
+                circleX: 50,           // Circle center X-coordinate
+                circleY: 50,           // Circle center Y-coordinate
+                arrowColor: "#000000",  // Arrow color
+                restitution: 0.6,       // Bounciness of the shape (optional)
+                color: grey,
+                x: getRandomNumber(minRandomValue, maxRandomValue),
+                y: 0,
+                swipeLeft: 'swipe-left',
+                arrowWidth: scaledValue() * 202,
+                arrowHeight: scaledValue() * 199,
+                circleRadius: scaledValue() * 115,
+                gap: isDesktop ? 10 : isTablet ? 10 : 5,
+                arrowSpeed: scaledValue() * 20,
+            },
+        ]
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Randomize SHAPES array
+        const SHAPES = shuffleArray([...SHAPESDATA]);
+
+        const arrowImg = new Image();
+        arrowImg.src = arrowSource; // Replace with the actual image path
+        arrowImg.onload = () => {
+            console.log('Arrow image loaded successfully');
+            console.log('Image dimensions:', arrowImg.naturalWidth, arrowImg.naturalHeight);
+        };
+
+        // Preload all images
+        const preloadImages = () => {
+            const imagePromises = SHAPES.filter(shape => shape.type === 'image').map(shape => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.src = shape.src;
+                    img.onload = () => {
+                        shape.img = img;
+                        resolve(img);
+                    };
+                    img.onerror = reject;
+                });
+            });
+
+            return Promise.all(imagePromises); // Wait for all images to load
+        };
+
+        // Trigger image loading as soon as the page loads
+        window.onload = function () {
+            preloadImages()
+                .then(() => {
+                    document.getElementById('loading').style.display = 'none'; // Hide loading screen once images are loaded
+                    startSimulation(); // Start the simulation
+                })
+                .catch(error => {
+                    console.error("Error loading images:", error);
+                    document.getElementById('loading').textContent = 'Error loading images, please try again.';
+                });
+        };
+
+        function startSimulation() {
+            const engine = Engine.create();
+            const world = engine.world;
+
+            const render = Render.create({
+                element: document.querySelector('.contact-canvas'),
+                // element: document.body,
+                canvas: document.getElementById('world'),
+                engine: engine,
+                options: {
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                    wireframes: false,
+                    background: contactCanvasBG
+                }
+            });
+
+            const boundaryThickness = 100;
+
+            const boundaries = [
+                Bodies.rectangle(window.innerWidth / 2, -boundaryThickness / 2, window.innerWidth, boundaryThickness, {
+                    isStatic: true,
+                    restitution: 1.0,
+                    render: { fillStyle: '#8b8b8b' }
+                }),
+                Bodies.rectangle(-boundaryThickness / 2, window.innerHeight / 2, boundaryThickness, window.innerHeight, {
+                    isStatic: true,
+                    restitution: 1.0,
+                    render: { fillStyle: '#8b8b8b' }
+                }),
+                Bodies.rectangle(window.innerWidth + boundaryThickness / 2, window.innerHeight / 2, boundaryThickness, window.innerHeight, {
+                    isStatic: true,
+                    restitution: 1.0,
+                    render: { fillStyle: '#8b8b8b' }
+                }),
+                Bodies.rectangle(window.innerWidth / 2, window.innerHeight + boundaryThickness / 2, window.innerWidth, boundaryThickness, {
+                    isStatic: true,
+                    restitution: 1.0,
+                    render: { fillStyle: '#8b8b8b' }
+                })
+            ];
+
+            World.add(world, boundaries);
+
+            let shapeIndex = 0; // Start index for shape creation
+            let delay = 1000; // Initial delay (1 second)
+            let shapesMissing = false;
+
+            // Create shapes one by one with a delay
+            function createNextShape() {
+                if (shapeIndex < SHAPES.length) {
+                    const shape = SHAPES[shapeIndex];
+                    let body;
+                    let randomAngle = Math.random() * 2 * Math.PI; // Random angle between 0 and 2π
+                    let randomAngularVelocity = (Math.random() - 0.5) * 0.05; // Random angular velocity
+
+                    if (shape.type === 'box') {
+                        body = Bodies.rectangle(shape.x, shape.y, shape.width, shape.height, {
+                            restitution: shape.restitution,
+                            render: { fillStyle: shape.color },
+                            angle: randomAngle, // Set the initial random rotation
+                        });
+                    } else if (shape.type === 'circle') {
+                        body = Bodies.circle(shape.x, shape.y, shape.radius, {
+                            restitution: shape.restitution,
+                            render: { fillStyle: shape.color },
+                            angle: randomAngle, // Set the initial random rotation
+                        });
+                    } else if (shape.type === 'image' && shape.img) {
+                        if (shape.shapeType === "circle") {
+                            // Create a circular shape for images with "circle" type
+                            body = Bodies.circle(shape.x, shape.y, shape.width / 2, {
+                                restitution: shape.restitution,
+                                render: { fillStyle: 'transparent' },
+                            });
+                        } else {
+                            body = Bodies.rectangle(shape.x, shape.y, shape.width, shape.height, {
+                                restitution: shape.restitution,
+                                render: { fillStyle: 'transparent' },
+                            });
+                        }
+                    } else if (shape.type === "circleWithArrow") {
+                        body = drawCircleWithArrow(shape); // Create the circle with arrow
+                    }
+
+                    // Apply a random angular velocity to make the shape rotate while falling
+                    if (body) Body.setAngularVelocity(body, randomAngularVelocity);
+
+                    World.add(world, body);
+                    shape.body = body;
+                    shapeIndex++;
+
+                    // Reduce the delay for the next shape (e.g., reduce by 100ms each time, but not below 200ms)
+                    delay = Math.max(200, delay - 100); // Decrease delay, but keep it above 200ms
+
+                    // Create the next shape after the reduced delay
+                    setTimeout(createNextShape, delay); // Delay in ms
+                }
+            }
+
+            // Start the shape creation process
+            createNextShape();
+
+            // Create the mouse constraint for drag functionality
+            const mouse = Mouse.create(render.canvas);
+            const mouseConstraint = MouseConstraint.create(engine, {
+                mouse: mouse,
+                constraint: {
+                    stiffness: 0.2,
+                    render: { visible: false }
+                }
+            });
+            World.add(world, mouseConstraint);
+
+
+            Engine.run(engine);
+            Render.run(render);
+
+            (function renderText() {
+                const context = render.context;
+
+                SHAPES.forEach((shape) => {
+                    const body = shape.body;
+                    if (body) {
+                        context.save(); // Save the current context
+                        context.translate(body.position.x, body.position.y); // Move the context to the shape's position
+                        context.rotate(body.angle); // Rotate the context by the shape's angle
+
+                        // Render title and text inside the shape
+                        if (shape.type === 'image' && shape.img) {
+                            context.drawImage(shape.img, -shape.width / 2, -shape.height / 2, shape.width, shape.height);
+                        } else {
+                            context.font = `${shape.fontWeight} ${shape.fontSize} Oswald, Arial`; // Font for shape title and text
+                            context.fillStyle = shape.textColor; // Shape text color
+                            context.textAlign = 'center';
+                            context.textBaseline = 'middle';
+                            context.fillText(shape.text, shape.textX, shape.textY); // Text inside the box
+
+                            if (shape.title) {
+                                context.font = `${shape.titleFontWeight} ${shape.titleFontSize} Lora, Arial`; // Font for shape title and text
+                                context.fillStyle = shape.titleColor; // Shape text color
+                                context.fillText(shape.title, shape.titleX, shape.titleY); // Title at the top of the box
+                            }
+                        }
+
+                        context.restore();
+                    }
+                });
+
+                requestAnimationFrame(renderText);
+            })();
+
+            function reloadCanvas() {
+                // Clear the existing world and bodies
+                Matter.World.clear(world);
+                Matter.Engine.clear(engine);
+
+                SHAPES.forEach(shape => {
+                    // Clear shape-specific properties, like the body reference
+                    delete shape.body;
+                });
+
+                // Reinitialize the simulation and shapes
+                startSimulation();
+            }
+
+            const reloadButton = document.getElementById('reloadButton');
+            reloadButton.addEventListener('click', reloadCanvas);
+
+            // Add an event listener to check the visibility of shapes during the simulation
+            Events.on(engine, 'afterUpdate', function () {
+                let shapesMissing = false;
+
+                SHAPES.forEach(shape => {
+
+                    const body = shape.body;
+                    if (body) {
+                        // Check if the shape's bounding box is outside the canvas
+                        const bounds = body.bounds;
+                        if (
+                            bounds.max.x < 0 || // Completely off the left edge
+                            bounds.min.x > render.options.width || // Completely off the right edge
+                            bounds.max.y < 0 || // Completely above the top edge
+                            bounds.min.y > render.options.height // Completely below the bottom edge
+                        ) {
+                            shapesMissing = true;
+                        }
+                    }
+
+                    if (shapesMissing) {
+                        reloadButton.style.display = 'block'; // Show button
+                    } else {
+                        reloadButton.style.display = 'none'; // Hide button
+                    }
+                });
+            });
+
+            function hoverStyle(event) {
+                if (!event) return; // Ensure the event object is defined
+
+                let isHovering = false;
+                const rect = render.canvas.getBoundingClientRect(); // Get canvas bounds
+                let mouseX; // Adjust mouse X position
+                let mouseY;  // Adjust mouse Y position
+
+                if (event.type === 'mousemove') {
+                    mouseX = event.clientX - rect.left;
+                    mouseY = event.clientY - rect.top;
+
+                } else if (event.type === 'touchmove' && event.touches) {
+                    const touch = event.touches[0];
+                    mouseX = touch.clientX - rect.left;
+                    mouseY = touch.clientY - rect.top;
+
+                }
+
+                SHAPES.forEach(shape => {
+                    const body = shape.body;
+                    if (body && shape.hoverCursor) {
+
+                        // Update bounds to match the current shape's position
+                        Matter.Bounds.update(body.bounds, body.vertices);
+                        const bounds = body.bounds;
+
+                        // Check if the mouse is within the bounds
+                        if (
+                            mouseX >= bounds.min.x &&
+                            mouseX <= bounds.max.x &&
+                            mouseY >= bounds.min.y &&
+                            mouseY <= bounds.max.y
+                        ) {
+                            // Precise hit detection using the shape's vertices
+                            if (Matter.Vertices.contains(body.vertices, { x: mouseX, y: mouseY })) {
+                                isHovering = true;
+                            }
+                        }
+                    }
+                });
+
+                // Set cursor style based on hovering state
+                render.canvas.style.cursor = isHovering ? 'pointer' : 'default';
+                return isHovering;
+            }
+
+            let clickStartTime = 0;
+            let clickStartPosition = { x: 0, y: 0 };
+            let isDragging = false;
+            let isClicking = false;
+            const DRAG_THRESHOLD = 10;
+            const CLICK_THRESHOLD = 300;
+
+            function handleStart(event) {
+                if (event.button === 0) {
+                    clickStartTime = Date.now();
+                    clickStartPosition = { x: event.clientX, y: event.clientY };
+                    isDragging = false;
+                    isClicking = true;
+                } else if (event.touches) {
+                    clickStartTime = Date.now();
+                    const touch = event.touches[0];
+                    clickStartPosition = { x: touch.clientX, y: touch.clientY };
+                    isDragging = false;
+                    isClicking = true;
+                }
+            }
+
+            render.canvas.addEventListener('mousedown', handleStart);
+            render.canvas.addEventListener('touchstart', function (event) {
+                handleStart(event);
+            }, { passive: false });
+
+            function handleMove(event) {
+                let currentX, currentY;
+
+                if (event.type === 'mousemove') {
+                    currentX = event.clientX;
+                    currentY = event.clientY;
+                } else if (event.type === 'touchmove' && event.touches) {
+                    const touch = event.touches[0];
+                    currentX = touch.clientX;
+                    currentY = touch.clientY;
+                }
+
+                if (currentX !== undefined && currentY !== undefined) {
+                    const distance = Math.hypot(currentX - clickStartPosition.x, currentY - clickStartPosition.y);
+                    if (distance > DRAG_THRESHOLD) {
+                        isDragging = true;
+                    }
+                }
+            }
+
+            render.canvas.addEventListener('mousemove', handleMove);
+            render.canvas.addEventListener('touchmove', handleMove, { passive: false });
+
+            function handleEnd(event) {
+                const rect = render.canvas.getBoundingClientRect(); // Get canvas bounds for proper scaling
+                let mouseX, mouseY;
+
+                if (event.type === 'touchend' && event.changedTouches) {
+                    // Handle touch events
+                    const touch = event.changedTouches[0];
+                    mouseX = touch.clientX - rect.left;
+                    mouseY = touch.clientY - rect.top;
+                } else {
+                    // Handle mouse events
+                    mouseX = event.clientX - rect.left;
+                    mouseY = event.clientY - rect.top;
+                }
+
+                const duration = Date.now() - clickStartTime;
+
+                // Check if it was a click/tap (not dragging) and within the click threshold
+                if (!isDragging && isClicking && duration < CLICK_THRESHOLD) {
+                    SHAPES.forEach(shape => {
+                        const body = shape.body;
+                        if (body) {
+                            // Update bounds to ensure they match the shape's current position
+                            Matter.Bounds.update(body.bounds, body.vertices);
+                            const bounds = body.bounds;
+
+                            // Check if the click/tap is within the shape's bounds
+                            if (
+                                mouseX >= bounds.min.x &&
+                                mouseX <= bounds.max.x &&
+                                mouseY >= bounds.min.y &&
+                                mouseY <= bounds.max.y
+                            ) {
+                                // Fine-grained hit detection using the shape's vertices
+                                if (Matter.Vertices.contains(body.vertices, { x: mouseX, y: mouseY })) {
+                                    // Open a link in a new tab
+                                    if (shape.link) {
+                                        window.open(shape.link, '_blank');
+                                    }
+
+                                    // Copy text to clipboard
+                                    if (shape.copyText) {
+                                        navigator.clipboard.writeText(shape.text).then(() => {
+                                            let oldText = shape.text;
+                                            let oldTextX = shape.textX;
+                                            shape.text = "Copied!"; // Change text to indicate copy
+                                            shape.textX = 0;
+
+                                            // Optional: Restore the original text after a short delay
+                                            setTimeout(() => {
+                                                shape.text = oldText;
+                                                shape.textX = oldTextX;
+                                            }, 1000);
+                                        });
+                                    }
+
+                                    // Trigger form container slide-in for the arrow shape
+                                    if (shape.swipeLeft === 'swipe-left') {
+                                        document.getElementById('world').style.transform = 'translateX(-100%)';
+                                        document.getElementById('form-container').style.right = '0';
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Add event listeners for mouse and touch end events
+            render.canvas.addEventListener('mouseup', handleEnd);
+            render.canvas.addEventListener('touchend', handleEnd);
+
+            document.getElementById('back-button').addEventListener('click', function () {
+                document.getElementById('world').style.transform = 'translateX(0)';
+                document.getElementById('form-container').style.right = '-100%';
+            });
+
+            function drawCircleWithArrow(shape) {
+                const {
+                    circleX,
+                    circleY,
+                    circleRadius,
+                    arrowWidth,
+                    arrowHeight,
+                    arrowHeadWidth,
+                    arrowHeadHeight,
+                    arrowThickness,
+                    arrowColor,
+                    arrowSpeed,
+                    gap,
+                } = shape;
+
+                let arrowOffset = 0; // Start in the center of the circle
+                let isHovering = false; // Track if the mouse is inside the circle
+                let mouseEntered = false;
+
+                // Create the physics body for the circle
+                const body = Bodies.circle(circleX, circleY, circleRadius, {
+                    restitution: shape.restitution,
+                    render: {
+                        fillStyle: shape.color || "transparent", // Fill color for the circle
+                        lineWidth: 0, // Set border width to 0
+                        strokeStyle: "transparent", // Make the border transparent
+                        visible: false,
+                    },
+                });
+
+                // Get the canvas and context
+                const canvas = document.getElementById("world");
+                const ctx = canvas.getContext("2d");
+
+                canvas.addEventListener('wheel', (event) => {
+                    event.stopPropagation(); // Prevent canvas-specific scroll handling
+                }, { passive: true });
+
+                let touchStartY = 0;
+                let counttt = 0;
+                let isInShape = false;
+                const scrollSpeed = 3;
+
+                function getTouchPosition(event) {
+                    const rect = canvas.getBoundingClientRect();
+                    return {
+                        x: event.touches[0].clientX - rect.left,
+                        y: event.touches[0].clientY - rect.top,
+                    };
+                }
+
+                canvas.addEventListener("touchstart", (event) => {
+                    const touchPos = getTouchPosition(event);
+                    touchStartY = touchPos.y;
+                });
+
+                canvas.addEventListener("touchmove", (event) => {
+                    const touchPos = getTouchPosition(event);
+                    let scrollDistance = touchStartY - touchPos.y;
+                    if (!isInShape) {
+                        isInShape = hoverStyle(event) || isMouseInCircle(event);
+                    }
+
+                    if (!isInShape) {
+                        window.scrollBy({
+                            top: scrollDistance * scrollSpeed,
+                            behavior: "smooth",
+                        });
+                    }
+                    event.preventDefault();
+                });
+
+                canvas.addEventListener("touchend", () => {
+                    isInShape = false;
+                });
+
+                // Function to draw the arrow
+                function drawArrow(circleX, circleY, offset) {
+                    const startX = circleX - arrowWidth / 1.2 + offset; // Adjust horizontally using offset
+                    const startY = circleY - arrowHeight / 2; // Center vertically
+
+                    ctx.drawImage(arrowImg, startX + gap, startY, arrowWidth, arrowHeight);
+                }
+
+                // Function to animate the arrow
+                function animateArrow() {
+
+                    const { x: currentX, y: currentY } = body.position; // Get the current position of the circle
+
+                    // Draw the circle
+                    ctx.beginPath();
+                    ctx.arc(currentX, currentY, circleRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = shape.color || "transparent";
+                    ctx.fill();
+
+                    // Restrict drawing to the circle area using clipping
+                    ctx.save(); // Save the current canvas state
+                    ctx.beginPath();
+                    ctx.arc(currentX, currentY, circleRadius, 0, Math.PI * 2); // Define the circular clipping path
+                    ctx.clip(); // Apply the clipping path
+
+                    // Update arrow position if hovering
+                    if (mouseEntered) {
+                        if (isHovering) {
+                            arrowOffset += arrowSpeed;
+                            if (arrowOffset > circleRadius * 2) {
+                                arrowOffset = -circleRadius * 2; // Loop the arrow position
+                            }
+                        } else {
+                            arrowOffset = scaledValue() * 50; // Reset offset if not hovering
+                        }
+                    } else {
+                        arrowOffset = scaledValue() * 50; // Reset offset if not hovering
+                    }
+
+                    // Draw the arrow with the current offset
+                    drawArrow(currentX, currentY, arrowOffset);
+
+                    ctx.restore(); // Restore the canvas state (remove clipping)
+                    requestAnimationFrame(animateArrow); // Continue the animation
+                }
+
+                // Function to check if the mouse is inside the circle
+                function isMouseInCircle(event) {
+                    const rect = canvas.getBoundingClientRect();
+                    let mouseX, mouseY;
+                    if (event.type === 'mousemove') {
+                        mouseX = event.clientX - rect.left;
+                        mouseY = event.clientY - rect.top;
+                    } else if (event.type === 'touchmove' && event.touches) {
+                        const touch = event.touches[0];
+                        mouseX = touch.clientX - rect.left;
+                        mouseY = touch.clientY - rect.top;
+                    }
+
+                    const dx = mouseX - body.position.x;
+                    const dy = mouseY - body.position.y;
+                    return dx * dx + dy * dy <= circleRadius * circleRadius;
+                }
+
+                // Mouse move event listener
+                canvas.addEventListener("mousemove", (event) => {
+                    if (isMouseInCircle(event)) {
+                        render.canvas.style.cursor = 'pointer';
+                    } else {
+                        hoverStyle(event);
+                    }
+
+                    if (!mouseEntered && isMouseInCircle(event)) {
+                        mouseEntered = isMouseInCircle(event); // Update hovering state
+                        if (mouseEntered) {
+                            isHovering = true;
+                        }
+                        setTimeout(() => {
+                            isHovering = false;
+                        }, 400);
+                    }
+                    if (!isMouseInCircle(event)) {
+                        mouseEntered = false;
+                    }
+                });
+
+                canvas.addEventListener("mouseleave", () => {
+                    isHovering = false; // Reset hovering state when mouse leaves the canvas
+                });
+
+                // Start the animation
+                animateArrow();
+
+                return body; // Return the physics body to be added to the world
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        ul {
+            display: flex;
+            margin-top: 150px;
+            padding: 0;
+            list-style: none;
+        }
+
+        li {
+            width: 100%;
+            border: 1px solid black;
+            position: relative;
+            padding: 20px;
+            text-align: center;
+        }
+
+        a {
+            display: block;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .icon {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            visibility: hidden;
+            pointer-events: none;
+            transition: transform 0.1s linear;
+        }
+
+        .icon img {
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <ul>
+            <li>
+                <a href="https://vimeo.com/govtsingapore" target="_blank" rel="noopener">@govtsingapore</a>
+                <div class="icon">
+                    <img decoding="async" src="/wp-content/uploads/2024/11/vimeo.svg" alt="vimeo">
+                </div>
+            </li>
+
+            <li>
+                <a href="https://www.facebook.com/thegovt" target="_blank" rel="noopener">@thegovt</a>
+                <div class="icon">
+                    <img decoding="async" src="/wp-content/uploads/2024/11/fb.svg" alt="fb">
+                </div>
+            </li>
+
+            <li>
+                <a href="https://www.instagram.com/thegovtsg/" target="_blank" rel="noopener">@thegovtsg</a>
+                <div class="icon">
+                    <img decoding="async" src="/wp-content/uploads/2024/11/insta.svg" alt="insta">
+                </div>
+            </li>
+
+            <li>
+                <a href="https://www.linkedin.com/company/thegovt" target="_blank" rel="noopener">@thegovtsg</a>
+                <div class="icon">
+                    <img decoding="async" src="/wp-content/uploads/2024/11/in.svg" alt="in">
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        function hoverFOllow(parentClass, childClass, x, y) {
+            const parent = document.querySelectorAll(parentClass);
+
+            if (parent.length > 0) {
+                parent.forEach(child => {
+                    const icon = child.querySelector(childClass);
+
+                    if (icon) {
+                        child.addEventListener('mouseenter', () => {
+                            icon.style.visibility = 'visible';
+                        });
+
+                        child.addEventListener('mousemove', (e) => {
+                            const rect = child.getBoundingClientRect();
+                            const offsetX = e.clientX - rect.left;
+                            const offsetY = e.clientY - rect.top;
+
+                            // Move the icon to follow the cursor
+                            icon.style.transform = `translate(${offsetX - x}px, ${offsetY - y}px)`;
+                        });
+
+                        child.addEventListener('mouseleave', () => {
+                            icon.style.visibility = 'hidden';
+                        });
+                    }
+                });
+            }
+        }
+
+        hoverFOllow('li', '.icon', 50, 75);
+    </script>
+</body>
+
+</html>

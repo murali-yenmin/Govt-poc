@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin-top: 150px;
+        }
+
+        .socailLink {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+            position: absolute;
+            visibility: hidden;
+            /* Hide the icon by default */
+            pointer-events: none;
+            /* Prevent icon from interfering with mouse events */
+            transition: transform 0.1s linear;
+            /* Smooth following effect */
+        }
+
+        .socailLink>div {
+            border: 1px solid black;
+            width: 100%;
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="socailLink">
+
+        <div>
+            <div>
+                <div>
+                    <div>
+                        <span class="icon">
+                            <img loading="lazy" decoding="async" width="34" height="28"
+                                src="https://govt.yenmin.in/wp-content/uploads/2024/11/vimeo.svg" alt="">
+                        </span>
+                    </div>
+                    <div>
+                        <h4>
+                            <span>@govtsingapore</span>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div>
+                <div>
+                    <div>
+                        <span class="icon">
+                            <img loading="lazy" decoding="async" width="29" height="29"
+                                src="https://govt.yenmin.in/wp-content/uploads/2024/11/fb.svg" alt="">
+                        </span>
+                    </div>
+                    <div>
+                        <h4>
+                            <span>@thegovt</span>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div>
+                <div>
+                    <div>
+                        <span class="icon">
+                            <img loading="lazy" decoding="async" width="32" height="32"
+                                src="https://govt.yenmin.in/wp-content/uploads/2024/11/insta.svg" alt="">
+                        </span>
+                    </div>
+                    <div>
+                        <h4>
+                            <span>@thegovtsg</span>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div>
+                <div>
+                    <div>
+                        <span class="icon">
+                            <img loading="lazy" decoding="async" width="29" height="29"
+                                src="https://govt.yenmin.in/wp-content/uploads/2024/11/in.svg" alt="">
+                        </span>
+                    </div>
+                    <div>
+                        <h4>
+                            <span>@thegovt</span>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function hoverFOllow(parentClass, childClass, x, y) {
+            const parent = document.querySelectorAll(parentClass);
+
+            if (parent.length > 0) {
+                parent.forEach(child => {
+                    const icon = child.querySelector(childClass);
+
+                    if (icon) {
+                        child.addEventListener('mouseenter', () => {
+                            icon.style.visibility = 'visible';
+                        });
+
+                        child.addEventListener('mousemove', (e) => {
+                            const rect = child.getBoundingClientRect();
+                            const offsetX = e.clientX - rect.left;
+                            const offsetY = e.clientY - rect.top;
+
+                            // Move the icon to follow the cursor
+                            icon.style.transform = `translate(${offsetX - x}px, ${offsetY - y}px)`;
+                        });
+
+                        child.addEventListener('mouseleave', () => {
+                            icon.style.visibility = 'hidden';
+                        });
+                    }
+                });
+            }
+        }
+
+        hoverFOllow('.socailLink > div', '.icon', 25, 50);
+    </script>
+</body>
+
+</html>
